@@ -45,6 +45,13 @@ O Ilo, o cachorro da família, vai junto.
 ## Entre as fases
 Ao terminar cada parte aparece o mapa da viagem, com a rota e o transporte até o próximo destino, de 1 a 3 estrelas (docinhos pegos e vidas que sobraram), confete e musiquinha. No fim do jogo, a Madrinha deixa um cartão-postal de Solonópole para a Gabi.
 
+## Corrida Neon (corrida infinita)
+Corrida em 3 faixas fugindo da NÉVOA, passando pelas cidades da família: Sertão de Solonópole, Lisboa, Helsinque, Lapônia e Cidade Neon (muda a cada 1000 m). Abre pelo menu do jogo principal ou em `corrida.html`.
+- **Controles:** deslize o dedo para os lados (trocar de faixa), para cima (pular) e para baixo (deslizar). No teclado: setas ou W A S D.
+- **Obstáculos:** barreiras (pule), barras rosa (deslize), veículos (desvie ou suba pela rampa amarela e corra em cima) e drones da NÉVOA. Bater de lado faz tropeçar; duas vezes seguidas, a NÉVOA pega.
+- **Personagens:** Madrinha Ana (começa com escudo), Gabi (pulo duplo), José (passa por baixo das barras), Keka (pula mais alto), Emiel (quebra barreiras), Vovó Hermina (ímã dura o dobro) e Ilo (pequeno e já sai com ímã).
+- **Poderes:** ímã, pontos em dobro, mochila-foguete, tênis de mola e escudo. Moedas compram melhorias na loja; missões aumentam o multiplicador de pontos.
+
 ## Esquadrão Neon (jogo novo, para jogar junto)
 Nave espacial em 5 setores (Nebulosa Rosa, Anéis de Gelo, Cinturão de Asteroides, Cidade Neon de Órion e Núcleo da NÉVOA), cada um com um chefão. Abre pelo botão no menu do jogo principal ou direto em `neon.html`.
 - **Pilotos:** Madrinha Ana (+1 vida), Gabi (especial mais rápido), José (nave pequena e veloz), Keka (tiro mais rápido), Emiel (tiro mais forte), Vovó Hermina (ímã de estrelas) e o Ilo (começa com um drone).
@@ -66,7 +73,7 @@ Um escape room de conversa no universo de *The Vampire Diaries*. Um número desc
 Na conversa: *dica* dá uma ajudinha, *repetir* manda a pista de novo e *reiniciar* começa do zero. A história e as respostas ficam em `mystic-historia.js`.
 
 ### No celular, pelo navegador
-Abra `mystic.html` (no site: https://jogodamadrinhaana.dynosai.cloud/mystic.html). Parece uma conversa de aplicativo de mensagens, com "digitando...", arquivo para abrir e áudio falado. O progresso fica salvo no celular.
+Abra `mystic.html` (no site: https://aparecida201782-cmd.github.io/jogo-Gabi/mystic.html). Parece uma conversa de aplicativo de mensagens, com "digitando...", arquivo para abrir e áudio falado. O progresso fica salvo no celular.
 
 ### No WhatsApp de verdade
 O robô fica em `whatsapp/`. Ele precisa de um **número de WhatsApp só para ele** (um chip extra; não use o seu número pessoal, porque o robô usa uma conexão não oficial e o WhatsApp pode bloquear o número) e de um computador ligado com o [Node.js](https://nodejs.org) 20 ou mais novo.
@@ -91,7 +98,7 @@ Menus em estilo neon (vidro, brilho e grade animada), painel de vida e pontos fu
 O GitHub Actions gera o app a cada envio (`.github/workflows/android.yml`). Baixe o `MadrinhaAna.apk` na página **Releases** do repositório, abra no celular e permita a instalação.
 
 ## Site
-O jogo é publicado pelo GitHub Pages em https://jogodamadrinhaana.dynosai.cloud (`.github/workflows/site.yml`).
+O jogo é publicado pelo GitHub Pages em https://aparecida201782-cmd.github.io/jogo-Gabi/ (o domínio jogodamadrinhaana.dynosai.cloud só funciona depois de configurado no DNS e em Settings > Pages) (`.github/workflows/site.yml`).
 
 ## Rodar no navegador
 Abra `index.html`. A versão de história com escolhas está em `historia.html`.

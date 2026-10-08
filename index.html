@@ -362,7 +362,9 @@ function title(){screen.wide=false;
    ${bday?'<p><b>🎂 Hoje é aniversário da Madrinha Ana e Dia das Crianças! 🎉</b></p>':''}
    <p>Você é a <b>Madrinha Ana</b>! Saia de Solonópole, no Ceará, atravesse o oceano e chegue até Helsinque para visitar a ${AFILHADA}.</p>
    <div class="keys">Celular: botões na tela. Teclado: <b>←</b><b>→</b> andar · <b>Shift</b> correr · <b>↑</b>/<b>Espaço</b> pular · <b>↓</b> abaixar (correndo: rasteira) · <b>X</b> murro · <b>C</b> pesada</div></div>`,
-   [{t:'🚀 NOVO: Esquadrão Neon (jogue junto com a Madrinha!)',go:()=>{location.href='neon.html';}},
+   [{t:'🌕 NOVO: Operação Mystic Falls (mistério de vampiros)',go:()=>{location.href='mystic.html';}},
+    {t:'🏃 Corrida Neon (corrida infinita!)',go:()=>{location.href='corrida.html';}},
+    {t:'🚀 Esquadrão Neon (jogue junto com a Madrinha!)',go:()=>{location.href='neon.html';}},
     {t:'▶ Fase 1: A viagem',go:()=>intro()},
     save.done?{t:'▶ Fase 2: Passeio por Helsinque',go:()=>intro2()}:{t:'🔒 Fase 2: termine a Fase 1 para abrir',alt:true,go:()=>{}},
     save.done2?{t:'▶ Fase 3: Natureza e primeira neve',go:()=>intro3()}:{t:'🔒 Fase 3: termine a Fase 2 para abrir',alt:true,go:()=>{}},
