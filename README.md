@@ -42,6 +42,9 @@ O Ilo, o cachorro da família, vai junto.
 2. **Solonópole:** até a praça, onde a Vovó Hermina espera a família.
 3. **O quintal da Vovó Hermina:** bolo, galinhas e o mergulho final na piscina.
 
+## Entre as fases
+Ao terminar cada parte aparece o mapa da viagem, com a rota e o transporte até o próximo destino, de 1 a 3 estrelas (docinhos pegos e vidas que sobraram), confete e musiquinha. No fim do jogo, a Madrinha deixa um cartão-postal de Solonópole para a Gabi.
+
 ## Controles
 - Celular: botões na tela (◀ ▶ andar, » correr, ⤒ pular, ▼ abaixar, 👊 murro, 🦶 pesada). Correndo + ▼ = rasteira.
 - Teclado: setas ou A/D andam, Shift corre, ↑ ou Espaço pula, ↓ abaixa, X dá murro, C dá pesada.

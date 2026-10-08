@@ -9,7 +9,7 @@
   :root{--ink:#14213d;--sun:#ffc93c;--sun-ink:#3a2a00;--sky:#0b1530;--card:#fffaf0;--pink:#ff6b8a;--teal:#1aa881}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;height:100%;background:var(--sky);overflow:hidden;font-family:"Trebuchet MS",system-ui,sans-serif;color:var(--ink);user-select:none;-webkit-user-select:none;touch-action:none}
-  canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+  #c{position:fixed;inset:0;width:100%;height:100%;display:block}
   .ov{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(11,21,48,.55);z-index:5}
   .ov[hidden]{display:none}
   .card{background:var(--card);border-radius:22px;max-width:560px;width:100%;max-height:92vh;overflow:auto;box-shadow:0 18px 50px rgba(0,0,0,.45);animation:pop .35s ease both}
@@ -114,7 +114,7 @@ function build(def){
     N:(x,t)=>L.signs.push({x:x*T,t}),
   };
   def.make(api);
-  L.endX=def.end*T;
+  L.endX=def.end*T;L.totalCoins=L.items.filter(i=>i.k==='coin').length;
   return L;
 }
 const LEVELS=[
@@ -329,20 +329,21 @@ swapBtn.addEventListener('pointerdown',e=>{e.preventDefault();if(mode==='play')p
 // ---------- telas ----------
 function screen(html,btns){
   mode=mode==='play'?'paused':mode;pauseBtn.hidden=true;pad.hidden=true;swapBtn.hidden=true;
-  ov.innerHTML=`<div class="card">${html}<div class="bd" style="padding-top:0">${btns.map((b,i)=>`<button class="btn ${b.alt?'alt':''}" data-i="${i}">${b.t}</button>`).join('')}</div></div>`;
+  ov.innerHTML=`<div class="card"${screen.wide?' style="max-width:880px"':''}>${html}<div class="bd" style="padding-top:0">${btns.map((b,i)=>`<button class="btn ${b.alt?'alt':''}" data-i="${i}">${b.t}</button>`).join('')}</div></div>`;
   ov.hidden=false;
   ov.querySelectorAll('button').forEach(b=>b.onclick=()=>{if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}btns[b.dataset.i].go();});
 }
 function story(cards,done){
   let i=0;const next=()=>{if(i>=cards.length)return done();const c=cards[i++];
-    screen(`<div class="pic" style="background:${c.bg}${c.big?';height:min(52vh,300px)':''}">${c.tag?`<span>${c.tag}</span>`:''}</div><div class="bd">${c.h?`<h1>${c.h}</h1>`:''}${c.text||''}${c.who?say(c.who,c.say):''}</div>`,[{t:c.btn||'Continuar ▶',go:next}]);};
+    screen.wide=!!c.wide;screen(`<div class="pic" style="background:${c.bg}${c.wide?';height:min(78vh,540px)':c.big?';height:min(52vh,300px)':''}">${c.tag?`<span>${c.tag}</span>`:''}</div><div class="bd">${c.h?`<h1>${c.h}</h1>`:''}${c.text||''}${c.who?say(c.who,c.say):''}</div>`,[{t:c.btn||'Continuar ▶',go:next}]);};
   next();
 }
 const SKY={laponia:'linear-gradient(#9cc0e0,#f4f8fc)',rovaniemi:'linear-gradient(#5a7ab0,#e8eef6)',aurora:'linear-gradient(#060a22,#1f8a6a)',fortaleza:'linear-gradient(#3f9fe8,#f2dca4)',solonopole:'linear-gradient(#4f9be0,#f2e0a0)',quintal:'linear-gradient(#4f9be0,#3fc8c8)',cruzeiro:'linear-gradient(#060a22,#2a3470)',gamlastan:'linear-gradient(#8ab8e0,#f4f6f8)',skansen:'linear-gradient(#6aaee8,#eef7fd)',navio:'linear-gradient(#4f9be0,#eaf5fc)',tallinn:'linear-gradient(#7ab8e8,#f2f8fc)',muralha:'linear-gradient(#e8946a,#fbe4c6)',zoo:'linear-gradient(#6aaee8,#eef7fd)',nuuksio:'linear-gradient(#7fb4e0,#f4ead6)',loyly:'linear-gradient(#141c48,#b07a9a)',mercado:'linear-gradient(#4f9be0,#e3f1fb)',ilha:'linear-gradient(#5aa6e6,#eaf5fc)',parque:'linear-gradient(#f39a5a,#fde6c8)',sertao:'linear-gradient(#ff9f5a,#ffe2a0)',lisboa:'linear-gradient(#6fb7ff,#d4ecff)',helsinque:'linear-gradient(#0b1530,#2b4680)',voo:'linear-gradient(#4fa6ff,#d4ecff)'};
-function title(){
+function title(){screen.wide=false;
   mode='title';pauseBtn.hidden=true;pad.hidden=true;swapBtn.hidden=true;L=null;
   const bday=(()=>{const d=new Date();return d.getMonth()===9&&d.getDate()===12})();
   screen(`<div class="pic" style="background:url(img/fora.jpg) center/cover"><span>${save.done7?'Jogo completo! 🎉':save.done6?'Fases 1 a 7':save.done5?'Fases 1 a 6':save.done4?'Fases 1 a 5':save.done3?'Fases 1 a 4':save.done2?'Fases 1, 2 e 3':save.done?'Fases 1 e 2':'Fase 1'}</span></div><div class="bd"><h1>Madrinha Ana ao Resgate</h1>
+   ${save.stars?`<p>⭐ ${Object.values(save.stars).reduce((a,b)=>a+b,0)} de ${LEVELS.length*3} estrelas</p>`:''}
    ${bday?'<p><b>🎂 Hoje é aniversário da Madrinha Ana e Dia das Crianças! 🎉</b></p>':''}
    <p>Você é a <b>Madrinha Ana</b>! Saia de Solonópole, no Ceará, atravesse o oceano e chegue até Helsinque para visitar a ${AFILHADA}.</p>
    <div class="keys">Celular: botões na tela. Teclado: <b>←</b><b>→</b> andar · <b>Shift</b> correr · <b>↑</b>/<b>Espaço</b> pular · <b>↓</b> abaixar (correndo: rasteira) · <b>X</b> murro · <b>C</b> pesada</div></div>`,
@@ -440,8 +441,91 @@ const FOTOS={6:['🦌 As renas do zoológico','🐻 O urso-pardo cochilando','�
 function levelCard(i){
   story([{bg:SKY[LEVELS[i].theme],tag:'Fase '+LEVELS[i].phase+' · parte '+(i%3+1)+' de 3',h:LEVELS[i].name,text:i===2?'<p>O frio aqui é de rachar! O termômetro de calor vai caindo: pegue ☕ cafezinhos para esquentar.</p>':LEVELS[i].duo?`<p>Vamos lá, Madrinha e ${AFILHADA}!</p>`:'<p>Vamos lá, Madrinha!</p>',btn:'Começar ▶'}],()=>startLevel(i));
 }
+// ---------- mapa da viagem, estrelas, confete e cartão-postal ----------
+const LUGAR=[[-38.97,-5.72,'Solonópole'],[-9.14,38.72,'Lisboa'],[24.94,60.17,'Helsinque'],[24.94,60.17,'Helsinque'],[24.98,60.15,'Suomenlinna'],[24.94,60.19,'Helsinque'],
+  [24.98,60.17,'Korkeasaari'],[24.6,60.3,'Nuuksio'],[24.92,60.16,'Löyly'],[24.8,59.8,'Golfo da Finlândia'],[24.75,59.44,'Tallinn'],[24.74,59.44,'Tallinn'],
+  [21,59.6,'Mar Báltico'],[18.07,59.33,'Estocolmo'],[18.1,59.33,'Skansen'],[25.2,66.2,'Lapônia'],[25.73,66.54,'Rovaniemi'],[26,67,'Lapônia'],
+  [-38.5,-3.73,'Fortaleza'],[-38.97,-5.72,'Solonópole'],[-38.97,-5.72,'Casa da Vovó']];
+const VIA=['🚗','✈️','🚶','🚶','⛴️','🎡','🚌','🚌','🚶','🚢','🚶','🚢','🚢','🚶','🚂','🛷','🌌','✈️','🚐','🏠','🏊'];
+const MAPW=560,MAPH=320,LON0=-48,LON1=36,LAT0=-12,LAT1=72;
+const mx=lon=>(lon-LON0)/(LON1-LON0)*MAPW, my=lat=>MAPH-(lat-LAT0)/(LAT1-LAT0)*MAPH;
+const LAND=[
+ [[-35,-12],[-35,-7],[-37,-4.8],[-40,-2.8],[-44,-2.3],[-48,-1],[-50,0.5],[-51.5,4],[-55,6],[-60,8.5],[-62,10.5],[-67,11],[-72,12],[-80,9],[-80,-12]],
+ [[-17,14],[-17,21],[-13,27.5],[-10,30],[-6,35.8],[-2,35.2],[3,36.8],[10,37.3],[11,33],[20,31],[30,31.3],[34,31.5],[36,26],[40,20],[43,12.5],[51,12],[44,-12],[10,-12],[9,4],[-8,4.5],[-15,10]],
+ [[-9.5,43],[-9.2,38.8],[-8.9,37],[-6,36.2],[-2,36.7],[0,39],[3.2,42],[6.5,43.2],[9,44],[12.5,44],[16,41.5],[18.5,40],[20,39.5],[23,36.5],[26,40.5],[29,41],[36,41],[40,41],[40,72],[31,70.5],[28,71],[24,71],[18,70],[15,68],[13,66],[11,64],[8,63],[5,62],[5,58.5],[7,58],[10,59],[11.5,58],[12.5,56],[10.5,57.7],[8.5,57],[8,55],[9,54],[4.5,52.5],[2,51],[-1.5,49.5],[-4.5,48.5],[-2,47],[-1.5,43.5]],
+ [[-5.5,50],[1.5,51.2],[1.7,52.8],[-0.5,54],[-2,55.8],[-5,58.6],[-6.2,56.5],[-4.8,54.8],[-3,53.5],[-5,52]]];
+const BALTIC=[[10,54.2],[14,54],[18,54.7],[21,55.5],[21,57],[23,57],[24,58.5],[28,59.6],[30,60],[25,60.4],[22,60.3],[21,61.5],[21.5,63.5],[25.5,65.2],[24,65.8],[21.5,65.5],[18,63],[17,61.5],[19,60],[18.8,59.3],[16.5,57.5],[16,56],[12.7,55.6]];
+function calcStars(){const tot=L.totalCoins||1;return 1+(coins>=tot*.6?1:0)+(hearts>=3?1:0);}
+function fanfare(){if(!AC)return;const t0=AC.currentTime;[523,659,784,1046,784,1046].forEach((f,i)=>{const o=AC.createOscillator(),g=AC.createGain();o.type='triangle';o.frequency.value=f;o.connect(g);g.connect(AC.destination);const t=t0+i*.13;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.12,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+(i===5?.6:.2));o.start(t);o.stop(t+.7);});}
+function drawMapBase(g){
+  g.fillStyle='#8fc8e8';g.fillRect(0,0,MAPW,MAPH);
+  g.strokeStyle='rgba(255,255,255,.35)';g.lineWidth=.6;for(let lo=-40;lo<=30;lo+=10){g.beginPath();g.moveTo(mx(lo),0);g.lineTo(mx(lo),MAPH);g.stroke();}for(let la=0;la<=70;la+=10){g.beginPath();g.moveTo(0,my(la));g.lineTo(MAPW,my(la));g.stroke();}
+  const poly=(pts,c)=>{g.fillStyle=c;g.beginPath();pts.forEach(([lo,la],i)=>i?g.lineTo(mx(lo),my(la)):g.moveTo(mx(lo),my(la)));g.closePath();g.fill();};
+  LAND.forEach(p=>poly(p,'#f1e2b8'));poly(BALTIC,'#8fc8e8');
+  g.strokeStyle='#c8b58a';g.lineWidth=1;LAND.forEach(p=>{g.beginPath();p.forEach(([lo,la],i)=>i?g.lineTo(mx(lo),my(la)):g.moveTo(mx(lo),my(la)));g.closePath();g.stroke();});
+  g.fillStyle='rgba(40,70,110,.55)';g.font='italic 11px Georgia,serif';g.fillText('Oceano Atlântico',mx(-36),my(22));g.fillText('Mar Báltico',mx(16),my(57.5));
+  g.font='bold 10px sans-serif';g.fillStyle='#6a5a3a';g.fillText('BRASIL',mx(-46),my(-8));g.fillText('PORTUGAL',mx(-14),my(35.5));g.fillText('FINLÂNDIA',mx(26),my(63));g.fillText('SUÉCIA',mx(13),my(62));g.fillText('ESTÔNIA',mx(25.5),my(57.3));
+}
+function mapScreen(i,stars,done){
+  const from=LUGAR[i],to=LUGAR[Math.min(i+1,LUGAR.length-1)],last=i>=LUGAR.length-1;
+  const best=Math.max(save.stars?.[i]||0,stars);save.stars=save.stars||{};save.stars[i]=best;store();
+  const st='⭐'.repeat(stars)+'☆'.repeat(3-stars);
+  screen.wide=false;screen(`<div class="bd" style="padding-bottom:4px"><h1 style="text-align:center">${LEVELS[i].name} ✔</h1><p style="text-align:center;font-size:1.6rem;margin:.1em 0">${st}</p>
+    <canvas id="mapc" width="${MAPW*2}" height="${MAPH*2}" style="width:100%;max-height:48vh;object-fit:contain;border-radius:14px;display:block;background:#8fc8e8"></canvas>
+    <p style="text-align:center;margin:.5em 0 0">${last?'🏠 Chegamos em casa!':`${VIA[i+1]||'✈️'} Próximo destino: <b>${to[2]}</b>`}</p></div>`,[{t:'Continuar ▶',go:()=>{cancelAnimationFrame(mapRAF);done();}}]);
+  fanfare();
+  const c=document.getElementById('mapc'),g=c.getContext('2d');g.scale(2,2);
+  const conf=[...Array(70)].map(()=>({x:Math.random()*MAPW,y:-Math.random()*200,v:40+Math.random()*60,r:Math.random()*6,c:['#ffd25a','#ff6b8a','#7cc4ff','#5ee6b8','#c86ad8'][Math.random()*5|0]}));
+  const t0=performance.now();
+  const step=now=>{const t=(now-t0)/1000,k=Math.min(1,t/2.2),e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
+    drawMapBase(g);
+    g.setLineDash([5,4]);g.lineWidth=2;g.strokeStyle='#d8293b';g.beginPath();for(let j=0;j<=i;j++){const [lo,la]=LUGAR[j];j?g.lineTo(mx(lo),my(la)):g.moveTo(mx(lo),my(la));}
+    const ax=mx(from[0]),ay=my(from[1]),bx=mx(to[0]),by=my(to[1]),cx=(ax+bx)/2,cy=Math.min(ay,by)-Math.hypot(bx-ax,by-ay)*.25;
+    const px=(1-e)*(1-e)*ax+2*(1-e)*e*cx+e*e*bx,py=(1-e)*(1-e)*ay+2*(1-e)*e*cy+e*e*by;g.lineTo(px,py);g.stroke();g.setLineDash([]);
+    for(let j=0;j<=Math.min(i+1,LUGAR.length-1);j++){const [lo,la]=LUGAR[j];g.fillStyle=j<=i?'#d8293b':'#fff';g.beginPath();g.arc(mx(lo),my(la),3.5,0,7);g.fill();g.strokeStyle='#7a1a1a';g.lineWidth=1;g.stroke();}
+    g.font='18px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(last?'💛':(VIA[i+1]||'✈️'),px,py-(last?Math.abs(Math.sin(t*4))*6:0));
+    g.font='bold 11px sans-serif';g.fillStyle='#1d2a4a';g.fillText(to[2],bx,by+14);g.textAlign='left';
+    for(const q of conf){q.y+=q.v/60;q.r+=.1;if(q.y<MAPH+10){g.save();g.translate(q.x+Math.sin(q.r)*6,q.y);g.rotate(q.r);g.fillStyle=q.c;g.fillRect(-3,-1.5,6,3);g.restore();}}
+    mapRAF=requestAnimationFrame(step);};
+  mapRAF=requestAnimationFrame(step);
+}
+let mapRAF=0;
+function postcardPic(){
+  const c=document.createElement('canvas');c.width=1000;c.height=640;const g=c.getContext('2d');
+  g.fillStyle='#fbf3e0';g.fillRect(0,0,1000,640);g.strokeStyle='#e0cfa8';g.lineWidth=10;g.strokeRect(10,10,980,620);
+  // ilustração: igreja amarela e piscina
+  let G=g.createLinearGradient(0,30,0,330);G.addColorStop(0,'#4f9be0');G.addColorStop(1,'#cfe8f8');g.fillStyle=G;g.fillRect(40,40,440,300);
+  g.fillStyle='#f2c46b';g.beginPath();g.arc(420,90,30,0,7);g.fill();
+  g.fillStyle='#d8b48e';g.beginPath();g.moveTo(40,260);for(let x=40;x<=480;x+=40)g.lineTo(x,235-Math.sin(x/60)*15);g.lineTo(480,340);g.lineTo(40,340);g.fill();
+  const Y='#e8b84a',W='#fbf8f0',x0=200;g.fillStyle=Y;g.fillRect(x0,170,70,150);g.fillStyle=W;g.fillRect(x0,170,6,150);g.fillRect(x0+64,170,6,150);
+  g.fillStyle=Y;g.beginPath();g.moveTo(x0+5,172);g.lineTo(x0+35,70);g.lineTo(x0+65,172);g.fill();g.strokeStyle=W;g.lineWidth=3;g.stroke();
+  g.fillStyle=W;g.fillRect(x0+28,190,14,24);g.fillRect(x0+26,270,18,50);g.strokeStyle='#5a4a3a';g.lineWidth=2.5;g.beginPath();g.moveTo(x0+35,70);g.lineTo(x0+35,54);g.moveTo(x0+29,60);g.lineTo(x0+41,60);g.stroke();
+  g.fillStyle=Y;g.fillRect(x0+70,240,60,80);g.fillStyle=W;g.fillRect(x0+70,240,60,5);
+  g.fillStyle='#a8703a';g.fillRect(40,300,440,40);G=g.createLinearGradient(0,306,0,336);G.addColorStop(0,'#46d0cc');G.addColorStop(1,'#1f7aa8');g.fillStyle=G;g.fillRect(50,306,420,28);
+  for(let x=90;x<450;x+=70){g.fillStyle='#ffe0cf';g.beginPath();g.arc(x,310,9,0,7);g.fill();g.fillStyle=['#4a2818','#a87850','#efcb63','#a8784a','#e8c870','#3a2418'][(x/70|0)%6];g.beginPath();g.arc(x,306,9,Math.PI,0);g.fill();}
+  g.strokeStyle='#5a4a3a';g.lineWidth=2;g.strokeRect(40,40,440,300);
+  g.fillStyle='#d8293b';g.font='bold 30px Georgia,serif';g.fillText('Lembranças de',60,390);g.font='bold 44px Georgia,serif';g.fillText('Solonópole · CE',60,438);
+  g.font='22px sans-serif';g.fillText('🇧🇷 💛 🇫🇮',60,480);
+  // linha divisória, selo e carimbo
+  g.strokeStyle='#c8b58a';g.lineWidth=2;g.beginPath();g.moveTo(510,50);g.lineTo(510,600);g.stroke();
+  g.fillStyle='#fff';g.fillRect(840,50,120,140);g.setLineDash([6,5]);g.strokeStyle='#c8343e';g.lineWidth=3;g.strokeRect(846,56,108,128);g.setLineDash([]);
+  g.fillStyle='#4f9be0';g.fillRect(856,66,88,80);g.fillStyle='#e8b84a';g.beginPath();g.moveTo(880,140);g.lineTo(900,80);g.lineTo(920,140);g.fill();g.fillStyle='#c8343e';g.font='bold 14px sans-serif';g.fillText('BRASIL',870,172);
+  g.strokeStyle='rgba(60,60,140,.6)';g.lineWidth=3;g.beginPath();g.arc(800,170,48,0,7);g.stroke();g.beginPath();g.arc(800,170,36,0,7);g.stroke();
+  g.fillStyle='rgba(60,60,140,.7)';g.font='bold 11px sans-serif';g.textAlign='center';g.fillText('SOLONÓPOLE',800,166);g.fillText('12 OUT',800,182);g.textAlign='left';
+  for(let k=0;k<4;k++){g.beginPath();g.moveTo(690,150+k*10);for(let x=690;x<760;x+=10)g.quadraticCurveTo(x+5,145+k*10,x+10,150+k*10);g.stroke();}
+  // mensagem
+  const font='"Segoe Script","Brush Script MT","Snell Roundhand","Comic Sans MS",cursive';
+  g.fillStyle='#2a3a6a';g.font=`26px ${font}`;
+  const msg=[`Minha querida ${AFILHADA},`,'','Atravessei o mar, enfrentei a neve,','o frio e até um alce teimoso...','tudo pra ficar pertinho de você.','Onde você estiver, meu coração vai junto.','Você é forte, especial e muito amada.','A nossa aventura só está começando!','','Com todo o amor do mundo,','Madrinha Ana 💛'];
+  msg.forEach((l,k)=>g.fillText(l,530,240+k*34));
+  g.strokeStyle='#c8b58a';g.lineWidth=1;for(let k=0;k<11;k++){g.beginPath();g.moveTo(530,248+k*34);g.lineTo(970,248+k*34);g.stroke();}
+  return c.toDataURL('image/jpeg',.9);
+}
 function finishLevel(){
-  sfx('win');if(lvl%3<2){save.lvl=Math.max(save.lvl,lvl+1);}store();if(LEVELS[lvl].phase===3)album[lvl]=Math.max(album[lvl]||0,photos);
+  const st=calcStars();mapScreen(lvl,st,nextStory);
+}
+function nextStory(){
+if(lvl%3<2){save.lvl=Math.max(save.lvl,lvl+1);}store();if(LEVELS[lvl].phase===3)album[lvl]=Math.max(album[lvl]||0,photos);
   const pics=LEVELS[lvl].phase===3?`<p>📸 Fotos aqui: <b>${photos} de 3</b></p>`:'';
   const got=`<p>🌟 ${coins} ${{cocada:'cocadas',nata:'pastéis de nata',pao:'pães de queijo',morango:'morangos',pulla:'pullas',sorvete:'sorvetes',mirtilo:'mirtilos',cogumelo:'cogumelos',pipari:'biscoitos pipari',choco:'chocolates',amendoa:'cones de amêndoas',marzipan:'marzipãs',cupcake:'cupcakes',chokladboll:'bolinhas de chocolate',dala:'cavalinhos de Dala',presente:'presentes',estrela:'estrelas',tapioca:'tapiocas',rapadura:'rapaduras',bolo:'pedaços de bolo'}[LEVELS[lvl].coin]} · ${score} pontos</p>`;
   if(lvl===0)story([
@@ -522,6 +606,7 @@ function ending7(got){
      who:'jose',say:'“A melhor piscina do mundo é a da Vovó!”'},
     {bg:`url(${pic}) center/cover`,big:1,tag:'Solonópole, Ceará',h:'A família toda junta',text:'<p>Depois do banho, tem comida boa da Vovó na mesa e conversa até tarde. Do sertão do Ceará até a neve da Finlândia, e de volta pra casa: a família inteira junta, feliz. 💛</p>',
      who:'ana',say:`“${ANA.frase} Eu disse que ia dar tudo certo, não disse?”`},
+    {bg:`url(${postcardPic()}) center/contain no-repeat #fbf3e0`,wide:1,tag:'Cartão-postal',h:'💌 Um cartão da Madrinha para você',btn:'Continuar ▶'},
     {bg:'linear-gradient(#ffb35a,#ff6b8a)',tag:'Fim',h:'🎉 Fim do jogo! 🎉',text:`<p>Obrigada por jogar <b>Madrinha Ana ao Resgate</b>!</p>${say('gabi','“Te amo, Madrinha!”')}<p>Feito com muito amor para a ${AFILHADA}. 💛🇧🇷🇫🇮</p><p>🌟 ${score} pontos</p>`,btn:'Voltar ao início'}
   ],title);
 }
