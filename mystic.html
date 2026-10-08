@@ -126,7 +126,7 @@ const fmt = s => esc(s)
   .replace(/(^|[\s"(])_([^_\n]+)_(?=$|[\s.,!?:)"])/gm, '$1<i>$2</i>');
 const hora = () => new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 const rolar = () => chat.scrollTop = chat.scrollHeight;
-const POSTER = { cameras: 'suspeitos', final_sombra: 'parede' };
+const POSTER = { abertura: 'floresta', cameras: 'suspeitos', final_sombra: 'parede' };
 const imgURL = nome => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(IMAGENS[nome] || '');
 
 function mostrarFase() {
