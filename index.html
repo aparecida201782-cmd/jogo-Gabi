@@ -491,7 +491,12 @@ function finishLevel(){
   ],()=>startLevel(14));
   else if(lvl===14)ending5(got);
   else if(lvl===15)story([{bg:SKY.rovaniemi,tag:'Floresta → Rovaniemi',h:'A Vila do Papai Noel',text:got+'<p>Em Rovaniemi, bem em cima do Círculo Polar Ártico, fica a Vila do Papai Noel: casinhas vermelhas, luzinhas e presentes por todo lado! 🎅🎁</p>',who:'jose',say:'“Será que o Papai Noel sabe falar português?”',btn:'Entrar na vila ▶'}],()=>startLevel(16));
-  else if(lvl===16)story([{bg:SKY.aurora,tag:'A noite chega',h:'Noite de aurora boreal',text:got+'<p>À noite, a família vai dormir em iglus de vidro. Mas antes, uma caminhada na neve para ver o céu dançar... 🌌</p>',who:'keka',say:'“Gente, olha o céu! Tá verde!”',btn:'Sair na neve ▶'}],()=>startLevel(17));
+  else if(lvl===16)story([
+    {bg:SKY.rovaniemi,tag:'Vila do Papai Noel',h:'O Papai Noel! 🎅',text:got+'<p>No fim da vila, sentado perto da lareira, está ele: o <b>Papai Noel</b> de verdade, de barba branquinha e roupa vermelha! O José fica de boca aberta.</p>',
+     who:'jose',say:'“Papai Noel... você fala português?”'},
+    {bg:SKY.rovaniemi,tag:'Vila do Papai Noel',h:'“Ho ho ho! Falo sim!”',text:`<p>O Papai Noel ri e responde em português: <i>“Claro, José! Eu falo todas as línguas das crianças do mundo!”</i></p><p>Ele dá um presente para cada um: um gorro de rena para o José, um caderninho de desenho para a ${AFILHADA}, e para a Madrinha... uma cartinha que diz: <b>“Para a melhor madrinha do mundo”</b>. 💛🎁</p>`,
+     who:'ana',say:'“Ai, Papai Noel, assim a Madrinha chora!”'},
+    {bg:SKY.aurora,tag:'A noite chega',h:'Noite de aurora boreal',text:got+'<p>À noite, a família vai dormir em iglus de vidro. Mas antes, uma caminhada na neve para ver o céu dançar... 🌌</p>',who:'keka',say:'“Gente, olha o céu! Tá verde!”',btn:'Sair na neve ▶'}],()=>startLevel(17));
   else if(lvl===17)ending6(got);
   else if(lvl===18)story([{bg:SKY.solonopole,tag:'Fortaleza → Solonópole',h:'Pé na estrada pelo sertão',text:got+'<p>Depois da praia, todo mundo entra na van e encara a estrada pelo sertão até <b>Solonópole</b>. O Ilo vai com a cabeça pra fora da janela, feliz da vida! 🚐🐶</p>',who:'ana',say:'“Chegando na minha terra, gente! Olha o sol!”',btn:'Chegar em Solonópole ▶'}],()=>startLevel(19));
   else if(lvl===19)story([
@@ -1440,6 +1445,13 @@ function drawEnd(){
   else if(th==='mercado'||th==='ilha'){ctx.save();ctx.translate(x,11*T);ctx.fillStyle='#6b4a30';ctx.fillRect(-10,-4,90,4);for(let i=0;i<5;i++)ctx.fillRect(-8+i*20,-4,3,12);
     ctx.fillStyle='#f4f6f8';ctx.beginPath();ctx.moveTo(20,-6);ctx.lineTo(110,-6);ctx.lineTo(102,8);ctx.lineTo(26,8);ctx.fill();ctx.fillRect(40,-22,50,16);ctx.fillStyle='#2a6fb0';ctx.fillRect(22,-3,86,3);ctx.fillStyle='#8fb4d4';for(let i=0;i<5;i++)ctx.fillRect(46+i*9,-18,5,5);
     ctx.fillStyle='#1a5fb4';rr(-6,-58,74,18,4);ctx.fillStyle='#fff';ctx.font='bold 10px sans-serif';ctx.fillText(th==='mercado'?'⛴ SUOMENLINNA':'⛴ VOLTA AO CENTRO',-2,-45);ctx.fillStyle='#555';ctx.fillRect(28,-40,3,36);ctx.restore();}
+  else if(th==='rovaniemi'){ctx.save();ctx.translate(x+30,11*T);const w=Math.sin(time*5)*.4;
+    ctx.fillStyle='#8a5a33';ctx.fillRect(-30,-46,4,46);ctx.fillRect(26,-46,4,46);ctx.fillStyle='#c8343e';rr(-36,-58,72,14,3);ctx.fillStyle='#fff';ctx.font='bold 8px sans-serif';ctx.fillText('PAPAI NOEL',-24,-48);
+    ctx.fillStyle='#2b2b30';ctx.fillRect(-6,-8,5,8);ctx.fillRect(2,-8,5,8);ctx.fillStyle='#c8343e';rr(-9,-28,18,21,6);ctx.fillStyle='#fff';ctx.fillRect(-9,-12,18,3);ctx.fillRect(-1.5,-28,3,16);ctx.fillStyle='#2b2b30';ctx.fillRect(-9,-15,18,2.5);ctx.fillStyle='#e2b84a';ctx.fillRect(-2,-15.5,4,3.5);
+    ctx.fillStyle='#f3cdb5';ctx.beginPath();ctx.arc(0,-34,6,0,7);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.moveTo(-6,-34);ctx.quadraticCurveTo(0,-20,6,-34);ctx.fill();ctx.fillRect(-6,-36,12,2);
+    ctx.fillStyle='#c8343e';ctx.beginPath();ctx.moveTo(-7,-38);ctx.lineTo(9,-46);ctx.lineTo(6,-38);ctx.fill();ctx.fillStyle='#fff';ctx.fillRect(-7,-40,14,3);ctx.beginPath();ctx.arc(9,-46,2,0,7);ctx.fill();ctx.fillStyle='#222';ctx.fillRect(-3,-36,1.4,1.4);ctx.fillRect(1.6,-36,1.4,1.4);
+    ctx.save();ctx.translate(8,-25);ctx.rotate(-1.2+w);ctx.fillStyle='#c8343e';ctx.fillRect(0,-2,11,4);ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(12,0,2.5,0,7);ctx.fill();ctx.restore();
+    ctx.fillStyle='#d8293b';rr(-26,-10,10,10,1);ctx.fillStyle='#2f6fb5';rr(16,-8,9,8,1);ctx.fillStyle='#f2c230';ctx.fillRect(-22,-10,2,10);ctx.fillRect(19.5,-8,2,8);ctx.restore();}
   else if(th==='laponia'||th==='rovaniemi'||th==='aurora'||th==='fortaleza'){ctx.save();ctx.translate(x,11*T);ctx.fillStyle='#555';ctx.fillRect(30,-58,3,58);ctx.fillStyle='#1d5bb0';rr(-8,-76,82,18,4);ctx.fillStyle='#fff';ctx.font='bold 9px sans-serif';
     ctx.fillText({laponia:'⇢ PAPAI NOEL',rovaniemi:'⇢ AURORA',aurora:'✈ BRASIL!',fortaleza:'🚐 SOLONÓPOLE'}[th],-2,-63);ctx.restore();}
   else if(th==='solonopole'){ctx.save();ctx.translate(x,11*T);ctx.fillStyle='#8a5a33';for(let k=0;k<3;k++)ctx.fillRect(k*30,-50,4,50);ctx.fillRect(-6,-52,76,4);ctx.restore();
