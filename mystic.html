@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
+<meta name="theme-color" content="#0f1714">
+<title>Operação Mystic Falls</title>
+<style>
+  :root{--bg:#0b100e;--top:#16201c;--ink:#e8efe9;--muted:#8fa59a;--eles:#1c2723;--eu:#5a1420;--eu-ink:#fbe9ec;--acc:#c8344a;--gold:#e7c36a;--line:rgba(255,255,255,.08)}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  body{display:flex;flex-direction:column;height:100dvh;max-width:720px;margin:0 auto}
+  header{display:flex;align-items:center;gap:12px;padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top));background:var(--top);border-bottom:1px solid var(--line)}
+  .av{flex:none;width:42px;height:42px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f2f2e8,#9aa39a 45%,#2b3330 70%);box-shadow:0 0 14px rgba(231,195,106,.35)}
+  header .nm{font-weight:700}
+  header .st{font-size:.8rem;color:var(--muted)}
+  header .st.dig{color:var(--gold)}
+  header .fs{margin-left:auto;font-size:.75rem;color:var(--gold);border:1px solid rgba(231,195,106,.4);border-radius:99px;padding:3px 10px;white-space:nowrap}
+  main{flex:1;overflow-y:auto;padding:14px 12px 6px;background:radial-gradient(120% 60% at 50% 0%,rgba(200,52,74,.10),transparent 60%),repeating-linear-gradient(45deg,rgba(255,255,255,.012) 0 12px,transparent 12px 24px)}
+  .aviso{margin:0 auto 14px;max-width:88%;text-align:center;font-size:.78rem;color:var(--gold);background:rgba(231,195,106,.08);border:1px solid rgba(231,195,106,.2);border-radius:10px;padding:6px 10px}
+  .b{position:relative;max-width:84%;width:fit-content;margin:3px 0 7px;padding:7px 10px 18px;border-radius:12px;line-height:1.38;font-size:.97rem;white-space:pre-wrap;word-wrap:break-word;animation:in .25s ease-out both}
+  @keyframes in{from{transform:translateY(6px);opacity:0}}
+  .b.eles{background:var(--eles);border-top-left-radius:3px}
+  .b.eu{background:var(--eu);color:var(--eu-ink);margin-left:auto;border-top-right-radius:3px}
+  .b time{position:absolute;right:9px;bottom:4px;font-size:.66rem;color:var(--muted)}
+  .b.eu time{color:#d99aa4}
+  .b code{display:block;font-family:ui-monospace,Menlo,Consolas,monospace;background:rgba(0,0,0,.35);border-radius:6px;padding:8px;margin:4px 0;font-size:1.02rem;letter-spacing:.5px}
+  .doc{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.25);border-radius:8px;padding:10px;margin-bottom:5px;cursor:pointer;border:0;color:inherit;font:inherit;width:100%;text-align:left}
+  .doc .ic{flex:none;width:34px;height:40px;border-radius:4px;background:#e7c36a;color:#3a2a00;font-size:.62rem;font-weight:800;display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px}
+  .doc small{display:block;color:var(--muted);font-size:.75rem}
+  .aud{display:flex;align-items:center;gap:10px;min-width:220px}
+  .aud button{flex:none;width:38px;height:38px;border-radius:50%;border:0;background:var(--acc);color:#fff;font-size:15px;cursor:pointer}
+  .aud .onda{flex:1;height:22px;background:repeating-linear-gradient(90deg,var(--muted) 0 3px,transparent 3px 6px);opacity:.7;border-radius:3px;clip-path:polygon(0 40%,8% 20%,16% 55%,24% 10%,32% 45%,40% 25%,48% 60%,56% 15%,64% 50%,72% 30%,80% 55%,88% 20%,100% 45%,100% 60%,88% 85%,80% 65%,72% 80%,64% 55%,56% 90%,48% 70%,40% 80%,32% 60%,24% 95%,16% 70%,8% 85%,0 65%)}
+  .aud.tocando .onda{opacity:1;background:repeating-linear-gradient(90deg,var(--gold) 0 3px,transparent 3px 6px)}
+  .transc{margin-top:6px;font-size:.84rem;color:var(--muted);font-style:italic}
+  .dig{display:inline-flex;gap:4px;padding:12px 14px 12px}
+  .dig i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:pu 1s infinite}
+  .dig i:nth-child(2){animation-delay:.15s}.dig i:nth-child(3){animation-delay:.3s}
+  @keyframes pu{0%,60%,100%{opacity:.3;transform:none}30%{opacity:1;transform:translateY(-3px)}}
+  .rap{display:flex;gap:6px;flex-wrap:wrap;padding:0 12px 6px}
+  .rap button{font:inherit;font-size:.82rem;border:1px solid var(--line);background:var(--top);color:var(--muted);border-radius:99px;padding:5px 12px;cursor:pointer}
+  footer{display:flex;gap:8px;padding:8px 10px;padding-bottom:calc(8px + env(safe-area-inset-bottom));background:var(--top)}
+  footer input{flex:1;min-width:0;font:inherit;font-size:16px;border:0;border-radius:22px;padding:11px 16px;background:#24302b;color:var(--ink);outline:none}
+  footer button{flex:none;width:46px;height:46px;border-radius:50%;border:0;background:var(--acc);color:#fff;font-size:18px;cursor:pointer}
+  dialog{border:0;border-radius:14px;background:#111816;color:var(--ink);width:min(680px,94vw);max-height:86vh;padding:0}
+  dialog::backdrop{background:rgba(0,0,0,.7)}
+  dialog .hd{display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);font-weight:700}
+  dialog .hd button{margin-left:auto;font:inherit;border:0;background:none;color:var(--gold);font-size:1rem;cursor:pointer}
+  dialog pre{margin:0;padding:14px;overflow:auto;max-height:72vh;font-size:.8rem;line-height:1.5;color:#b9d7c6;white-space:pre}
+  .b .ilu{display:block;width:100%;max-width:320px;border-radius:8px;margin:-2px -4px 5px;cursor:zoom-in;border:0;padding:0;background:none}
+  .b .ilu img{display:block;width:100%;border-radius:8px}
+  .b.ilu-b{padding:5px 5px 18px}
+  .b.ilu-b .cap{padding:0 5px}
+  .b video{display:block;width:100%;max-width:320px;border-radius:8px;background:#000}
+  .b.apagada{color:var(--muted);font-style:italic}
+  .b.sumindo{animation:some .6s ease-in forwards}
+  @keyframes some{to{filter:blur(6px);opacity:0}}
+  .opc{display:flex;gap:8px;flex-wrap:wrap;margin:-2px 0 10px}
+  .opc button{font:inherit;font-weight:700;border:1px solid var(--gold);background:rgba(231,195,106,.08);color:var(--gold);border-radius:99px;padding:8px 16px;cursor:pointer}
+  .opc button:hover,.opc button:focus-visible{background:rgba(231,195,106,.2);outline:none}
+  #som{flex:none;border:0;background:none;font-size:1.25rem;cursor:pointer;padding:4px;color:var(--ink)}
+  #lupa .zoom{overflow:auto;max-height:78vh;touch-action:pan-x pan-y pinch-zoom}
+  #lupa img{display:block;width:100%;cursor:zoom-in;transition:width .25s}
+  #lupa.perto img{width:220%;cursor:zoom-out}
+  #lupa .dica{padding:6px 14px 10px;font-size:.8rem;color:var(--muted)}
+  #capa{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;background:radial-gradient(60% 40% at 50% 35%,rgba(244,236,210,.12),transparent 70%),#05070a;cursor:pointer}
+  #capa[hidden]{display:none}
+  #capa .lua{width:110px;height:110px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fffbea,#e8dcb4 55%,#b9ad86);box-shadow:0 0 60px rgba(244,236,210,.45);animation:pulsa 3s ease-in-out infinite}
+  @keyframes pulsa{50%{box-shadow:0 0 110px rgba(200,52,74,.55)}}
+  #capa h1{margin:6px 0 0;font-family:Georgia,"Times New Roman",serif;font-weight:400;letter-spacing:4px;font-size:1.6rem;color:#f4ecd2}
+  #capa .notif{background:var(--top);border:1px solid var(--line);border-radius:14px;padding:10px 16px;max-width:320px;text-align:left;animation:in .5s 1s both}
+  #capa .notif b{display:block;color:var(--ink)}
+  #capa .notif span{color:var(--muted);font-size:.88rem}
+  #capa small{color:var(--muted);animation:pisca 1.6s infinite}
+  @keyframes pisca{50%{opacity:.3}}
+  body.glitch main{animation:glitch .5s steps(2) 3}
+  @keyframes glitch{0%{transform:translate(0);filter:none}25%{transform:translate(-4px,2px);filter:hue-rotate(90deg) contrast(1.6)}50%{transform:translate(3px,-2px);filter:invert(.15)}75%{transform:translate(-2px,0);filter:saturate(3)}100%{transform:none;filter:none}}
+  body.tremor{animation:tremor .08s linear 10}
+  @keyframes tremor{25%{transform:translate(2px,-2px)}50%{transform:translate(-2px,1px)}75%{transform:translate(1px,2px)}}
+  body.sangue main{box-shadow:inset 0 0 120px 30px rgba(140,10,25,.75);transition:box-shadow .4s}
+  @media (prefers-reduced-motion:reduce){body.glitch main,body.tremor,#capa .lua{animation:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="av" aria-hidden="true"></div>
+  <div><div class="nm" id="nome">Número desconhecido</div><div class="st" id="st">online</div></div>
+  <div class="fs" id="fs"></div>
+  <button id="som" aria-label="Ligar som ambiente" title="Som ambiente">🔇</button>
+</header>
+<main id="chat" aria-live="polite"><div class="aviso">🔒 As mensagens desta conversa somem quando a lua cheia acabar.</div></main>
+<div class="rap"><button data-t="dica">💡 dica</button><button data-t="repetir">🔁 repetir</button><button data-t="reiniciar">↺ reiniciar</button></div>
+<footer>
+  <input id="txt" placeholder="Mensagem" autocomplete="off" enterkeyhint="send">
+  <button id="env" aria-label="Enviar">➤</button>
+</footer>
+<dialog id="vis"><div class="hd"><span id="visnm"></span><button onclick="vis.close()">fechar ✕</button></div><pre id="viscont"></pre></dialog>
+<dialog id="lupa"><div class="hd"><span>🔍 Investigar imagem</span><button onclick="lupa.close()">fechar ✕</button></div><div class="zoom"><img id="lupaimg" alt=""></div><div class="dica">Toque na imagem para aproximar e procurar pistas.</div></dialog>
+<div id="capa" role="button" tabindex="0" aria-label="Abrir a conversa">
+  <div class="lua" aria-hidden="true"></div>
+  <h1>OPERAÇÃO MYSTIC FALLS</h1>
+  <div class="notif"><b>📵 Número desconhecido</b><span>1 chamada perdida · 1 nova mensagem</span></div>
+  <small>toque para abrir a conversa · use fones 🎧</small>
+</div>
+
+<script type="module">
+import { responder, estadoInicial, CONTATO, TOTAL_FASES } from './mystic-historia.js';
+import { IMAGENS } from './mystic-imagens.js';
+
+const chat = document.getElementById('chat'), st = document.getElementById('st'), fs = document.getElementById('fs');
+const txt = document.getElementById('txt'), vis = document.getElementById('vis'), lupa = document.getElementById('lupa');
+const capa = document.getElementById('capa'), somBtn = document.getElementById('som');
+document.getElementById('nome').textContent = CONTATO;
+const CHAVE = 'mysticFalls';
+let salvo = { estado: estadoInicial(), hist: [] };
+try { salvo = JSON.parse(localStorage.getItem(CHAVE)) || salvo; } catch {}
+const guardar = () => { try { localStorage.setItem(CHAVE, JSON.stringify(salvo)); } catch {} };
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+// formatação do WhatsApp: ```código```, *negrito*, _itálico_
+const fmt = s => esc(s)
+  .replace(/```([\s\S]+?)```/g, '<code>$1</code>')
+  .replace(/\*([^*\n]+)\*/g, '<b>$1</b>')
+  .replace(/(^|[\s"(])_([^_\n]+)_(?=$|[\s.,!?:)"])/gm, '$1<i>$2</i>');
+const hora = () => new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+const rolar = () => chat.scrollTop = chat.scrollHeight;
+const POSTER = { cameras: 'suspeitos', final_sombra: 'parede' };
+const imgURL = nome => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(IMAGENS[nome] || '');
+
+function mostrarFase() {
+  const f = salvo.estado.fase;
+  fs.textContent = f >= 1 && f <= TOTAL_FASES ? `Fase ${f}/${TOTAL_FASES}` : f > TOTAL_FASES ? '🏆 concluído' : '';
+}
+
+// ---------- som: vento, coração e o "plim" das mensagens (tudo gerado aqui, sem arquivos) ----------
+let audio = null, somLigado = false;
+try { somLigado = localStorage.getItem(CHAVE + 'Som') === '1'; } catch {}
+function iniciarSom() {
+  if (audio || !window.AudioContext) return;
+  const ctx = new AudioContext(), mestre = ctx.createGain();
+  mestre.gain.value = 0; mestre.connect(ctx.destination);
+  const ruido = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate), d = ruido.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  const vento = ctx.createBufferSource(); vento.buffer = ruido; vento.loop = true;
+  const filtro = ctx.createBiquadFilter(); filtro.type = 'lowpass'; filtro.frequency.value = 380;
+  const lfo = ctx.createOscillator(), lfoG = ctx.createGain(); lfo.frequency.value = .08; lfoG.gain.value = 220;
+  lfo.connect(lfoG).connect(filtro.frequency);
+  const vG = ctx.createGain(); vG.gain.value = .16;
+  vento.connect(filtro).connect(vG).connect(mestre); vento.start(); lfo.start();
+  const batida = (t, forca) => {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.frequency.setValueAtTime(58, t); o.frequency.exponentialRampToValueAtTime(34, t + .18);
+    g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(forca, t + .02); g.gain.exponentialRampToValueAtTime(.0001, t + .25);
+    o.connect(g).connect(mestre); o.start(t); o.stop(t + .3);
+  };
+  setInterval(() => { const t = ctx.currentTime + .05; batida(t, .5); batida(t + .28, .32); }, 1500);
+  audio = { ctx, mestre, batida, plim() {
+    const t = ctx.currentTime, o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = 'triangle'; o.frequency.setValueAtTime(880, t); o.frequency.setValueAtTime(1320, t + .07);
+    g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.12, t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + .3);
+    o.connect(g).connect(mestre); o.start(t); o.stop(t + .32);
+  } };
+}
+function aplicarSom() {
+  somBtn.textContent = somLigado ? '🔊' : '🔇';
+  somBtn.setAttribute('aria-label', somLigado ? 'Desligar som ambiente' : 'Ligar som ambiente');
+  if (somLigado) iniciarSom();
+  if (audio) { audio.ctx.resume(); audio.mestre.gain.setTargetAtTime(somLigado ? .9 : 0, audio.ctx.currentTime, .4); }
+}
+somBtn.onclick = () => { somLigado = !somLigado; try { localStorage.setItem(CHAVE + 'Som', somLigado ? '1' : '0'); } catch {} aplicarSom(); };
+
+function efeito(nome) {
+  if (!nome) return;
+  document.body.classList.remove('glitch', 'tremor', 'sangue');
+  void document.body.offsetWidth;
+  document.body.classList.add(nome);
+  if (navigator.vibrate) try { navigator.vibrate(nome === 'tremor' ? [80, 40, 80, 40, 160] : [60]); } catch {}
+  if (audio && somLigado) { const t = audio.ctx.currentTime; audio.batida(t, .9); audio.batida(t + .2, .7); }
+  setTimeout(() => document.body.classList.remove(nome), nome === 'sangue' ? 3000 : 1600);
+}
+
+function falar(texto, caixa) {
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(texto);
+  u.lang = 'pt-BR'; u.rate = 0.92; u.pitch = 0.7;
+  const voz = speechSynthesis.getVoices().find(v => v.lang?.toLowerCase().startsWith('pt'));
+  if (voz) u.voice = voz;
+  caixa.classList.add('tocando');
+  u.onend = u.onerror = () => caixa.classList.remove('tocando');
+  speechSynthesis.speak(u);
+}
+
+function abrirLupa(nome) {
+  document.getElementById('lupaimg').src = imgURL(nome);
+  lupa.classList.remove('perto');
+  lupa.showModal();
+}
+document.getElementById('lupaimg').onclick = () => lupa.classList.toggle('perto');
+
+function bolha(m, quem, h, apagada) {
+  const b = document.createElement('div');
+  b.className = 'b ' + quem;
+  if (apagada) {
+    b.classList.add('apagada');
+    b.textContent = '🚫 Esta mensagem foi apagada';
+  } else if (m.imagem) {
+    b.classList.add('ilu-b');
+    b.innerHTML = `<button class="ilu" aria-label="Ampliar imagem"><img src="${imgURL(m.imagem)}" alt=""></button>${m.texto ? `<div class="cap">${fmt(m.texto)}</div>` : ''}`;
+    b.querySelector('.ilu').onclick = () => abrirLupa(m.imagem);
+  } else if (m.video) {
+    b.classList.add('ilu-b');
+    b.innerHTML = `<video src="videos/${esc(m.video)}.mp4" controls playsinline preload="metadata" poster="${imgURL(POSTER[m.video] || m.video)}"></video>${m.texto ? `<div class="cap">${fmt(m.texto)}</div>` : ''}`;
+    // o som ambiente baixa enquanto o vídeo toca
+    const v = b.querySelector('video');
+    v.onplay = () => { document.querySelectorAll('.b video').forEach(o => o !== v && o.pause()); if (audio) audio.mestre.gain.setTargetAtTime(0, audio.ctx.currentTime, .2); };
+    v.onpause = v.onended = () => aplicarSom();
+  } else if (m.arquivo) {
+    const kb = (new Blob([m.arquivo.conteudo]).size / 1024).toFixed(1);
+    b.innerHTML = `<button class="doc"><span class="ic">${esc(m.arquivo.nome.split('.').pop().toUpperCase())}</span><span>${esc(m.arquivo.nome)}<small>${kb} kB · toque para abrir</small></span></button>${m.texto ? fmt(m.texto) : ''}`;
+    b.querySelector('.doc').onclick = () => {
+      document.getElementById('visnm').textContent = m.arquivo.nome;
+      document.getElementById('viscont').textContent = m.arquivo.conteudo;
+      vis.showModal();
+    };
+  } else if (m.audio) {
+    const seg = Math.min(59, Math.ceil(m.audio.length / 14));
+    b.innerHTML = `<div class="aud"><button aria-label="Ouvir áudio">▶</button><div class="onda"></div><small>0:${String(seg).padStart(2, '0')}</small></div><div class="transc">${esc(m.audio)}</div>`;
+    b.querySelector('button').onclick = () => falar(m.audio, b.querySelector('.aud'));
+  } else {
+    b.innerHTML = fmt(m.texto);
+  }
+  b.insertAdjacentHTML('beforeend', `<time>${h}</time>`);
+  chat.appendChild(b);
+  rolar();
+  return b;
+}
+
+function botoes(opcoes) {
+  chat.querySelectorAll('.opc').forEach(o => o.remove());
+  if (!opcoes) return;
+  const box = document.createElement('div');
+  box.className = 'opc';
+  for (const o of opcoes) {
+    const bt = document.createElement('button');
+    bt.textContent = o;
+    bt.onclick = () => enviar(o);
+    box.appendChild(bt);
+  }
+  chat.appendChild(box); rolar();
+}
+
+const pausa = ms => new Promise(r => setTimeout(r, ms));
+let fila = Promise.resolve();
+
+async function chegam(msgs) {
+  for (const m of msgs) {
+    st.textContent = m.audio ? 'gravando áudio...' : 'digitando...';
+    st.classList.add('dig');
+    const d = document.createElement('div');
+    d.className = 'b eles dig';
+    d.innerHTML = '<i></i><i></i><i></i>';
+    chat.appendChild(d); rolar();
+    await pausa(Math.min(m.espera ?? 1500, 4000));
+    d.remove();
+    st.textContent = 'online'; st.classList.remove('dig');
+    if (m.fantasma) { await pausa(900); continue; } // começou a digitar... e desistiu
+    const h = hora();
+    const b = bolha(m, 'eles', h);
+    const reg = { m, quem: 'eles', h };
+    salvo.hist.push(reg); guardar();
+    if (audio && somLigado) audio.plim();
+    efeito(m.efeito);
+    if (m.audio) falar(m.audio, b.querySelector('.aud'));
+    if (m.apagar) setTimeout(() => {
+      b.classList.add('sumindo');
+      setTimeout(() => b.replaceWith(bolha(m, 'eles', h, true)), 600); // a nova bolha vai para o lugar da antiga
+      reg.apagada = true; guardar();
+    }, m.apagar);
+    if (m.opcoes) botoes(m.opcoes);
+    await pausa(350);
+  }
+}
+
+function enviar(texto) {
+  texto = texto.trim();
+  if (!texto) return;
+  botoes(null);
+  const m = { texto }, h = hora();
+  bolha(m, 'eu', h);
+  salvo.hist.push({ m, quem: 'eu', h });
+  fila = fila.then(async () => {
+    const r = responder(salvo.estado, texto);
+    if (r.estado.fase === 1 && salvo.estado.fase !== 1 && salvo.estado.fase !== 0) {
+      salvo.hist = salvo.hist.slice(-1); // reiniciou: limpa a conversa antiga
+      chat.querySelectorAll('.b').forEach(b => b.remove());
+      bolha(m, 'eu', h);
+    }
+    salvo.estado = r.estado; guardar(); mostrarFase();
+    await chegam(r.msgs);
+  });
+}
+
+document.getElementById('env').onclick = () => { enviar(txt.value); txt.value = ''; txt.focus(); };
+txt.addEventListener('keydown', e => { if (e.key === 'Enter') { enviar(txt.value); txt.value = ''; } });
+document.querySelectorAll('.rap button').forEach(b => b.onclick = () => enviar(b.dataset.t));
+
+// redesenha a conversa salva
+for (const { m, quem, h, apagada } of salvo.hist) bolha(m, quem, h, apagada);
+const ultima = [...salvo.hist].reverse().find(x => x.quem === 'eles');
+if (ultima?.m.opcoes && salvo.hist.at(-1) === ultima) botoes(ultima.m.opcoes);
+mostrarFase();
+
+// tela de abertura: a chamada perdida (o toque também libera o som no celular)
+function abrir() {
+  capa.hidden = true;
+  if (salvo.estado.fase === 0) { somLigado = true; try { localStorage.setItem(CHAVE + 'Som', '1'); } catch {} }
+  aplicarSom();
+  if (salvo.estado.fase === 0) fila = fila.then(async () => {
+    await pausa(600);
+    const r = responder(salvo.estado, '');
+    salvo.estado = r.estado; guardar(); mostrarFase();
+    await chegam(r.msgs);
+  });
+}
+capa.onclick = abrir;
+capa.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') abrir(); };
+if (salvo.estado.fase !== 0) { capa.querySelector('.notif span').textContent = 'Toque para continuar a conversa'; }
+</script>
+</body>
+</html>

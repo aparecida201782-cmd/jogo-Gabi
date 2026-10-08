@@ -1,0 +1,16 @@
+{
+  "name": "mystic-falls-whatsapp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Robô de WhatsApp do jogo Operação Mystic Falls",
+  "scripts": {
+    "start": "node bot.mjs",
+    "testar": "node testar.mjs"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "6.7.24",
+    "pino": "9.14.0",
+    "qrcode-terminal": "0.12.0"
+  }
+}

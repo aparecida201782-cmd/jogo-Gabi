@@ -2,6 +2,7 @@
   "name": "madrinha-ana-ao-resgate",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Jogo Madrinha Ana ao Resgate, um presente para a Gabi",
   "scripts": {
     "build": "node scripts/build-www.mjs"
