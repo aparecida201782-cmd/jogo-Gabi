@@ -20,6 +20,11 @@ const rnd=(a,b)=>a+Math.random()*(b-a);
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
+// ---------- cenários (fotos do local, Helsinque, Finlândia) ----------
+const imgFora=new Image();imgFora.src='img/fora.jpg';
+const imgSala=new Image();imgSala.src='img/sala.jpg';
+const indoor=()=>level%2===0; // fases pares: dentro de casa (mais fresco)
+
 // ---------- estado ----------
 let state='menu'; // menu | play | over | levelup
 let level,timeLeft,score,best=+localStorage.getItem('anaBest')||0;
@@ -45,7 +50,7 @@ function newLevel(){
   timeLeft=40+level*5;
   resetLevelEntities();
   ana.water=Math.max(ana.water,3);
-  flash('Nível '+level+' — mantenha todos fresquinhos!');
+  flash('Nível '+level+(indoor()?' — dentro de casa, mais fresquinho!':' — no pátio, sol forte!'));
 }
 function flash(m){msg=m;msgT=3;}
 function float(x,y,text,col){floaters.push({x,y,text,col,life:1});}
@@ -88,11 +93,12 @@ function update(dt){
   const nearF=fountains.some(f=>dist(ana,f)<45);
   if(nearF){ana.water=5;ana.heat=Math.max(0,ana.heat-30*dt);}
   else if(inShade(ana))ana.heat=Math.max(0,ana.heat-8*dt);
+  else if(indoor())ana.heat=Math.max(0,ana.heat-2*dt);
   else ana.heat+=(2.2+level*0.25)*dt;
   if(ana.heat>=100)return end('A madrinha Ana desmaiou com o calor! 🥵');
 
   // pessoas
-  const rate=3.2+level*0.9;
+  const rate=(3.2+level*0.9)*(indoor()?0.6:1);
   for(const p of people){
     p.cool=Math.max(0,p.cool-dt);
     p.wt-=dt;
@@ -137,19 +143,20 @@ function heatCol(v){return v<.5?'#3fbf5f':v<.8?'#f2b01e':'#e03a2f';}
 function drawWorld(){
   // chão: areia com pontinhos
   ctx.fillStyle='#e8c36a';ctx.fillRect(0,0,W,H);
-  ctx.fillStyle='rgba(180,130,50,.25)';
-  for(let i=0;i<60;i++)ctx.fillRect((i*137)%W,(i*91)%H,4,3);
+  const bg=indoor()?imgSala:imgFora;
+  if(bg.complete&&bg.naturalWidth)ctx.drawImage(bg,0,0,W,H);
+  ctx.fillStyle=indoor()?'rgba(255,255,255,.12)':'rgba(255,200,60,.22)';ctx.fillRect(0,0,W,H);
   // brilho do sol (mais forte com o nível)
   const g=ctx.createRadialGradient(W-60,40,10,W-60,40,500);
   g.addColorStop(0,'rgba(255,220,80,'+Math.min(.45,.15+level*.04)+')');g.addColorStop(1,'rgba(255,220,80,0)');
   ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
   for(const s of shades){
     ctx.fillStyle='rgba(40,60,40,.28)';ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,6.28);ctx.fill();
-    emoji('🌳',s.x,s.y-6,52);
+    emoji(indoor()?'🪴':'🌳',s.x,s.y-6,52);
   }
   for(const f of fountains){
     ctx.fillStyle='rgba(60,150,255,.35)';ctx.beginPath();ctx.arc(f.x,f.y,45,0,6.28);ctx.fill();
-    emoji('⛲',f.x,f.y,44);
+    emoji(indoor()?'🚰':'⛲',f.x,f.y,44);
   }
   for(const k of pickups){emoji('🍦',k.x,k.y+Math.sin(t*5)*3,30);}
 }
@@ -192,8 +199,9 @@ function frame(now){
   if(state==='play')update(dt);
   if(state==='menu'){t+=dt;
     ctx.fillStyle='#e8c36a';ctx.fillRect(0,0,W,H);
+    if(imgFora.complete&&imgFora.naturalWidth)ctx.drawImage(imgFora,0,0,W,H);
     panel('☀️ Madrinha Ana ao Resgate 🌡️',[
-      'Está um calorão! Ajude a madrinha Ana a refrescar a turma.',
+      'Verão em Helsinque, Finlândia: está um calorão! Ajude a madrinha Ana a refrescar a turma.',
       '',
       'Mover: setas / WASD  (celular: arraste o dedo)',
       'Encoste nas pessoas com 💧 para refrescá-las',
