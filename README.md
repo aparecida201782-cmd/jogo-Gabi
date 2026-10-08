@@ -30,6 +30,18 @@ O José, irmãozinho da Gabi (6 anos), entra no jogo. O ⇄ alterna entre Madrin
 2. **Gamla Stan:** cidade velha de Estocolmo, bolinhas de chocolate, pombos, gatos e morcegos.
 3. **Skansen:** casinhas vermelhas, cavalinhos de Dala e o alce (3 golpes).
 
+## Fase 6: Lapônia com a família (abre depois da Fase 5)
+Entram a Keka (pula mais alto) e o Emiel (murro forte). O ⇄ alterna entre os cinco.
+1. **Floresta da Lapônia:** renas, neve e corujas.
+2. **Vila do Papai Noel:** Círculo Polar Ártico e presentes.
+3. **Noite de aurora boreal:** iglus de vidro e estrelas.
+
+## Fase 7: Todo mundo no Brasil! (a última)
+O Ilo, o cachorro da família, vai junto.
+1. **Praia de Fortaleza:** jangadas, coqueiros, tapiocas e caranguejos.
+2. **Solonópole:** até a praça, onde a Vovó Hermina espera a família.
+3. **O quintal da Vovó Hermina:** bolo, galinhas e o mergulho final na piscina.
+
 ## Controles
 - Celular: botões na tela (◀ ▶ andar, » correr, ⤒ pular, ▼ abaixar, 👊 murro, 🦶 pesada). Correndo + ▼ = rasteira.
 - Teclado: setas ou A/D andam, Shift corre, ↑ ou Espaço pula, ↓ abaixa, X dá murro, C dá pesada.
