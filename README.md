@@ -1,13 +1,20 @@
 # Madrinha Ana ao Resgate 🇧🇷💛🇫🇮
 
-Um presente para a Gabi. Você é a Madrinha Ana, que sai do calor do Nordeste do Brasil (Solonópole, Ceará) para resgatar a afilhada Gabi, presa num lugar em Helsinque.
+Um presente para a Gabi. Jogo de plataforma: você é a Madrinha Ana e sai de Solonópole, no Ceará, para visitar a afilhada em Helsinque.
 
-## Como jogar
-Abra `index.html` no navegador (computador ou celular). Mantenha a pasta `img/` junto do arquivo.
+## Fase 1
+1. **Sertão de Solonópole:** cocadas, cactos, pedras, calangos e bodes travessos. No fim, o carro até Fortaleza.
+2. **Lisboa:** conexão entre Fortaleza e Helsinque, com pastéis de nata, barris e pombos.
+3. **Helsinque:** neve, frio (o termômetro cai, e os cafezinhos esquentam), bonecos de neve e gaivotas. No fim, a Gabi acena da janela.
 
-- **Fase 1:** de Solonópole (CE), de carro até Fortaleza, avião para Lisboa e depois Helsinque. A Madrinha recebe o pedido de socorro, escolhe 3 itens para a mala, viaja até Helsinque e chega bem perto da Gabi. Mas a aventura continua…
-- Fique de olho no termômetro de calor: o frio finlandês é de rachar!
-- Cada combinação de itens muda o caminho. São 6 conquistas para colecionar.
-- `arcade.html`: minijogo extra de ação (salve a turma do calor).
+## Controles
+- Celular: botões na tela (◀ ▶ andar, » correr, ⤒ pular, 👊 murro).
+- Teclado: setas ou A/D andam, Shift corre, ↑ ou Espaço pula, X dá murro.
 
-Para mudar a frase típica da Madrinha, edite `const ANA` no `index.html`.
+## Instalar no Android
+O GitHub Actions gera o app a cada envio (`.github/workflows/android.yml`). Baixe o `MadrinhaAna.apk` na página **Releases** do repositório, abra no celular e permita a instalação.
+
+## Rodar no navegador
+Abra `index.html`. A versão de história com escolhas está em `historia.html`.
+
+Para mudar a frase da Madrinha, edite `const ANA` no topo do script em `index.html`.

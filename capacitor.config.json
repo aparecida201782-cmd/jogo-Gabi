@@ -1,0 +1,6 @@
+{
+  "appId": "br.madrinhaana.resgate",
+  "appName": "Madrinha Ana",
+  "webDir": "www",
+  "android": { "backgroundColor": "#0b1530" }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "madrinha-ana-ao-resgate",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Jogo Madrinha Ana ao Resgate, um presente para a Gabi",
+  "scripts": {
+    "build": "node scripts/build-www.mjs"
+  },
+  "dependencies": {
+    "@capacitor/android": "7.6.9",
+    "@capacitor/core": "7.6.9"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "3.0.5",
+    "@capacitor/cli": "7.6.9"
+  }
+}

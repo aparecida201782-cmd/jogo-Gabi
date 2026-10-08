@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Madrinha Ana ao Resgate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#e6eef7; --card:#ffffff; --ink:#14213d; --muted:#4d5b78; --line:#cfdbea;
+  --chip:#eef4fb; --sun:#ffc93c; --sun-ink:#3a2a00; --aurora:#1aa881; --pitanga:#e8474f;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b1530; --card:#14214a; --ink:#eef3fb; --muted:#a9b8d6; --line:#25366a;
+    --chip:#1b2b5c; --sun:#ffd25a; --sun-ink:#2b1f00; --aurora:#5ee6b8; --pitanga:#ff7177;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b1530; --card:#14214a; --ink:#eef3fb; --muted:#a9b8d6; --line:#25366a;
+  --chip:#1b2b5c; --sun:#ffd25a; --sun-ink:#2b1f00; --aurora:#5ee6b8; --pitanga:#ff7177;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:17px;line-height:1.6}
+.wrap{max-width:640px;margin:0 auto;padding:16px 16px 40px}
+h1,h2,h3{font-family:"Baloo 2","Trebuchet MS",system-ui,sans-serif;line-height:1.1;margin:0}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 2px 14px}
+.top h1{font-size:1.35rem;font-weight:800}
+.hud{display:flex;align-items:center;gap:8px;min-width:150px}
+.hud .lbl{font-weight:800;font-size:.9rem;white-space:nowrap}
+.bar{flex:1;height:12px;border-radius:99px;background:var(--chip);border:1px solid var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:100%;border-radius:99px;transition:width .5s ease,background .5s}
+.card{background:var(--card);border-radius:22px;overflow:hidden;border:1px solid var(--line)}
+.art svg{display:block;width:100%;height:auto}
+.art img{display:block;width:100%;aspect-ratio:400/220;object-fit:cover}
+.av svg{display:block;width:52px;height:52px;border-radius:50%;background:var(--card);border:2px solid var(--sun);flex:none}
+.body{padding:18px 20px 22px}
+.text p{margin:0 0 .8em}
+.text p.in{animation:in .45s ease both}
+.msg{display:flex;align-items:center;gap:12px;background:var(--chip);border-left:4px solid var(--aurora);padding:10px 14px;border-radius:4px 14px 14px 4px;font-weight:700}
+.frozen{display:block;background:var(--chip);border-left:4px solid #6db7ff;padding:10px 14px;border-radius:4px 14px 14px 4px}
+.choices{display:grid;gap:10px;margin-top:14px}
+.choices button,.btn{font:inherit;font-weight:800;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:14px;padding:13px 16px;text-align:left;cursor:pointer;min-height:50px;transition:border-color .15s,transform .1s}
+.choices button:hover{border-color:var(--aurora)}
+.choices button:active,.btn:active{transform:scale(.98)}
+.btn.main{background:var(--sun);color:var(--sun-ink);border-color:var(--sun);text-align:center;width:100%}
+.btn.main:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,input:focus-visible{outline:3px solid var(--aurora);outline-offset:2px}
+.inv{margin-top:14px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.9rem;color:var(--muted)}
+.inv span.c{background:var(--chip);border:1px solid var(--line);border-radius:99px;padding:3px 10px;color:var(--ink)}
+.start h2{font-size:2.3rem;font-weight:800;margin-bottom:6px}
+.start label{display:block;font-weight:800;margin:14px 0 6px}
+.start input{width:100%;font:inherit;padding:12px 14px;border-radius:12px;border:2px solid var(--line);background:var(--chip);color:var(--ink)}
+.start .hint{color:var(--muted);font-size:.92rem;margin:.3em 0 1em}
+.items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0 16px}
+.item{font:inherit;text-align:left;cursor:pointer;background:var(--card);color:var(--ink);border:2px solid var(--line);border-radius:14px;padding:10px 12px;transition:border-color .15s,background .15s}
+.item b{display:block;font-size:1rem}
+.item small{color:var(--muted);font-size:.85rem;line-height:1.35;display:block}
+.item .e{font-size:1.6rem;line-height:1}
+.item[aria-pressed="true"]{border-color:var(--aurora);background:var(--chip)}
+.end{margin-top:18px;padding-top:16px;border-top:2px dashed var(--line)}
+.end h3{font-size:1.6rem}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 16px}
+.badges span{background:var(--chip);border:1px solid var(--line);border-radius:12px;padding:6px 10px;font-weight:700;font-size:.92rem}
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 14px);transform:translateX(-50%);background:var(--ink);color:var(--card);font-weight:800;padding:8px 16px;border-radius:99px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:5}
+.toast.show{opacity:1}
+.snow circle{animation:fall linear infinite}
+.aurora{animation:glow 6s ease-in-out infinite alternate}
+.smoke circle{animation:rise 3s ease-out infinite}
+@keyframes fall{from{transform:translateY(-10px)}to{transform:translateY(235px)}}
+@keyframes glow{from{opacity:.55}to{opacity:1}}
+@keyframes rise{from{transform:translateY(0);opacity:.7}to{transform:translateY(-40px);opacity:0}}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (max-width:420px){.top h1{font-size:1.1rem}.start h2{font-size:1.9rem}.items{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <h1>Madrinha Ana ao Resgate</h1>
+    <div class="hud" id="hud" hidden><span class="lbl">🌡️ Calor</span><div class="bar"><i id="calorBar"></i></div></div>
+  </div>
+  <div class="card"><div id="app"></div></div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ---------- Estado ---------- */
+let S;
+function reset(nome){S={nome:nome||'',inv:[],calor:100,pistas:[],flags:{},conq:[],erros:0}}
+reset('');
+const has=k=>S.inv.includes(k);
+const hasP=k=>S.pistas.includes(k);
+const add=k=>{if(!has(k))S.inv.push(k)};
+const pista=k=>{if(!hasP(k))S.pistas.push(k)};
+const conqSaved=()=>{try{return JSON.parse(localStorage.getItem('madrinha-conq')||'[]')}catch(e){return []}};
+const badge=k=>{if(!S.conq.includes(k))S.conq.push(k);try{const a=conqSaved();if(!a.includes(k)){a.push(k);localStorage.setItem('madrinha-conq',JSON.stringify(a))}}catch(e){}};
+const esc=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+const N=()=>esc(S.nome.trim()||'Gabi');
+
+// ====== PERSONALIZE AQUI: frase típica da Madrinha Ana ======
+const ANA={frase:'Calma, meu bem, a madrinha chegou!'};
+const ITENS={
+  casaco:{e:'🧥',n:'Casaco da vovó',d:'Tricotado à mão, quentinho como abraço'},
+  lanterna:{e:'🔦',n:'Lanterna',d:'Para enxergar na sombra'},
+  brigadeiro:{e:'🍫',n:'Pote de brigadeiro',d:'Docinho que conquista qualquer um'},
+  paodequeijo:{e:'🧀',n:'Pão de queijo',d:'O lanche oficial da madrinha'},
+  cocada:{e:'🥥',n:'Cocada',d:'Direto do Nordeste'},
+  foto:{e:'📸',n:'Foto com a Gabi',d:'Vale mais que mil palavras'}
+};
+
+/* ---------- Ilustrações ---------- */
+function rnd(seed){let s=seed;return()=>{s=(s*9301+49297)%233280;return s/233280}}
+function stars(n,maxY,seed=7){const r=rnd(seed);let o='';for(let i=0;i<n;i++)o+=`<circle cx="${(r()*400).toFixed(1)}" cy="${(r()*maxY).toFixed(1)}" r="${(r()*1.3+.3).toFixed(2)}" fill="#fff" opacity="${(r()*.6+.3).toFixed(2)}"/>`;return o}
+function snow(n,seed=3){const r=rnd(seed);let o='<g class="snow">';for(let i=0;i<n;i++)o+=`<circle cx="${(r()*400).toFixed(1)}" cy="0" r="${(r()*1.8+.6).toFixed(2)}" fill="#fff" opacity=".9" style="animation-duration:${(r()*4+4).toFixed(1)}s;animation-delay:-${(r()*8).toFixed(1)}s"/>`;return o+'</g>'}
+function pine(x,y,s,c='#1d4a3c'){return `<g><rect x="${x-3*s}" y="${y-2}" width="${6*s}" height="${9*s}" fill="#4a3426"/><polygon points="${x},${y-62*s} ${x-22*s},${y-22*s} ${x+22*s},${y-22*s}" fill="${c}"/><polygon points="${x},${y-44*s} ${x-29*s},${y} ${x+29*s},${y}" fill="${c}"/><polygon points="${x},${y-62*s} ${x-8*s},${y-49*s} ${x+8*s},${y-49*s}" fill="#fff" opacity=".9"/><path d="M${x-29*s} ${y} Q${x} ${y-8*s} ${x+29*s} ${y}" fill="#fff" opacity=".85"/></g>`}
+function night(a='#071229',b='#1e3466'){return `<defs><linearGradient id="nt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient><linearGradient id="aur" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#5ee6b8" stop-opacity="0"/><stop offset=".3" stop-color="#5ee6b8"/><stop offset=".7" stop-color="#9a86ff"/><stop offset="1" stop-color="#9a86ff" stop-opacity="0"/></linearGradient></defs><rect width="400" height="220" fill="url(#nt)"/>`}
+function aurora(y=0){return `<g class="aurora" transform="translate(0 ${y})"><path d="M0 80 C70 30 130 95 210 45 S330 70 400 35 L400 70 C330 100 260 70 200 95 S70 95 0 115Z" fill="url(#aur)" opacity=".55"/><path d="M0 60 C90 20 160 70 240 30 S350 40 400 20 L400 40 C340 60 270 50 230 65 S90 70 0 85Z" fill="url(#aur)" opacity=".35"/></g>`}
+function ground(y=182,c='#eaf3fb'){return `<path d="M0 ${y} Q100 ${y-12} 200 ${y} T400 ${y-4} V220 H0Z" fill="${c}"/>`}
+function cloud(x,y,s=1){return `<g fill="#fff" opacity=".95"><ellipse cx="${x}" cy="${y}" rx="${30*s}" ry="${12*s}"/><ellipse cx="${x-16*s}" cy="${y+2*s}" rx="${18*s}" ry="${10*s}"/><ellipse cx="${x+10*s}" cy="${y-8*s}" rx="${18*s}" ry="${12*s}"/></g>`}
+function house(x,w,h,c){const y=182-h;return `<g><rect x="${x}" y="${y}" width="${w}" height="${h+4}" fill="${c}"/><polygon points="${x-6},${y+2} ${x+w/2},${y-w*.45} ${x+w+6},${y+2}" fill="#3b2a3f"/><polygon points="${x-6},${y+2} ${x+w/2},${y-w*.45} ${x+w+6},${y+2} ${x+w+2},${y+6} ${x+w/2},${y-w*.45+6} ${x-2},${y+6}" fill="#fff"/><rect x="${x+w/2-6}" y="${y+h*.3}" width="12" height="11" fill="#ffd25a"/></g>`}
+function heart(x,y,s,c='#ff6b8a'){return `<path d="M0 6 C0 0 8 -2 10 4 C12 -2 20 0 20 6 C20 13 10 18 10 21 C10 18 0 13 0 6Z" fill="${c}" transform="translate(${x} ${y}) scale(${s})"/>`}
+function castle(cx=200,base=184,s=1){const t=(x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#cdeeff"/><polygon points="${x-4},${y} ${x+w/2},${y-w*1.1} ${x+w+4},${y}" fill="#9fd6ff"/>`;
+  return `<g transform="translate(${cx} ${base}) scale(${s}) translate(-200 -184)">${t(118,86,32,100)}${t(250,86,32,100)}<rect x="146" y="112" width="108" height="74" fill="#e2f5ff"/>${t(184,56,32,60)}<path d="M186 186 V160 Q200 142 214 160 V186Z" fill="#2c4f86"/><rect x="128" y="104" width="10" height="16" rx="5" fill="#6db7ff"/><rect x="262" y="104" width="10" height="16" rx="5" fill="#6db7ff"/><rect x="195" y="74" width="10" height="16" rx="5" fill="#6db7ff"/><path d="M146 112 l10 12 l10 -12 l10 12 l10 -12 l10 12 l10 -12 l10 12 l10 -12 l10 12 l10 -12" fill="none" stroke="#fff" stroke-width="3"/></g>`}
+
+function art(k){
+  if(k==='fora'||k==='sala')return `<img src="img/${k}.jpg" alt="">`;
+  let b='';
+  if(k==='casa'){
+    b=`<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9f5a"/><stop offset="1" stop-color="#ffe2a0"/></linearGradient></defs><rect width="400" height="220" fill="url(#sk)"/><circle cx="320" cy="58" r="32" fill="#fff4b8"/><circle cx="320" cy="58" r="44" fill="#fff4b8" opacity=".3"/><path d="M0 170 Q120 150 220 168 T400 160 V220 H0Z" fill="#4fae5a"/><rect x="60" y="120" width="96" height="58" fill="#fbe7cc"/><polygon points="48,124 108,88 168,124" fill="#d9573b"/><rect x="98" y="146" width="22" height="32" fill="#1aa881"/><rect x="72" y="134" width="18" height="16" fill="#7cc4ff"/><rect x="128" y="134" width="18" height="16" fill="#7cc4ff"/><path d="M262 182 Q256 135 272 98" stroke="#8a5a2b" stroke-width="8" fill="none" stroke-linecap="round"/>${[-165,-125,-90,-55,-15,25,155].map(a=>`<ellipse cx="272" cy="98" rx="32" ry="8" fill="#2f8f46" transform="rotate(${a} 272 98) translate(28 0)"/>`).join('')}<text x="340" y="205" font-size="22">☕</text>`;
+  } else if(k==='aviao'){
+    b=`<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4fa6ff"/><stop offset="1" stop-color="#d4ecff"/></linearGradient></defs><rect width="400" height="220" fill="url(#sk)"/>${cloud(70,60,1.1)}${cloud(320,40,.8)}${cloud(300,170,1.3)}${cloud(90,180,.9)}<path d="M30 190 Q200 10 370 140" stroke="#fff" stroke-width="2.5" stroke-dasharray="7 7" fill="none"/><text x="14" y="212" font-size="24">🇧🇷</text><text x="356" y="168" font-size="24">🇫🇮</text><g transform="translate(210 74) rotate(14)"><polygon points="-4,0 14,0 -12,32 -26,32" fill="#e8474f"/><ellipse rx="46" ry="10" fill="#fff"/><polygon points="-4,0 14,0 -12,-28 -24,-28" fill="#e8474f"/><polygon points="-38,-2 -48,-22 -37,-22 -28,-2" fill="#1aa881"/>${[-14,-4,6,16,26].map(x=>`<circle cx="${x}" cy="-2" r="2.6" fill="#4fa6ff"/>`).join('')}<path d="M40 -4 Q48 0 40 5" fill="#4fa6ff"/></g>`;
+  } else if(k==='trem'){
+    b=night('#0a1838','#2b4680')+stars(50,110)+`<circle cx="330" cy="44" r="16" fill="#fff6d6"/>`+[30,90,150,300,360].map((x,i)=>pine(x,150,.6+(i%2)*.15,'#173b33')).join('')+ground(168)+`<rect x="0" y="182" width="400" height="3" fill="#7d8aa3"/>`+`<g><rect x="36" y="140" width="76" height="40" rx="6" fill="#d9473f"/><rect x="88" y="124" width="22" height="20" fill="#d9473f"/><rect x="48" y="150" width="16" height="12" fill="#ffd25a"/><circle cx="112" cy="168" r="5" fill="#ffd25a"/>`+[118,196,274].map(x=>`<rect x="${x}" y="146" width="72" height="34" rx="5" fill="#2d5aa0"/>`+[0,1,2].map(j=>`<rect x="${x+8+j*22}" y="154" width="14" height="11" fill="#ffd25a"/>`).join('')).join('')+[50,90,132,176,210,252,288,330].map(x=>`<circle cx="${x}" cy="182" r="5" fill="#222b3d"/>`).join('')+`</g>`+snow(30);
+  } else if(k==='cidade'){
+    b=night()+stars(40,90,11)+aurora()+[[20,40,40,'#c9564a'],[70,46,52,'#e0b04a'],[126,38,36,'#4a86c9'],[176,52,58,'#d9473f'],[238,40,42,'#e0b04a'],[288,46,50,'#4a86c9'],[344,40,38,'#c9564a']].map(a=>house(...a)).join('')+ground(190)+snow(40,5);
+  } else if(k==='floresta'){
+    b=night('#050c1f','#16284f')+stars(25,60,4)+[10,60,110,160,210,260,310,360,400].map((x,i)=>pine(x,150,.9,'#0f2c26')).join('')+[35,95,180,240,330,385].map(x=>pine(x,200,1.25,'#173b33')).join('')+ground(205)+snow(70,9);
+  } else if(k==='sauna'){
+    b=night('#081530','#22397a')+stars(35,90,8)+aurora(-10)+[20,70,330,380].map(x=>pine(x,175,1,'#173b33')).join('')+ground(182)+`<rect x="245" y="70" width="14" height="40" fill="#5a4636"/><g class="smoke">${[0,1,2].map(i=>`<circle cx="${252+i*4}" cy="66" r="${7+i*2}" fill="#dfe8f3" style="animation-delay:${i}s"/>`).join('')}</g><rect x="140" y="112" width="130" height="72" fill="#8a5a3a"/>${[0,1,2,3,4].map(i=>`<line x1="140" x2="270" y1="${124+i*13}" y2="${124+i*13}" stroke="#6e4630" stroke-width="2"/>`).join('')}<polygon points="128,114 205,68 282,114" fill="#4a3426"/><path d="M128 114 L205 68 L282 114 L276 118 L205 76 L134 118Z" fill="#fff"/><rect x="160" y="132" width="30" height="24" fill="#ffae42"/><rect x="160" y="132" width="30" height="24" fill="#ffd25a" opacity=".6"/><rect x="220" y="138" width="26" height="46" fill="#5a3a26"/>`+snow(25,2);
+  } else if(k==='ponte'){
+    b=night()+stars(45,90,13)+aurora(-15)+castle(330,150,.45)+`<polygon points="0,140 115,130 125,220 0,220" fill="#2b3f6b"/><polygon points="0,140 115,130 112,138 0,148" fill="#eaf3fb"/><polygon points="285,130 400,138 400,220 278,220" fill="#2b3f6b"/><polygon points="285,130 400,138 400,146 288,138" fill="#eaf3fb"/><path d="M112 134 Q200 112 290 134 L290 142 Q200 122 112 142Z" fill="#a8dcff"/><g><circle cx="200" cy="96" r="28" fill="#f4f9ff"/><circle cx="200" cy="54" r="20" fill="#f4f9ff"/><circle cx="192" cy="50" r="3.5" fill="#2c6fd1"/><circle cx="208" cy="50" r="3.5" fill="#2c6fd1"/><path d="M191 61 Q200 67 209 61" stroke="#5a6b86" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M172 90 L148 72" stroke="#f4f9ff" stroke-width="9" stroke-linecap="round"/><path d="M228 90 L252 72" stroke="#f4f9ff" stroke-width="9" stroke-linecap="round"/><circle cx="200" cy="92" r="3" fill="#9fd6ff"/><circle cx="200" cy="104" r="3" fill="#9fd6ff"/></g>`+snow(30,6);
+  } else if(k==='castelo'){
+    b=night('#060f26','#1c2f63')+stars(50,80,17)+aurora()+ground(186)+castle()+snow(40,12);
+  } else if(k==='estrada'){
+    b=`<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb35a"/><stop offset="1" stop-color="#ffe6a8"/></linearGradient></defs><rect width="400" height="220" fill="url(#sk)"/><circle cx="70" cy="52" r="28" fill="#fff4b8"/><path d="M0 150 Q100 135 200 148 T400 140 V220 H0Z" fill="#d9a35b"/><polygon points="150,220 250,220 206,150 194,150" fill="#5d5a63"/><path d="M200 220 L200 150" stroke="#ffd25a" stroke-width="2" stroke-dasharray="8 8"/>`+[[60,150],[330,146],[372,156]].map(([x,y])=>`<g fill="#4f8a3c"><rect x="${x-4}" y="${y-38}" width="8" height="40" rx="4"/><rect x="${x-16}" y="${y-28}" width="7" height="18" rx="3.5"/><rect x="${x+9}" y="${y-32}" width="7" height="20" rx="3.5"/><rect x="${x-16}" y="${y-14}" width="16" height="6" rx="3"/><rect x="${x}" y="${y-16}" width="16" height="6" rx="3"/></g>`).join('')+`<g transform="translate(200 182)"><rect x="-26" y="-14" width="52" height="18" rx="6" fill="#e8474f"/><path d="M-16 -14 L-10 -26 H12 L18 -14Z" fill="#e8474f"/><path d="M-11 -15 L-7 -23 H9 L13 -15Z" fill="#bfe6ff"/><circle cx="-14" cy="5" r="6" fill="#222b3d"/><circle cx="14" cy="5" r="6" fill="#222b3d"/></g><text x="14" y="210" font-size="13" fill="#5a3a1a" font-weight="bold">Solonópole → Fortaleza</text>`;
+  } else if(k==='fim1'){
+    b=night('#0a1838','#2b4680')+stars(60,110,21)+aurora(-10)+aurora(20)+ground(190)+heart(70,60,1.6)+heart(310,80,1.2,'#ffd25a')+heart(110,120,.9,'#5ee6b8')+heart(280,40,.9)+house(150,100,60,'#c9564a')+`<text x="168" y="212" font-size="22">🇧🇷💛🇫🇮</text>`+snow(30,4);
+  } else if(k==='final'){
+    b=night('#0a1838','#2b4680')+stars(60,110,21)+aurora(-10)+aurora(20)+ground(190)+castle(200,190,.7)+heart(70,60,1.6)+heart(310,80,1.2,'#ffd25a')+heart(110,120,.9,'#5ee6b8')+heart(280,40,.9)+`<text x="186" y="212" font-size="22">🇧🇷💛🇫🇮</text>`;
+  }
+  return `<svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">${b}</svg>`;
+}
+
+/* ---------- Cenas (Fase 1) ---------- */
+function face(who){
+  const g=who==='gabi',hair=g?'#f3d36b':'#6b3f2a';
+  return `<svg viewBox="0 0 100 100" aria-hidden="true">
+   ${g?`<path d="M22 46 Q18 92 34 96 L66 96 Q82 92 78 46 Z" fill="${hair}"/>`:`<ellipse cx="80" cy="62" rx="9" ry="22" fill="${hair}" transform="rotate(18 80 62)"/>`}
+   <ellipse cx="50" cy="96" rx="30" ry="18" fill="${g?'#7cc4ff':'#ff7a8a'}"/>
+   <ellipse cx="50" cy="52" rx="24" ry="27" fill="#ffe0cf"/>
+   <path d="M24 50 Q24 18 50 18 Q76 18 76 50 Q66 34 50 34 Q34 34 24 50Z" fill="${hair}"/>
+   <circle cx="41" cy="54" r="3" fill="#2a2a3a"/><circle cx="59" cy="54" r="3" fill="#2a2a3a"/>
+   <circle cx="35" cy="62" r="4" fill="#ffb3a7" opacity=".6"/><circle cx="65" cy="62" r="4" fill="#ffb3a7" opacity=".6"/>
+   <path d="M42 66 Q50 74 58 66" stroke="#b5483c" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>`;
+}
+const say=(who,t)=>`<span class="msg"><span class="av">${face(who)}</span><span>${t}</span></span>`;
+const DOCES=['brigadeiro','paodequeijo','cocada'];
+const doce=()=>DOCES.find(has);
+
+const SC={
+  mensagem:{bg:'casa',
+    text:()=>[`Tarde de sol rachando em <b>Solonópole, no sertão do Ceará</b>. 38 °C na sombra! A <b>Madrinha Ana</b>, de cabelo preso e leque na mão, toma um cafezinho na varanda quando o celular vibra.`,
+      `É uma mensagem de <b>${N()}</b>, a afilhada loura de cabelo liso, filha da irmã dela com um finlandês, que mora do outro lado do mundo, em <b>Helsinque</b>:`,
+      say('gabi',`“Madrinha, estou com tanta saudade! 💛 Estou longe de casa e do papai e da mamãe, num lugar aqui em Helsinque. Vem me visitar? Quero passear com você!”`),
+      `Ana larga a xícara na hora. Faltam poucos dias para o aniversário dela, <b>12 de outubro</b>, e o único presente que ela quer é ver a afilhada. Só tem um probleminha: a Madrinha só fala português. Mas isso nunca parou a Madrinha Ana!`],
+    choices:()=>[{t:'🧳 Arrumar a mala agora mesmo',go:'mala'}]},
+
+  estrada:{bg:'estrada',
+    text:()=>[`Primeiro desafio: sair de Solonópole e chegar ao aeroporto de <b>Fortaleza</b>. Ana pega o carro e encara quase 300 km de estrada pelo sertão, com o rádio tocando forró. 🚗`,
+      `No meio do caminho, uma barraquinha na beira da estrada: tapioca quentinha e queijo coalho na brasa...`],
+    choices:()=>[{t:'🫓 Parar para comer uma tapioca',go:'fortaleza',fx:()=>S.flags.tapioca=true},
+      {t:'💨 Seguir direto, a Gabi está esperando!',go:'fortaleza'}]},
+
+  fortaleza:{bg:'aviao',
+    text:()=>[S.flags.tapioca?`Barriga cheia de tapioca, Ana chega ao aeroporto de Fortaleza bem a tempo!`:`Ana chega ao aeroporto de Fortaleza tão adiantada que ainda dá tempo de um cafezinho.`,
+      `O avião decola de <b>Fortaleza, no Brasil</b>, e cruza o Oceano Atlântico rumo a <b>Lisboa, em Portugal</b>. Lá embaixo, só mar azul. ✈️`],
+    choices:()=>[{t:'🛬 Pousar em Lisboa',go:'lisboa'}]},
+
+  lisboa:{bg:'aviao',
+    text:()=>[`<b>Lisboa!</b> Ana troca de avião: o próximo voo vai de Portugal até <b>Helsinque, na Finlândia</b>. Aqui ainda todo mundo fala português, que alívio! 🇵🇹`,
+      `No portão de embarque, Ana senta ao lado de uma cearense simpática, a <b>Dona Socorro</b>, que mora na Finlândia há vinte anos.`],
+    choices:()=>[{t:'💬 Puxar conversa com a Dona Socorro',go:'helsinque',fx:()=>{S.flags.fi=true;S.flags.socorro=true;badge('📝 Bilhete mágico')}},
+      {t:'🥐 Comer um pastel de nata e dormir o voo todo',go:'helsinque'}]},
+
+  helsinque:{bg:'fora',
+    enter:()=>{S.calor-=has('casaco')?8:20},
+    text:()=>[`Ana pisa em <b>Helsinque</b>. É fim de tarde, o sol brilha entre as árvores, mas o vento é gelado: para quem vem do Nordeste, 12 °C parecem o Polo Norte! 🥶`,
+      has('casaco')?`Ainda bem que o casaco da vovó está na mala. Quentinho como abraço! 🧥`:`Sem casaco, Ana treme feito gelatina.`,
+      `Ela segue o endereço até um prédio baixo, de madeira vermelha, cercado de árvores e jardim. Em algum lugar lá dentro está ${N()}. Como chegar até ela?`],
+    choices:()=>[{t:'🚪 Bater na porta da frente',go:'porta'},{t:'🌿 Dar a volta e procurar a janela da afilhada',go:'janela'}]},
+
+  porta:{bg:'fora',
+    text:()=>[...(S.flags.socorro?[`(Antes de se despedir, Dona Socorro escreveu num papelzinho, em finlandês: <i>“Olen Gabin kummitäti”</i>, que quer dizer <b>“Sou a madrinha da Gabi”</b>.)`]:[]),
+      `Ana toca a campainha. Uma funcionária aparece do outro lado da porta de vidro. Ela fala finlandês e olha desconfiada para aquela brasileira de casaco no meio do verão.`,
+      `Pela fresta, ela diz alguma coisa: <i>“Ei vierailuja tänään!”</i> Ana não entende uma palavra, mas pela cara... hoje não tem visita.`],
+    choices:()=>[
+      ...(S.flags.fi?[{t:'📝 Mostrar o papelzinho da Dona Socorro',go:'porta2',fx:()=>S.flags.via='bilhete'}]:[]),
+      ...(has('foto')?[{t:'📸 Mostrar a foto dela com a Gabi',go:'porta2',fx:()=>{S.flags.via='foto';badge('📸 Prova de amor')}}]:[]),
+      ...(doce()?[{t:`${ITENS[doce()].e} Oferecer ${ITENS[doce()].n.toLowerCase()} à funcionária`,go:'porta2',fx:()=>{S.flags.via='doce';badge('🍬 Doceira de mão cheia')}}]:[]),
+      {t:'🗣️ Explicar tudo em português, bem alto e com muitos gestos',go:'porta2',fx:()=>{S.flags.via='gestos';S.calor-=5}}]},
+
+  porta2:{bg:'fora',
+    text:()=>[S.flags.via==='bilhete'?`A funcionária lê o papel e arregala os olhos: <i>“Ahh, Gabin kummi!”</i> Ela sorri, mas balança a cabeça: a porta só abre amanhã. Baixinho, ela aponta para o jardim. 🇫🇮`
+      :S.flags.via==='foto'?`A funcionária olha a foto, olha para Ana, olha a foto de novo... e sorri. Reconheceu a Gabi! Não pode abrir a porta, mas aponta discretamente para o jardim. 😉`
+      :S.flags.via==='doce'?`A funcionária prova, fecha os olhos e suspira: <i>“Herkullista!”</i> Ana não sabe o que é, mas parece elogio! Ela não pode abrir a porta, mas faz um sinal: dê a volta pelo jardim. 😉`
+      :`Quanto mais alto Ana fala, menos a funcionária entende. Ela ri educadamente e fecha a porta. Ana fica sozinha no vento gelado. Hora de outro plano!`],
+    choices:()=>[{t:'🌿 Dar a volta pelo jardim',go:'janela'}]},
+
+  janela:{bg:'fora',
+    enter:()=>{badge('🪟 Madrinha ninja');if(!has('lanterna'))S.calor-=10},
+    text:()=>[`Ana contorna o prédio por entre arbustos e galhos baixos. ${has('lanterna')?'A lanterna ilumina a sombra densa do jardim. 🔦':'Sem lanterna, ela tropeça nas raízes e a friagem entra pelas mangas.'}`,
+      `De repente, uma janela grande. Ana fica na ponta dos pés e espia...`],
+    choices:()=>[{t:'👀 Olhar pela janela',go:'vidro'}]},
+
+  vidro:{bg:'sala',
+    enter:()=>{S.calor+=20;badge('💛 Tão perto!');if(S.calor>=60)badge('🧣 À prova de frio')},
+    text:()=>[`Lá dentro, uma sala de sofás azuis e tapete de folhas. No sofá, uma menina loura de cabelo liso levanta a cabeça... é <b>${N()}</b>! 💛`,
+      `Ela corre até a janela e encosta a mão no vidro. Ana encosta a dela do outro lado. Só um vidro separa as duas.`,
+      say('gabi',`“Madrinha!! Você veio mesmo! Eu não posso sair agora... mas olha só!”`)],
+    choices:()=>[...(has('lanterna')?[{t:'🔦 Piscar a lanterna em código: “estou aqui”',go:'bilhete',fx:()=>badge('🔦 Código de luz')}]:[]),
+      {t:'✋ Fazer sinal de “estou aqui” e esperar',go:'bilhete'}]},
+
+  bilhete:{bg:'sala',
+    text:()=>[`${N()} sopra no vidro e desenha com o dedo: um <b>coração</b> e um <b>sol</b>, igualzinho ao sol do Ceará. ☀️💛`,
+      `Depois ela cola um bilhetinho na janela: <i>“Madrinha, a porta só abre amanhã. Volte, tá? Tenho tanta coisa pra te contar!”</i>`,
+      `Nessa hora, passos no corredor! ${N()} manda um beijo e volta correndo para o sofá. A luz da sala se apaga.`],
+    choices:()=>[{t:'💛 Prometer que volta amanhã',go:'fim'}]},
+
+  fim:{bg:'fim1',
+    enter:()=>{try{localStorage.setItem('madrinha-fase1','1')}catch(e){}},
+    text:()=>[`Ana atravessou o oceano, enfrentou o vento gelado e encontrou ${N()}. Chegou <b>tão perto</b>, a um vidro de distância! 💛`,
+      `Mas ainda não foi dessa vez que as duas puderam ficar juntinhas. A porta só abre amanhã, e até lá a Madrinha precisa achar um lugar quentinho para passar a noite em Helsinque.`,
+      say('ana',`“${ANA.frase} Me espera, ${N()}: amanhã eu volto!”`),
+      `<span class="frozen">🗺️ <b>Próximas fases</b><br>🔒 Fase 2: Passeio por Helsinque<br>🔒 Fase 3: ???<br>🔒 Fase 4: ???</span>`],
+    choices:()=>[], end:true}
+};
+
+/* ---------- Finais descobertos (só neste navegador) ---------- */
+
+
+
+/* ---------- Interface ---------- */
+const app=document.getElementById('app');
+const hud=document.getElementById('hud');
+const bar=document.getElementById('calorBar');
+let toastT;
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),1800)}
+function updateHud(){hud.hidden=false;const c=S.calor;bar.style.width=c+'%';bar.style.background=c>60?'#ff9f43':c>30?'#ffd25a':'#6db7ff'}
+function invHtml(){if(!S.inv.length)return '';return `<div class="inv">Mochila: ${S.inv.map(k=>`<span class="c" title="${ITENS[k].n}">${ITENS[k].e} ${k==='luva'?'Luva de '+N():ITENS[k].n}</span>`).join('')}</div>`}
+function scrollTop(){document.querySelector('.card').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})}
+
+function go(id){
+  const before=S.calor;const sc=SC[id];
+  if(sc.enter)sc.enter();
+  S.calor=Math.max(0,Math.min(100,S.calor));
+  let frozen=false;
+  if(S.calor<=0){S.calor=60;frozen=true}
+  const d=S.calor-before;
+  const paras=sc.text().filter(Boolean);
+  if(frozen)paras.push(`<span class="frozen">🥶 Ana ficou tão gelada que virou um picolé de madrinha! Por sorte, uma família de alces gentis a cobriu com um cobertor até ela se esquentar.</span>`);
+  const choices=sc.choices();
+  let html=`<div class="art">${art(sc.bg)}</div><div class="body"><div class="text">${paras.map((p,i)=>`<p class="in" style="animation-delay:${i*.08}s">${p}</p>`).join('')}</div>`;
+  if(sc.end){
+    html+=`<div class="end"><h3>🏁 Fim da Fase 1</h3><p>Conquistas: <b>${conqSaved().length} de 7</b> desbloqueadas. Jogue de novo com outros itens para descobrir todas!</p><div class="badges">${S.conq.map(x=>`<span>${x}</span>`).join('')}</div><button class="btn main" id="again">Jogar de novo</button></div>`;
+  } else {
+    html+=`<div class="choices">${choices.map((c,i)=>`<button data-i="${i}">${c.t}</button>`).join('')}</div>`;
+  }
+  html+=invHtml()+`</div>`;
+  app.innerHTML=html;
+  app.querySelectorAll('.choices button').forEach(b=>b.onclick=()=>{const c=choices[+b.dataset.i];if(c.fx)c.fx();go(c.go);scrollTop()});
+  const again=document.getElementById('again');if(again)again.onclick=()=>{startScreen(S.nome);scrollTop()};
+  updateHud();
+  if(d>0)toast(`🔥 +${d} de calor`);else if(d<0)toast(`❄️ ${d} de calor`);
+}
+
+function renderMala(){
+  const opts=['casaco','lanterna','brigadeiro','paodequeijo','cocada','foto'];
+  const sel=new Set();
+  app.innerHTML=`<div class="art">${art('casa')}</div><div class="body"><div class="text"><p class="in">Ana abre a mala em cima da cama. Mas é uma mala de mão: <b>só cabem 3 coisas</b>. O que levar para a Finlândia? Cada escolha muda a aventura!</p></div><div class="items">${opts.map(k=>`<button class="item" aria-pressed="false" data-k="${k}"><span class="e">${ITENS[k].e}</span><b>${ITENS[k].n}</b><small>${ITENS[k].d}</small></button>`).join('')}</div><button class="btn main" id="fechar" disabled>Escolha 3 itens (0 de 3)</button></div>`;
+  const btn=document.getElementById('fechar');
+  app.querySelectorAll('.item').forEach(b=>b.onclick=()=>{const k=b.dataset.k;
+    if(sel.has(k)){sel.delete(k);b.setAttribute('aria-pressed','false')}
+    else if(sel.size<3){sel.add(k);b.setAttribute('aria-pressed','true')}
+    else{toast('A mala está cheia! Tire algo antes.');return}
+    btn.disabled=sel.size!==3;btn.textContent=sel.size===3?'✅ Fechar a mala e partir!':`Escolha 3 itens (${sel.size} de 3)`});
+  btn.onclick=()=>{S.inv=[...sel];go('estrada');scrollTop()};
+  updateHud();
+}
+SC.mala={};const _go=go;go=function(id){if(id==='mala')return renderMala();_go(id)};
+
+function startScreen(nome){
+  reset(nome);hud.hidden=true;
+  const n=conqSaved().length;
+  app.innerHTML=`<div class="art">${art('casa')}</div><div class="body start"><h2>Madrinha Ana ao Resgate</h2><p><b>Fase 1.</b> Você é a <b>Madrinha Ana</b>! A Gabi está em Helsinque, na Finlândia, morrendo de saudade, e chamou a Madrinha Ana para passear. Mas ela está em Solonópole, no sertão do Ceará, do outro lado do mundo, e só fala português!</p><label for="nome">Nome da afilhada</label><input id="nome" maxlength="24" value="${esc(nome||'Gabi')}" autocomplete="off">${(()=>{const d=new Date();return d.getMonth()===9&&d.getDate()===12?'<p class="msg" style="display:block">🎂 Hoje é aniversário da Madrinha Ana e Dia das Crianças! Parabéns, Madrinha! 🎉</p>':''})()}<p class="hint">Fique de olho no termômetro lá em cima: o frio de Helsinque é de rachar!${n?` Conquistas: ${n} de 7.`:''}</p><button class="btn main" id="start">❄️ Começar a aventura</button><p class="hint" style="text-align:center"><a href="index.html" style="color:inherit">Voltar ao jogo de ação</a></p></div>`;
+  const inp=document.getElementById('nome');
+  const begin=()=>{S.nome=inp.value;go('mensagem');scrollTop()};
+  document.getElementById('start').onclick=begin;
+  inp.onkeydown=e=>{if(e.key==='Enter')begin()};
+}
+startScreen('Gabi');
+</script>
+</body>
+</html>
