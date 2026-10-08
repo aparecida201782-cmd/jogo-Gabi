@@ -45,6 +45,14 @@ O Ilo, o cachorro da família, vai junto.
 ## Entre as fases
 Ao terminar cada parte aparece o mapa da viagem, com a rota e o transporte até o próximo destino, de 1 a 3 estrelas (docinhos pegos e vidas que sobraram), confete e musiquinha. No fim do jogo, a Madrinha deixa um cartão-postal de Solonópole para a Gabi.
 
+## Esquadrão Neon (jogo novo, para jogar junto)
+Nave espacial em 5 setores (Nebulosa Rosa, Anéis de Gelo, Cinturão de Asteroides, Cidade Neon de Órion e Núcleo da NÉVOA), cada um com um chefão. Abre pelo botão no menu do jogo principal ou direto em `neon.html`.
+- **Pilotos:** Madrinha Ana (+1 vida), Gabi (especial mais rápido), José (nave pequena e veloz), Keka (tiro mais rápido), Emiel (tiro mais forte), Vovó Hermina (ímã de estrelas) e o Ilo (começa com um drone).
+- **Jeitos de jogar:** com uma nave; duas naves no mesmo aparelho (cada uma usa metade da tela); ou **online**, cada uma no seu celular: uma cria a sala e manda o código de 4 letras para a outra.
+- Arraste o dedo para pilotar, o tiro é automático. O botão ESPECIAL limpa a tela. Em dupla, quem cai vira uma cápsula SOS e a outra nave salva.
+- Depois de cada chefão, cada piloto escolhe uma melhoria. Três dificuldades (Fácil, Normal, Insano) e recordes salvos.
+- O modo online usa o PeerJS (`lib/peerjs.min.js`) e o servidor gratuito de salas do PeerJS; as duas precisam de internet.
+
 ## Visual e efeitos especiais
 Menus em estilo neon (vidro, brilho e grade animada), painel de vida e pontos futurista, brilho (bloom) nas luzes, raios de sol, vagalumes e poeira no ar, rastro de velocidade, ondas de choque e "POW!" nos golpes, tremida e congelada rápida no impacto, câmera suave e abertura em círculo no começo de cada fase. Se o celular ficar lento, os efeitos mais pesados se desligam sozinhos.
 
