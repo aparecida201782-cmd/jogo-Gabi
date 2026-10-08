@@ -51,6 +51,7 @@ Corrida em 3 faixas fugindo da NÉVOA, passando pelas cidades da família: Sert�
 - **Obstáculos:** barreiras (pule), barras rosa (deslize), veículos (desvie ou suba pela rampa amarela e corra em cima) e drones da NÉVOA. Bater de lado faz tropeçar; duas vezes seguidas, a NÉVOA pega.
 - **Personagens:** Madrinha Ana (começa com escudo), Gabi (pulo duplo), José (passa por baixo das barras), Keka (pula mais alto), Emiel (quebra barreiras), Vovó Hermina (ímã dura o dobro) e Ilo (pequeno e já sai com ímã).
 - **Poderes:** ímã, pontos em dobro, mochila-foguete, tênis de mola e escudo. Moedas compram melhorias na loja; missões aumentam o multiplicador de pontos.
+- **Online:** duas pessoas correm ao mesmo tempo na mesma pista, cada uma no seu celular (código de sala de 4 letras). Uma vê a outra correndo ao lado; no fim aparece quem fez mais pontos, com botão de revanche.
 
 ## Esquadrão Neon (jogo novo, para jogar junto)
 Nave espacial em 5 setores (Nebulosa Rosa, Anéis de Gelo, Cinturão de Asteroides, Cidade Neon de Órion e Núcleo da NÉVOA), cada um com um chefão. Abre pelo botão no menu do jogo principal ou direto em `neon.html`.
