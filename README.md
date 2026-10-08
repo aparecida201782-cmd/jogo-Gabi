@@ -81,7 +81,7 @@ O que deixa o jogo mais misterioso:
 - **Segredos:** mande nomes da série (Damon, Stefan, Elena, Katherine, Klaus, Caroline, Bonnie) a qualquer momento para ver o que a bruxa responde.
 
 ### No celular, pelo navegador
-Abra `mystic.html` (no site: https://aparecida201782-cmd.github.io/jogo-Gabi/mystic.html). Parece uma conversa de aplicativo de mensagens, com "digitando...", arquivo para abrir e áudio falado. O progresso fica salvo no celular.
+Abra `mystic.html` (no site: https://jogodamadrinhaana.dynosai.cloud/mystic.html). Parece uma conversa de aplicativo de mensagens, com "digitando...", arquivo para abrir e áudio falado. O progresso fica salvo no celular.
 
 ### No WhatsApp de verdade
 O robô fica em `whatsapp/`. Ele precisa de um **número de WhatsApp só para ele** (um chip extra; não use o seu número pessoal, porque o robô usa uma conexão não oficial e o WhatsApp pode bloquear o número) e de um computador ligado com o [Node.js](https://nodejs.org) 20 ou mais novo.
@@ -106,7 +106,7 @@ Menus em estilo neon (vidro, brilho e grade animada), painel de vida e pontos fu
 O GitHub Actions gera o app a cada envio (`.github/workflows/android.yml`). Baixe o `MadrinhaAna.apk` na página **Releases** do repositório, abra no celular e permita a instalação.
 
 ## Site
-O jogo é publicado pelo GitHub Pages em https://aparecida201782-cmd.github.io/jogo-Gabi/ (o domínio jogodamadrinhaana.dynosai.cloud só funciona depois de configurado no DNS e em Settings > Pages) (`.github/workflows/site.yml`).
+O jogo é publicado pelo GitHub Pages em https://jogodamadrinhaana.dynosai.cloud (domínio configurado com um registro CNAME apontando para aparecida201782-cmd.github.io e em Settings > Pages) (`.github/workflows/site.yml`).
 
 ## Rodar no navegador
 Abra `index.html`. A versão de história com escolhas está em `historia.html`.
