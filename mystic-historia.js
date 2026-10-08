@@ -67,7 +67,7 @@ export function estadoInicial() {
 // ---------- Fase 1: O Grimório Digitalizado ----------
 const FASE1 = [
   m('...', 1500),
-  img('floresta', 'Onde eu acordei.'),
+  vid('abertura', 'Onde eu acordei.'),
   m('Oi. Não desliga, por favor. Eu não tenho muito tempo.'),
   { fantasma: true, espera: 2500 },
   m('Ele está aqui perto. Eu sinto.', 1500, { apagar: 3500 }),
@@ -146,7 +146,7 @@ const FASE6 = [
 // ---------- Fase 7: A Escolha ----------
 const FASE7 = [
   m('⚰️ *O túmulo embaixo da igreja!* Onde os 27 vampiros ficaram presos desde 1864.'),
-  img('cripta', 'As velas acenderam sozinhas.'),
+  vid('cripta', 'As velas acenderam sozinhas.'),
   m('Estou aqui. Tem velas que acenderam sozinhas quando eu entrei. Atrás de uma pedra solta... achei. A *estaca de carvalho branco*. Está quente na minha mão.'),
   m('E agora eu lembro de TUDO. Meu nome é *Bonnie Bennett*. O Original que está vindo se chama *Silas*, e ele quer a estaca para destruir os outros. O Lucien jurou proteger meu segredo em troca da própria liberdade.', 4000, { efeito: 'glitch' }),
   m('O Damon mandou mensagem: _"O vampiro do porão está acordando. Mato ou solto?"_\n\nSe a gente soltar o Lucien, ele pode lutar do nosso lado... ou trair a gente. Se ficar preso, a cidade fica mais segura hoje, mas a gente enfrenta o Silas sozinhas.', D, R),
