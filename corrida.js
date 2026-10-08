@@ -540,7 +540,7 @@ function title(){
   mode='title';pauseBtn.hidden=true;if(!R||!R.attract||R.who!==store.char)newRun(true);music.start();music.bio=0;
   const allDone=store.missions.every(m=>m.done);
   const btns=[{t:'▶ CORRER',cls:'play',go:startRun},{t:'🌐 Correr online com alguém',cls:'pink',go:onlineMenu},{row:[{t:'👥 Personagens',cls:'alt',go:chars},{t:'🛒 Loja',cls:'alt',go:shop},{t:`🎯 Missões${allDone?' ✨':''}`,cls:'alt',go:missions}]},
-    {row:[{t:'❔ Como jogar',cls:'alt',go:howTo},{t:store.mute?'🔇 Som':'🔊 Som',cls:'alt',go:()=>{store.mute=!store.mute;save();if(MASTER)MASTER.gain.value=store.mute?0:.8;title();}},{t:'⬅ Outros jogos',cls:'alt',go:()=>{location.href='index.html';}}]}];
+    {row:[{t:'❔ Como jogar',cls:'alt',go:howTo},{t:store.mute?'🔇 Som':'🔊 Som',cls:'alt',go:()=>{store.mute=!store.mute;save();if(MASTER)MASTER.gain.value=store.mute?0:.8;title();}},{t:'⬅ Galáxia da Gabi',cls:'alt',go:()=>{location.href='index.html';}}]}];
   panel(`<div class="logo"><div class="l1">CORRIDA</div><div class="l2">NEON</div><div class="l3">Fuja da NÉVOA pelas cidades da família</div></div>
     <div class="menu"><div class="stats"><span class="chip">🏆 <b>${store.best.toLocaleString('pt-BR')}</b></span><span class="chip">🪙 <b>${store.coins.toLocaleString('pt-BR')}</b></span><span class="chip">✖ <b>${mult()}</b></span><span class="chip" style="border-color:${CH[store.char].hex}">${CH[store.char].nome}</span></div>${btnsHTML(btns)}</div>`,btns,{raw:1,dim:false,id:'title'});
   ov.style.background='linear-gradient(rgba(3,2,14,.55),transparent 35%,transparent 55%,rgba(3,2,14,.75))';

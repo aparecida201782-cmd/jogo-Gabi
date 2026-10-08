@@ -58,6 +58,7 @@
   .opc{display:flex;gap:8px;flex-wrap:wrap;margin:-2px 0 10px}
   .opc button{font:inherit;font-weight:700;border:1px solid var(--gold);background:rgba(231,195,106,.08);color:var(--gold);border-radius:99px;padding:8px 16px;cursor:pointer}
   .opc button:hover,.opc button:focus-visible{background:rgba(231,195,106,.2);outline:none}
+  #volta{flex:none;color:var(--muted);text-decoration:none;font-size:1.8rem;line-height:1;margin:-4px -4px 0 -4px;padding:0 4px}
   #som{flex:none;border:0;background:none;font-size:1.25rem;cursor:pointer;padding:4px;color:var(--ink)}
   #lupa .zoom{overflow:auto;max-height:78vh;touch-action:pan-x pan-y pinch-zoom}
   #lupa img{display:block;width:100%;cursor:zoom-in;transition:width .25s}
@@ -83,6 +84,7 @@
 </head>
 <body>
 <header>
+  <a id="volta" href="index.html" aria-label="Voltar para a Galáxia da Gabi">‹</a>
   <div class="av" aria-hidden="true"></div>
   <div><div class="nm" id="nome">Número desconhecido</div><div class="st" id="st">online</div></div>
   <div class="fs" id="fs"></div>
