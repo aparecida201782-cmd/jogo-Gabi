@@ -113,7 +113,7 @@ const ITENS={
   brigadeiro:{e:'🍫',n:'Pote de brigadeiro',d:'Docinho que conquista qualquer um'},
   paodequeijo:{e:'🧀',n:'Pão de queijo',d:'O lanche oficial da madrinha'},
   cocada:{e:'🥥',n:'Cocada',d:'Direto do Nordeste'},
-  dicionario:{e:'📖',n:'Dicionário de finlandês',d:'Para conversar com os locais'}
+  foto:{e:'📸',n:'Foto com a Gabi',d:'Vale mais que mil palavras'}
 };
 
 /* ---------- Ilustrações ---------- */
@@ -149,6 +149,8 @@ function art(k){
     b=night()+stars(45,90,13)+aurora(-15)+castle(330,150,.45)+`<polygon points="0,140 115,130 125,220 0,220" fill="#2b3f6b"/><polygon points="0,140 115,130 112,138 0,148" fill="#eaf3fb"/><polygon points="285,130 400,138 400,220 278,220" fill="#2b3f6b"/><polygon points="285,130 400,138 400,146 288,138" fill="#eaf3fb"/><path d="M112 134 Q200 112 290 134 L290 142 Q200 122 112 142Z" fill="#a8dcff"/><g><circle cx="200" cy="96" r="28" fill="#f4f9ff"/><circle cx="200" cy="54" r="20" fill="#f4f9ff"/><circle cx="192" cy="50" r="3.5" fill="#2c6fd1"/><circle cx="208" cy="50" r="3.5" fill="#2c6fd1"/><path d="M191 61 Q200 67 209 61" stroke="#5a6b86" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M172 90 L148 72" stroke="#f4f9ff" stroke-width="9" stroke-linecap="round"/><path d="M228 90 L252 72" stroke="#f4f9ff" stroke-width="9" stroke-linecap="round"/><circle cx="200" cy="92" r="3" fill="#9fd6ff"/><circle cx="200" cy="104" r="3" fill="#9fd6ff"/></g>`+snow(30,6);
   } else if(k==='castelo'){
     b=night('#060f26','#1c2f63')+stars(50,80,17)+aurora()+ground(186)+castle()+snow(40,12);
+  } else if(k==='estrada'){
+    b=`<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb35a"/><stop offset="1" stop-color="#ffe6a8"/></linearGradient></defs><rect width="400" height="220" fill="url(#sk)"/><circle cx="70" cy="52" r="28" fill="#fff4b8"/><path d="M0 150 Q100 135 200 148 T400 140 V220 H0Z" fill="#d9a35b"/><polygon points="150,220 250,220 206,150 194,150" fill="#5d5a63"/><path d="M200 220 L200 150" stroke="#ffd25a" stroke-width="2" stroke-dasharray="8 8"/>`+[[60,150],[330,146],[372,156]].map(([x,y])=>`<g fill="#4f8a3c"><rect x="${x-4}" y="${y-38}" width="8" height="40" rx="4"/><rect x="${x-16}" y="${y-28}" width="7" height="18" rx="3.5"/><rect x="${x+9}" y="${y-32}" width="7" height="20" rx="3.5"/><rect x="${x-16}" y="${y-14}" width="16" height="6" rx="3"/><rect x="${x}" y="${y-16}" width="16" height="6" rx="3"/></g>`).join('')+`<g transform="translate(200 182)"><rect x="-26" y="-14" width="52" height="18" rx="6" fill="#e8474f"/><path d="M-16 -14 L-10 -26 H12 L18 -14Z" fill="#e8474f"/><path d="M-11 -15 L-7 -23 H9 L13 -15Z" fill="#bfe6ff"/><circle cx="-14" cy="5" r="6" fill="#222b3d"/><circle cx="14" cy="5" r="6" fill="#222b3d"/></g><text x="14" y="210" font-size="13" fill="#5a3a1a" font-weight="bold">Solonópole → Fortaleza</text>`;
   } else if(k==='fim1'){
     b=night('#0a1838','#2b4680')+stars(60,110,21)+aurora(-10)+aurora(20)+ground(190)+heart(70,60,1.6)+heart(310,80,1.2,'#ffd25a')+heart(110,120,.9,'#5ee6b8')+heart(280,40,.9)+house(150,100,60,'#c9564a')+`<text x="168" y="212" font-size="22">🇧🇷💛🇫🇮</text>`+snow(30,4);
   } else if(k==='final'){
@@ -175,17 +177,28 @@ const doce=()=>DOCES.find(has);
 
 const SC={
   mensagem:{bg:'casa',
-    text:()=>[`Tarde de sol forte no <b>Nordeste do Brasil</b>. A <b>Madrinha Ana</b>, de cabelo preso e leque na mão, toma um cafezinho na varanda quando o celular vibra.`,
+    text:()=>[`Tarde de sol rachando em <b>Solonópole, no sertão do Ceará</b>. 38 °C na sombra! A <b>Madrinha Ana</b>, de cabelo preso e leque na mão, toma um cafezinho na varanda quando o celular vibra.`,
       `É uma mensagem de <b>${N()}</b>, a afilhada loura de cabelo liso, filha da irmã dela com um finlandês, que mora do outro lado do mundo, em <b>Helsinque</b>:`,
-      say('gabi',`“Madrinha, socorro! 😱 Estou presa num lugar aqui em Helsinque e não consigo sair! Só você pode me ajudar!”`),
-      `Ana larga a xícara na hora. Ninguém mexe com a afilhada dela!`],
+      say('gabi',`“Madrinha, socorro! 😱 Estou longe de casa e do papai e da mamãe, num lugar aqui em Helsinque, e não posso sair. Que saudade! Só você pode me ajudar!”`),
+      `Ana larga a xícara na hora. Faltam poucos dias para o aniversário dela, <b>12 de outubro</b>, e o único presente que ela quer é ver a afilhada. Só tem um probleminha: a Madrinha só fala português. Mas isso nunca parou a Madrinha Ana!`],
     choices:()=>[{t:'🧳 Arrumar a mala agora mesmo',go:'mala'}]},
 
-  voo:{bg:'aviao',
-    text:()=>[`Do Nordeste até Helsinque são duas conexões e mais de vinte horas de viagem. Ana olha pela janelinha o mar de nuvens e pensa em ${N()}.`,
-      `Ela sabe que o pai da afilhada é finlandês, e que ela não entende nada do idioma. Como usar o tempo de voo?`],
-    choices:()=>[{t:has('dicionario')?'📖 Estudar finlandês no dicionário':'🧑‍🤝‍🧑 Aprender frases com o passageiro ao lado',go:'helsinque',fx:()=>{S.flags.fi=true;badge('🗣️ Poliglota')}},
-      {t:'😴 Dormir até pousar',go:'helsinque'}]},
+  estrada:{bg:'estrada',
+    text:()=>[`Primeiro desafio: sair de Solonópole e chegar ao aeroporto de <b>Fortaleza</b>. Ana pega o carro e encara quase 300 km de estrada pelo sertão, com o rádio tocando forró. 🚗`,
+      `No meio do caminho, uma barraquinha na beira da estrada: tapioca quentinha e queijo coalho na brasa...`],
+    choices:()=>[{t:'🫓 Parar para comer uma tapioca',go:'fortaleza',fx:()=>S.flags.tapioca=true},
+      {t:'💨 Seguir direto, a Gabi está esperando!',go:'fortaleza'}]},
+
+  fortaleza:{bg:'aviao',
+    text:()=>[S.flags.tapioca?`Barriga cheia de tapioca, Ana chega ao aeroporto de Fortaleza bem a tempo!`:`Ana chega ao aeroporto de Fortaleza tão adiantada que ainda dá tempo de um cafezinho.`,
+      `O avião decola de <b>Fortaleza, no Brasil</b>, e cruza o Oceano Atlântico rumo a <b>Lisboa, em Portugal</b>. Lá embaixo, só mar azul. ✈️`],
+    choices:()=>[{t:'🛬 Pousar em Lisboa',go:'lisboa'}]},
+
+  lisboa:{bg:'aviao',
+    text:()=>[`<b>Lisboa!</b> Ana troca de avião: o próximo voo vai de Portugal até <b>Helsinque, na Finlândia</b>. Aqui ainda todo mundo fala português, que alívio! 🇵🇹`,
+      `No portão de embarque, Ana senta ao lado de uma cearense simpática, a <b>Dona Socorro</b>, que mora na Finlândia há vinte anos.`],
+    choices:()=>[{t:'💬 Puxar conversa com a Dona Socorro',go:'helsinque',fx:()=>{S.flags.fi=true;S.flags.socorro=true;badge('📝 Bilhete mágico')}},
+      {t:'🥐 Comer um pastel de nata e dormir o voo todo',go:'helsinque'}]},
 
   helsinque:{bg:'fora',
     enter:()=>{S.calor-=has('casaco')?8:20},
@@ -195,17 +208,20 @@ const SC={
     choices:()=>[{t:'🚪 Bater na porta da frente',go:'porta'},{t:'🌿 Dar a volta e procurar a janela da afilhada',go:'janela'}]},
 
   porta:{bg:'fora',
-    text:()=>[`Ana toca a campainha. Uma funcionária aparece do outro lado da porta de vidro. Ela fala finlandês e olha desconfiada para aquela brasileira de casaco no meio do verão.`,
-      `Pela fresta, ela avisa: <i>“Ei vierailuja tänään!”</i> Pelo jeito, hoje não tem visita.`],
+    text:()=>[...(S.flags.socorro?[`(Antes de se despedir, Dona Socorro escreveu num papelzinho, em finlandês: <i>“Olen Gabin kummitäti”</i>, que quer dizer <b>“Sou a madrinha da Gabi”</b>.)`]:[]),
+      `Ana toca a campainha. Uma funcionária aparece do outro lado da porta de vidro. Ela fala finlandês e olha desconfiada para aquela brasileira de casaco no meio do verão.`,
+      `Pela fresta, ela diz alguma coisa: <i>“Ei vierailuja tänään!”</i> Ana não entende uma palavra, mas pela cara... hoje não tem visita.`],
     choices:()=>[
-      ...(S.flags.fi?[{t:'🗣️ Dizer “Hei! Olen Gabin kummitäti!” (Oi! Sou a madrinha da Gabi!)',go:'porta2',fx:()=>S.flags.via='finlandes'}]:[]),
+      ...(S.flags.fi?[{t:'📝 Mostrar o papelzinho da Dona Socorro',go:'porta2',fx:()=>S.flags.via='bilhete'}]:[]),
+      ...(has('foto')?[{t:'📸 Mostrar a foto dela com a Gabi',go:'porta2',fx:()=>{S.flags.via='foto';badge('📸 Prova de amor')}}]:[]),
       ...(doce()?[{t:`${ITENS[doce()].e} Oferecer ${ITENS[doce()].n.toLowerCase()} à funcionária`,go:'porta2',fx:()=>{S.flags.via='doce';badge('🍬 Doceira de mão cheia')}}]:[]),
-      {t:'🤝 Explicar em português, com muitos gestos',go:'porta2',fx:()=>{S.flags.via='gestos';S.calor-=5}}]},
+      {t:'🗣️ Explicar tudo em português, bem alto e com muitos gestos',go:'porta2',fx:()=>{S.flags.via='gestos';S.calor-=5}}]},
 
   porta2:{bg:'fora',
-    text:()=>[S.flags.via==='finlandes'?`A funcionária arregala os olhos: <i>“Ahh, Gabin kummi!”</i> Ela sorri, mas balança a cabeça: a porta só abre amanhã. Baixinho, ela aponta para o jardim: <i>“Ikkuna...”</i> (a janela). 🇫🇮`
-      :S.flags.via==='doce'?`A funcionária prova, fecha os olhos e suspira: <i>“Herkullista!”</i> (delicioso!). Não pode abrir a porta, mas faz um sinal discreto: dê a volta pelo jardim. 😉`
-      :`A funcionária não entende nada da mímica, ri educadamente e fecha a porta. Ana fica sozinha no vento gelado. Hora de outro plano!`],
+    text:()=>[S.flags.via==='bilhete'?`A funcionária lê o papel e arregala os olhos: <i>“Ahh, Gabin kummi!”</i> Ela sorri, mas balança a cabeça: a porta só abre amanhã. Baixinho, ela aponta para o jardim. 🇫🇮`
+      :S.flags.via==='foto'?`A funcionária olha a foto, olha para Ana, olha a foto de novo... e sorri. Reconheceu a Gabi! Não pode abrir a porta, mas aponta discretamente para o jardim. 😉`
+      :S.flags.via==='doce'?`A funcionária prova, fecha os olhos e suspira: <i>“Herkullista!”</i> Ana não sabe o que é, mas parece elogio! Ela não pode abrir a porta, mas faz um sinal: dê a volta pelo jardim. 😉`
+      :`Quanto mais alto Ana fala, menos a funcionária entende. Ela ri educadamente e fecha a porta. Ana fica sozinha no vento gelado. Hora de outro plano!`],
     choices:()=>[{t:'🌿 Dar a volta pelo jardim',go:'janela'}]},
 
   janela:{bg:'fora',
@@ -218,22 +234,22 @@ const SC={
     enter:()=>{S.calor+=20;badge('💛 Tão perto!');if(S.calor>=60)badge('🧣 À prova de frio')},
     text:()=>[`Lá dentro, uma sala de sofás azuis e tapete de folhas. No sofá, uma menina loura de cabelo liso levanta a cabeça... é <b>${N()}</b>! 💛`,
       `Ela corre até a janela e encosta a mão no vidro. Ana encosta a dela do outro lado. Só um vidro separa as duas.`,
-      say('gabi',`“Madrinha!! Você veio mesmo! Eu não consigo sair... mas descobri uma coisa. Olha!”`)],
+      say('gabi',`“Madrinha!! Você veio mesmo! Eu não posso sair agora... mas olha só!”`)],
     choices:()=>[...(has('lanterna')?[{t:'🔦 Piscar a lanterna em código: “estou aqui”',go:'bilhete',fx:()=>badge('🔦 Código de luz')}]:[]),
       {t:'✋ Fazer sinal de “estou aqui” e esperar',go:'bilhete'}]},
 
   bilhete:{bg:'sala',
-    text:()=>[`${N()} sopra no vidro e desenha com o dedo: uma <b>chave</b> 🗝️ e uma seta apontando para longe.`,
-      `Depois ela cola um bilhetinho na janela: <i>“A chave não está aqui. Encontre-a e volte por mim!”</i>`,
+    text:()=>[`${N()} sopra no vidro e desenha com o dedo: um <b>coração</b> e um <b>sol</b>, igualzinho ao sol do Ceará. ☀️💛`,
+      `Depois ela cola um bilhetinho na janela: <i>“Madrinha, a porta só abre amanhã. Volte, tá? Tenho tanta coisa pra te contar!”</i>`,
       `Nessa hora, passos no corredor! ${N()} manda um beijo e volta correndo para o sofá. A luz da sala se apaga.`],
-    choices:()=>[{t:'🗝️ Guardar a pista no coração',go:'fim'}]},
+    choices:()=>[{t:'💛 Prometer que volta amanhã',go:'fim'}]},
 
   fim:{bg:'fim1',
     enter:()=>{try{localStorage.setItem('madrinha-fase1','1')}catch(e){}},
     text:()=>[`Ana atravessou o oceano, enfrentou o vento gelado e encontrou ${N()}. Chegou <b>tão perto</b>, a um vidro de distância! 💛`,
-      `Mas a afilhada ainda não está livre. Agora Ana tem uma pista: uma chave escondida em algum lugar de Helsinque.`,
-      say('ana',`“${ANA.frase} Me espera, ${N()}: eu vou achar essa chave!”`),
-      `<span class="frozen">🗺️ <b>Próximas fases</b><br>🔒 Fase 2: A chave perdida<br>🔒 Fase 3: ???<br>🔒 Fase 4: ???</span>`],
+      `Mas ainda não foi dessa vez que as duas puderam ficar juntinhas. A porta só abre amanhã, e até lá a Madrinha precisa achar um lugar quentinho para passar a noite em Helsinque.`,
+      say('ana',`“${ANA.frase} Me espera, ${N()}: amanhã eu volto!”`),
+      `<span class="frozen">🗺️ <b>Próximas fases</b><br>🔒 Fase 2: O dia da visita<br>🔒 Fase 3: ???<br>🔒 Fase 4: ???</span>`],
     choices:()=>[], end:true}
 };
 
@@ -263,7 +279,7 @@ function go(id){
   const choices=sc.choices();
   let html=`<div class="art">${art(sc.bg)}</div><div class="body"><div class="text">${paras.map((p,i)=>`<p class="in" style="animation-delay:${i*.08}s">${p}</p>`).join('')}</div>`;
   if(sc.end){
-    html+=`<div class="end"><h3>🏁 Fim da Fase 1</h3><p>Conquistas: <b>${conqSaved().length} de 6</b> desbloqueadas. Jogue de novo com outros itens para descobrir todas!</p><div class="badges">${S.conq.map(x=>`<span>${x}</span>`).join('')}</div><button class="btn main" id="again">Jogar de novo</button></div>`;
+    html+=`<div class="end"><h3>🏁 Fim da Fase 1</h3><p>Conquistas: <b>${conqSaved().length} de 7</b> desbloqueadas. Jogue de novo com outros itens para descobrir todas!</p><div class="badges">${S.conq.map(x=>`<span>${x}</span>`).join('')}</div><button class="btn main" id="again">Jogar de novo</button></div>`;
   } else {
     html+=`<div class="choices">${choices.map((c,i)=>`<button data-i="${i}">${c.t}</button>`).join('')}</div>`;
   }
@@ -276,7 +292,7 @@ function go(id){
 }
 
 function renderMala(){
-  const opts=['casaco','lanterna','brigadeiro','paodequeijo','cocada','dicionario'];
+  const opts=['casaco','lanterna','brigadeiro','paodequeijo','cocada','foto'];
   const sel=new Set();
   app.innerHTML=`<div class="art">${art('casa')}</div><div class="body"><div class="text"><p class="in">Ana abre a mala em cima da cama. Mas é uma mala de mão: <b>só cabem 3 coisas</b>. O que levar para a Finlândia? Cada escolha muda a aventura!</p></div><div class="items">${opts.map(k=>`<button class="item" aria-pressed="false" data-k="${k}"><span class="e">${ITENS[k].e}</span><b>${ITENS[k].n}</b><small>${ITENS[k].d}</small></button>`).join('')}</div><button class="btn main" id="fechar" disabled>Escolha 3 itens (0 de 3)</button></div>`;
   const btn=document.getElementById('fechar');
@@ -285,7 +301,7 @@ function renderMala(){
     else if(sel.size<3){sel.add(k);b.setAttribute('aria-pressed','true')}
     else{toast('A mala está cheia! Tire algo antes.');return}
     btn.disabled=sel.size!==3;btn.textContent=sel.size===3?'✅ Fechar a mala e partir!':`Escolha 3 itens (${sel.size} de 3)`});
-  btn.onclick=()=>{S.inv=[...sel];go('voo');scrollTop()};
+  btn.onclick=()=>{S.inv=[...sel];go('estrada');scrollTop()};
   updateHud();
 }
 SC.mala={};const _go=go;go=function(id){if(id==='mala')return renderMala();_go(id)};
@@ -293,7 +309,7 @@ SC.mala={};const _go=go;go=function(id){if(id==='mala')return renderMala();_go(i
 function startScreen(nome){
   reset(nome);hud.hidden=true;
   const n=conqSaved().length;
-  app.innerHTML=`<div class="art">${art('casa')}</div><div class="body start"><h2>Madrinha Ana ao Resgate</h2><p><b>Fase 1.</b> Você é a <b>Madrinha Ana</b>! A Gabi está presa em Helsinque, na Finlândia, e só a Madrinha Ana pode ajudar. Mas ela está no calor do Nordeste do Brasil, do outro lado do mundo!</p><label for="nome">Nome da afilhada</label><input id="nome" maxlength="24" value="${esc(nome||'Gabi')}" autocomplete="off"><p class="hint">Fique de olho no termômetro lá em cima: o frio de Helsinque é de rachar!${n?` Conquistas: ${n} de 6.`:''}</p><button class="btn main" id="start">❄️ Começar a aventura</button><p class="hint" style="text-align:center"><a href="arcade.html" style="color:inherit">Modo arcade: salve a turma do calor</a></p></div>`;
+  app.innerHTML=`<div class="art">${art('casa')}</div><div class="body start"><h2>Madrinha Ana ao Resgate</h2><p><b>Fase 1.</b> Você é a <b>Madrinha Ana</b>! A Gabi está presa em Helsinque, na Finlândia, e só a Madrinha Ana pode ajudar. Mas ela está em Solonópole, no sertão do Ceará, do outro lado do mundo, e só fala português!</p><label for="nome">Nome da afilhada</label><input id="nome" maxlength="24" value="${esc(nome||'Gabi')}" autocomplete="off">${(()=>{const d=new Date();return d.getMonth()===9&&d.getDate()===12?'<p class="msg" style="display:block">🎂 Hoje é aniversário da Madrinha Ana e Dia das Crianças! Parabéns, Madrinha! 🎉</p>':''})()}<p class="hint">Fique de olho no termômetro lá em cima: o frio de Helsinque é de rachar!${n?` Conquistas: ${n} de 7.`:''}</p><button class="btn main" id="start">❄️ Começar a aventura</button><p class="hint" style="text-align:center"><a href="arcade.html" style="color:inherit">Modo arcade: salve a turma do calor</a></p></div>`;
   const inp=document.getElementById('nome');
   const begin=()=>{S.nome=inp.value;go('mensagem');scrollTop()};
   document.getElementById('start').onclick=begin;
