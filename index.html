@@ -515,10 +515,15 @@ function postcardPic(){
   for(let k=0;k<4;k++){g.beginPath();g.moveTo(690,150+k*10);for(let x=690;x<760;x+=10)g.quadraticCurveTo(x+5,145+k*10,x+10,150+k*10);g.stroke();}
   // mensagem
   const font='"Segoe Script","Brush Script MT","Snell Roundhand","Comic Sans MS",cursive';
-  g.fillStyle='#2a3a6a';g.font=`26px ${font}`;
+  g.fillStyle='#2a3a6a';
   const msg=[`Minha querida ${AFILHADA},`,'','Atravessei o mar, enfrentei a neve,','o frio e até um alce teimoso...','tudo pra ficar pertinho de você.','Onde você estiver, meu coração vai junto.','Você é forte, especial e muito amada.','A nossa aventura só está começando!','','Com todo o amor do mundo,','Madrinha Ana 💛'];
-  msg.forEach((l,k)=>g.fillText(l,530,240+k*34));
-  g.strokeStyle='#c8b58a';g.lineWidth=1;for(let k=0;k<11;k++){g.beginPath();g.moveTo(530,248+k*34);g.lineTo(970,248+k*34);g.stroke();}
+  // ajusta o tamanho da letra para todas as linhas caberem (a fonte manuscrita muda de celular para celular)
+  const maxW=425,top=222,bottom=600;let fs=28;
+  const fits=()=>{g.font=`${fs}px ${font}`;return msg.every(l=>g.measureText(l).width<=maxW)&&msg.length*fs*1.28<=bottom-top;};
+  while(fs>12&&!fits())fs--;
+  const lh=fs*1.28;g.font=`${fs}px ${font}`;g.textBaseline='alphabetic';
+  g.strokeStyle='#c8b58a';g.lineWidth=1;
+  msg.forEach((l,k)=>{const y=top+lh*(k+1)-lh*.25;g.fillText(l,535,y);g.beginPath();g.moveTo(530,y+lh*.22);g.lineTo(970,y+lh*.22);g.stroke();});
   return c.toDataURL('image/jpeg',.9);
 }
 function finishLevel(){
