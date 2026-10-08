@@ -490,6 +490,61 @@ function mapScreen(i,stars,done){
   mapRAF=requestAnimationFrame(step);
 }
 let mapRAF=0;
+function portraitPic(){
+  const c=document.createElement('canvas');c.width=900;c.height=900;const g=c.getContext('2d');
+  const R=(()=>{let s=7;return()=>{s=(s*9301+49297)%233280;return s/233280};})();
+  // parede texturizada
+  g.fillStyle='#efe9dc';g.fillRect(0,0,900,900);g.strokeStyle='rgba(180,170,150,.25)';g.lineWidth=2;
+  for(let i=0;i<260;i++){const x=R()*900,y=R()*900;g.beginPath();g.moveTo(x,y);g.quadraticCurveTo(x+R()*10-5,y+15,x+R()*8-4,y+30+R()*20);g.stroke();}
+  g.fillStyle='#8a6a40';g.fillRect(0,250,70,10);g.fillStyle='#c8a46a';for(let x=0;x<70;x+=8)g.fillRect(x,252,4,6);
+  const skin='#f3cdb5',skinD='#e3b49a';
+  const ell=(x,y,rx,ry,a,col)=>{g.fillStyle=col;g.beginPath();g.ellipse(x,y,rx,ry,a||0,0,7);g.fill();};
+  // ===== Madrinha (atrás, à esquerda) =====
+  g.save();g.translate(330,330);g.rotate(-.12);
+  g.fillStyle='#2e1a12';g.beginPath();g.moveTo(-120,-20);g.quadraticCurveTo(-130,-150,0,-160);g.quadraticCurveTo(125,-150,118,-20);g.lineTo(125,250);g.lineTo(-140,260);g.closePath();g.fill();
+  g.restore();
+  // corpo da Madrinha: blusa branca com bordado
+  g.fillStyle='#fbfaf6';g.beginPath();g.moveTo(80,900);g.lineTo(40,560);g.quadraticCurveTo(60,440,200,430);g.lineTo(420,450);g.lineTo(470,900);g.fill();
+  g.fillStyle='#f6f3ec';ell(120,560,95,120,-.3,'#f6f3ec');
+  g.strokeStyle='#c9ab7a';g.lineWidth=2.5;for(let i=0;i<14;i++){const x=60+R()*150,y=470+R()*200;g.beginPath();g.arc(x,y,6+R()*6,0,Math.PI*1.4);g.stroke();g.beginPath();g.moveTo(x,y+10);g.quadraticCurveTo(x+10,y+22,x+4,y+34);g.stroke();}
+  g.save();g.translate(330,330);g.rotate(-.12);
+  ell(0,40,22,30,0,skinD);
+  ell(0,-30,92,108,0,skin);
+  g.fillStyle='#2e1a12';g.beginPath();g.moveTo(-96,10);g.quadraticCurveTo(-100,-130,-10,-140);g.quadraticCurveTo(90,-140,96,-40);g.quadraticCurveTo(40,-110,-20,-100);g.quadraticCurveTo(-70,-60,-80,40);g.closePath();g.fill();
+  // óculos dourados
+  g.strokeStyle='#d8b04a';g.lineWidth=5;g.beginPath();g.ellipse(-36,-30,30,24,0,0,7);g.stroke();g.beginPath();g.ellipse(40,-30,30,24,0,0,7);g.stroke();g.beginPath();g.moveTo(-6,-32);g.lineTo(10,-32);g.stroke();
+  ell(-36,-30,7,8,0,'#3a2a2a');ell(40,-30,7,8,0,'#3a2a2a');g.fillStyle='#fff';g.fillRect(-34,-34,3,3);g.fillRect(42,-34,3,3);
+  g.strokeStyle='#2e1a12';g.lineWidth=4;g.beginPath();g.moveTo(-60,-66);g.quadraticCurveTo(-36,-76,-12,-66);g.moveTo(16,-66);g.quadraticCurveTo(40,-76,64,-66);g.stroke();
+  ell(-55,15,16,10,0,'rgba(240,130,130,.35)');ell(60,15,16,10,0,'rgba(240,130,130,.35)');
+  g.fillStyle='#9a3a34';g.beginPath();g.moveTo(-34,22);g.quadraticCurveTo(4,70,42,22);g.quadraticCurveTo(4,36,-34,22);g.fill();g.fillStyle='#fff';g.beginPath();g.moveTo(-28,25);g.quadraticCurveTo(4,40,36,25);g.lineTo(32,32);g.quadraticCurveTo(4,42,-24,32);g.fill();
+  g.restore();
+  // ===== Gabi (na frente, à direita) =====
+  g.save();g.translate(575,300);g.rotate(.28);
+  g.fillStyle='#6b4428';g.beginPath();g.moveTo(-110,-10);g.quadraticCurveTo(-120,-150,0,-155);g.quadraticCurveTo(120,-150,112,-10);g.quadraticCurveTo(140,150,110,290);g.quadraticCurveTo(0,260,-120,300);g.quadraticCurveTo(-140,150,-110,-10);g.fill();
+  g.strokeStyle='#8a5a38';g.lineWidth=4;for(let i=0;i<8;i++){g.beginPath();g.moveTo(-100+i*28,40);g.quadraticCurveTo(-110+i*28+R()*20,160,-100+i*30,270);g.stroke();}
+  g.restore();
+  // corpo da Gabi: blusa preta com manga bufante
+  g.fillStyle='#1c1c22';g.beginPath();g.moveTo(330,900);g.lineTo(380,520);g.quadraticCurveTo(450,430,600,440);g.quadraticCurveTo(780,450,820,560);g.lineTo(860,900);g.fill();
+  ell(400,520,90,75,-.4,'#24242c');ell(800,560,85,75,.4,'#24242c');
+  g.save();g.translate(575,300);g.rotate(.28);
+  ell(0,50,22,30,0,skinD);
+  ell(0,-25,88,104,0,'#f7d8c4');
+  g.fillStyle='#6b4428';g.beginPath();g.moveTo(-92,20);g.quadraticCurveTo(-98,-125,0,-133);g.quadraticCurveTo(98,-128,92,20);g.quadraticCurveTo(70,-70,30,-95);g.quadraticCurveTo(10,-60,-30,-90);g.quadraticCurveTo(-70,-60,-92,20);g.fill();
+  g.fillStyle='#2b2b30';ell(-10,-140,26,14,0,'#2b2b30');
+  ell(-34,-22,9,10,0,'#3a2418');ell(36,-22,9,10,0,'#3a2418');g.fillStyle='#fff';g.fillRect(-32,-27,3,3);g.fillRect(38,-27,3,3);
+  g.strokeStyle='#5a3a20';g.lineWidth=4;g.beginPath();g.moveTo(-54,-50);g.quadraticCurveTo(-34,-58,-14,-50);g.moveTo(16,-50);g.quadraticCurveTo(36,-58,56,-50);g.stroke();
+  ell(-55,18,15,10,0,'rgba(240,130,130,.35)');ell(58,18,15,10,0,'rgba(240,130,130,.35)');
+  g.fillStyle='#9a3a34';g.beginPath();g.moveTo(-36,24);g.quadraticCurveTo(2,72,40,24);g.quadraticCurveTo(2,38,-36,24);g.fill();g.fillStyle='#fff';g.beginPath();g.moveTo(-30,27);g.quadraticCurveTo(2,42,34,27);g.lineTo(30,34);g.quadraticCurveTo(2,44,-26,34);g.fill();
+  g.fillStyle='#f2e6c8';g.beginPath();g.arc(-88,30,5,0,7);g.fill();
+  g.restore();
+  // braços cruzados na frente (abraço)
+  const arm=(x1,y1,x2,y2,w,col)=>{g.strokeStyle=col;g.lineWidth=w;g.lineCap='round';g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();};
+  arm(140,640,560,700,64,'#fbfaf6');arm(380,690,640,720,52,skin);
+  arm(420,560,760,680,58,'#f7d8c4');arm(800,600,560,740,54,'#f7d8c4');
+  ell(640,722,34,26,.2,skin);ell(560,742,32,26,-.3,'#f7d8c4');
+  g.fillStyle='#d8b04a';g.fillRect(608,708,10,4);
+  return c.toDataURL('image/jpeg',.9);
+}
 function postcardPic(){
   const c=document.createElement('canvas');c.width=1000;c.height=640;const g=c.getContext('2d');
   g.fillStyle='#fbf3e0';g.fillRect(0,0,1000,640);g.strokeStyle='#e0cfa8';g.lineWidth=10;g.strokeRect(10,10,980,620);
@@ -612,6 +667,7 @@ function ending7(got){
     {bg:`url(${pic}) center/cover`,big:1,tag:'Solonópole, Ceará',h:'A família toda junta',text:'<p>Depois do banho, tem comida boa da Vovó na mesa e conversa até tarde. Do sertão do Ceará até a neve da Finlândia, e de volta pra casa: a família inteira junta, feliz. 💛</p>',
      who:'ana',say:`“${ANA.frase} Eu disse que ia dar tudo certo, não disse?”`},
     {bg:`url(${postcardPic()}) center/contain no-repeat #fbf3e0`,wide:1,tag:'Cartão-postal',h:'💌 Um cartão da Madrinha para você',btn:'Continuar ▶'},
+    {bg:`url(${portraitPic()}) center/contain no-repeat #efe9dc`,wide:1,tag:'Madrinha & Gabi',h:'💛 Madrinha e Gabi, sempre juntinhas',btn:'Continuar ▶'},
     {bg:'linear-gradient(#ffb35a,#ff6b8a)',tag:'Fim',h:'🎉 Fim do jogo! 🎉',text:`<p>Obrigada por jogar <b>Madrinha Ana ao Resgate</b>!</p>${say('gabi','“Te amo, Madrinha!”')}<p>Feito com muito amor para a ${AFILHADA}. 💛🇧🇷🇫🇮</p><p>🌟 ${score} pontos</p>`,btn:'Voltar ao início'}
   ],title);
 }
