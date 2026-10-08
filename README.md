@@ -45,6 +45,9 @@ O Ilo, o cachorro da família, vai junto.
 ## Entre as fases
 Ao terminar cada parte aparece o mapa da viagem, com a rota e o transporte até o próximo destino, de 1 a 3 estrelas (docinhos pegos e vidas que sobraram), confete e musiquinha. No fim do jogo, a Madrinha deixa um cartão-postal de Solonópole para a Gabi.
 
+## Visual e efeitos especiais
+Menus em estilo neon (vidro, brilho e grade animada), painel de vida e pontos futurista, brilho (bloom) nas luzes, raios de sol, vagalumes e poeira no ar, rastro de velocidade, ondas de choque e "POW!" nos golpes, tremida e congelada rápida no impacto, câmera suave e abertura em círculo no começo de cada fase. Se o celular ficar lento, os efeitos mais pesados se desligam sozinhos.
+
 ## Controles
 - Celular: botões na tela (◀ ▶ andar, » correr, ⤒ pular, ▼ abaixar, 👊 murro, 🦶 pesada). Correndo + ▼ = rasteira.
 - Teclado: setas ou A/D andam, Shift corre, ↑ ou Espaço pula, ↓ abaixa, X dá murro, C dá pesada.
