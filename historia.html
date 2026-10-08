@@ -178,7 +178,7 @@ const doce=()=>DOCES.find(has);
 const SC={
   mensagem:{bg:'casa',
     text:()=>[`Tarde de sol rachando em <b>Solonópole, no sertão do Ceará</b>. 38 °C na sombra! A <b>Madrinha Ana</b>, de cabelo preso e leque na mão, toma um cafezinho na varanda quando o celular vibra.`,
-      `É uma mensagem de <b>${N()}</b>, a afilhada loura de cabelo liso, filha da irmã dela com um finlandês, que mora do outro lado do mundo, em <b>Helsinque</b>:`,
+      `É uma mensagem de <b>${N()}</b>, a afilhada de cabelo castanho comprido, filha da irmã dela com um finlandês, que mora do outro lado do mundo, em <b>Helsinque</b>:`,
       say('gabi',`“Madrinha, estou com tanta saudade! 💛 Estou longe de casa e do papai e da mamãe, num lugar aqui em Helsinque. Vem me visitar? Quero passear com você!”`),
       `Ana larga a xícara na hora. Faltam poucos dias para o aniversário dela, <b>12 de outubro</b>, e o único presente que ela quer é ver a afilhada. Só tem um probleminha: a Madrinha só fala português. Mas isso nunca parou a Madrinha Ana!`],
     choices:()=>[{t:'🧳 Arrumar a mala agora mesmo',go:'mala'}]},
@@ -232,7 +232,7 @@ const SC={
 
   vidro:{bg:'sala',
     enter:()=>{S.calor+=20;badge('💛 Tão perto!');if(S.calor>=60)badge('🧣 À prova de frio')},
-    text:()=>[`Lá dentro, uma sala de sofás azuis e tapete de folhas. No sofá, uma menina loura de cabelo liso levanta a cabeça... é <b>${N()}</b>! 💛`,
+    text:()=>[`Lá dentro, uma sala de sofás azuis e tapete de folhas. No sofá, uma menina de cabelo castanho comprido levanta a cabeça... é <b>${N()}</b>! 💛`,
       `Ela corre até a janela e encosta a mão no vidro. Ana encosta a dela do outro lado. Só um vidro separa as duas.`,
       say('gabi',`“Madrinha!! Você veio mesmo! Eu não posso sair agora... mas olha só!”`)],
     choices:()=>[...(has('lanterna')?[{t:'🔦 Piscar a lanterna em código: “estou aqui”',go:'bilhete',fx:()=>badge('🔦 Código de luz')}]:[]),

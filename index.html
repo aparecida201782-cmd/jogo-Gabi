@@ -87,11 +87,11 @@ function sfx(k){
 
 // ---------- retratos ----------
 function face(who){
-  const H={ana:'#5a3322',gabi:'#f3d36b',jose:'#a8784a',keka:'#a87850',emiel:'#e8c870',vovo:'#3a2418'}[who]||'#5a3322';
+  const H={ana:'#4a2818',gabi:'#6b4428',jose:'#a8784a',keka:'#a87850',emiel:'#e8c870',vovo:'#3a2418'}[who]||'#5a3322';
   const shirt={ana:'#f6d860',gabi:'#7cc4ff',jose:'#3fae5a',keka:'#e0287a',emiel:'#2f5a9a',vovo:'#1f2a5a'}[who]||'#ff6b8a';
-  const back=(who==='gabi'||who==='keka')?`<path d="M22 46 Q18 92 34 96 L66 96 Q82 92 78 46 Z" fill="${H}"/>`:who==='ana'?`<ellipse cx="80" cy="62" rx="9" ry="22" fill="${H}" transform="rotate(18 80 62)"/>`:'';
+  const back=(who==='gabi'||who==='keka'||who==='ana')?`<path d="M22 46 Q18 92 34 96 L66 96 Q82 92 78 46 Z" fill="${H}"/>`:false?`<ellipse cx="80" cy="62" rx="9" ry="22" fill="${H}" transform="rotate(18 80 62)"/>`:'';
   const eye=who==='emiel'?'#2f7ad8':'#2a2a3a';
-  return `<svg viewBox="0 0 100 100" aria-hidden="true">${back}<ellipse cx="50" cy="96" rx="30" ry="18" fill="${shirt}"/><ellipse cx="50" cy="52" rx="24" ry="27" fill="#ffe0cf"/><path d="M24 50 Q24 18 50 18 Q76 18 76 50 Q66 34 50 34 Q34 34 24 50Z" fill="${H}"/><circle cx="41" cy="54" r="3" fill="${eye}"/><circle cx="59" cy="54" r="3" fill="${eye}"/><circle cx="35" cy="62" r="4" fill="#ffb3a7" opacity=".6"/><circle cx="65" cy="62" r="4" fill="#ffb3a7" opacity=".6"/><path d="M42 66 Q50 74 58 66" stroke="#b5483c" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>`;
+  return `<svg viewBox="0 0 100 100" aria-hidden="true">${back}<ellipse cx="50" cy="96" rx="30" ry="18" fill="${shirt}"/><ellipse cx="50" cy="52" rx="24" ry="27" fill="#ffe0cf"/><path d="M24 50 Q24 18 50 18 Q76 18 76 50 Q66 34 50 34 Q34 34 24 50Z" fill="${H}"/><circle cx="41" cy="54" r="3" fill="${eye}"/><circle cx="59" cy="54" r="3" fill="${eye}"/><circle cx="35" cy="62" r="4" fill="#ffb3a7" opacity=".6"/><circle cx="65" cy="62" r="4" fill="#ffb3a7" opacity=".6"/><path d="M42 66 Q50 74 58 66" stroke="#b5483c" stroke-width="2.5" fill="none" stroke-linecap="round"/>${who==='ana'?'<g fill="none" stroke="#d8b04a" stroke-width="2.2"><circle cx="41" cy="54" r="8"/><circle cx="59" cy="54" r="8"/><path d="M49 54h2M33 53l-8-2M67 53l8-2"/></g>':''}</svg>`;
 }
 
 const say=(who,t)=>`<div class="say">${face(who)}<div>${t}</div></div>`;
@@ -400,7 +400,7 @@ function poolPic(){
   g.fillStyle='#a8703a';g.fillRect(120,200,560,140);g.fillStyle='#c88a50';g.fillRect(120,200,560,12);
   G=g.createLinearGradient(0,214,0,330);G.addColorStop(0,'#46d0cc');G.addColorStop(1,'#1f7aa8');g.fillStyle=G;g.fillRect(136,214,528,112);
   g.fillStyle='#c8343e';for(const x of [40,740]){g.fillRect(x,240,30,6);g.fillRect(x,212,6,60);g.fillRect(x+24,246,6,26);g.fillRect(x,212,30,6);}
-  const heads=[['ana','#5a3322',230],['keka','#a87850',310],['gabi','#efcb63',390],['jose','#a8784a',460],['emiel','#e8c870',540],['vovo','#3a2418',610]];
+  const heads=[['ana','#5a3322',230],['keka','#a87850',310],['gabi','#6b4428',390],['jose','#a8784a',460],['emiel','#e8c870',540],['vovo','#3a2418',610]];
   for(const [w,hc,x] of heads){g.fillStyle='rgba(255,255,255,.8)';for(let k=0;k<6;k++){g.beginPath();g.arc(x-24+k*10,262+Math.sin(k)*4,5+k%3,0,7);g.fill();}
     g.fillStyle='#ffe0cf';g.beginPath();g.arc(x,246,w==='jose'?13:16,0,7);g.fill();g.fillStyle=hc;g.beginPath();g.arc(x,240,w==='jose'?13:16,Math.PI,0);g.fill();
     if(w==='gabi'||w==='keka'){g.fillRect(x-16,240,6,22);g.fillRect(x+10,240,6,22);}
@@ -502,7 +502,7 @@ function postcardPic(){
   g.fillStyle=W;g.fillRect(x0+28,190,14,24);g.fillRect(x0+26,270,18,50);g.strokeStyle='#5a4a3a';g.lineWidth=2.5;g.beginPath();g.moveTo(x0+35,70);g.lineTo(x0+35,54);g.moveTo(x0+29,60);g.lineTo(x0+41,60);g.stroke();
   g.fillStyle=Y;g.fillRect(x0+70,240,60,80);g.fillStyle=W;g.fillRect(x0+70,240,60,5);
   g.fillStyle='#a8703a';g.fillRect(40,300,440,40);G=g.createLinearGradient(0,306,0,336);G.addColorStop(0,'#46d0cc');G.addColorStop(1,'#1f7aa8');g.fillStyle=G;g.fillRect(50,306,420,28);
-  for(let x=90;x<450;x+=70){g.fillStyle='#ffe0cf';g.beginPath();g.arc(x,310,9,0,7);g.fill();g.fillStyle=['#4a2818','#a87850','#efcb63','#a8784a','#e8c870','#3a2418'][(x/70|0)%6];g.beginPath();g.arc(x,306,9,Math.PI,0);g.fill();}
+  for(let x=90;x<450;x+=70){g.fillStyle='#ffe0cf';g.beginPath();g.arc(x,310,9,0,7);g.fill();g.fillStyle=['#4a2818','#a87850','#6b4428','#a8784a','#e8c870','#3a2418'][(x/70|0)%6];g.beginPath();g.arc(x,306,9,Math.PI,0);g.fill();}
   g.strokeStyle='#5a4a3a';g.lineWidth=2;g.strokeRect(40,40,440,300);
   g.fillStyle='#d8293b';g.font='bold 30px Georgia,serif';g.fillText('Lembranças de',60,390);g.font='bold 44px Georgia,serif';g.fillText('Solonópole · CE',60,438);
   g.font='22px sans-serif';g.fillText('🇧🇷 💛 🇫🇮',60,480);
@@ -656,7 +656,7 @@ function ending(){
   save.done=1;save.lvl=Math.max(save.lvl,3);store();
   story([
     {bg:'url(img/fora.jpg) center/cover',tag:'Helsinque',h:'O prédio vermelho',text:`<p>Ana chega ao prédio de madeira vermelha, cercado de árvores. Ela mostra o papelzinho da Dona Socorro na porta. A moça lê, sorri: <i>“Ahh, Gabin kummi!”</i>... mas hoje já é tarde, e a visita fica para amanhã.</p><p>Ela aponta para a janela da sala, ali no jardim.</p>`},
-    {bg:'url(img/sala.jpg) center/cover',tag:'Pela janela',h:'Tão pertinho!',text:`<p>Lá dentro, numa sala de sofás azuis, uma menina loura de cabelo liso levanta a cabeça... é a <b>${AFILHADA}</b>! Ela corre até a janela e encosta a mão no vidro. A madrinha encosta a dela do outro lado. 💛</p>`,
+    {bg:'url(img/sala.jpg) center/cover',tag:'Pela janela',h:'Tão pertinho!',text:`<p>Lá dentro, numa sala de sofás azuis, uma menina de cabelo castanho comprido levanta a cabeça... é a <b>${AFILHADA}</b>! Ela corre até a janela e encosta a mão no vidro. A madrinha encosta a dela do outro lado. 💛</p>`,
      who:'gabi',say:'“Madrinha!! Você veio mesmo! Amanhã a gente vai passear por Helsinque inteirinha, tá? Tenho um monte de lugares pra te mostrar!”'},
     {bg:'linear-gradient(#0a1838,#2b4680)',tag:'Fim da Fase 1',h:'Até amanhã!',text:`<p>A Madrinha Ana atravessou o mundo e chegou pertinho da ${AFILHADA}: <b>grande vitória!</b> 🎉 Agora é só esperar o dia do passeio.</p>${say('ana',`“${ANA.frase} Amanhã eu volto, ${AFILHADA}!”`)}<p>🌟 ${score} pontos</p><p>🔓 <b>Fase 2: Passeio por Helsinque</b> liberada no menu!</p>`,btn:'Voltar ao início'}
   ],title);
@@ -1470,7 +1470,7 @@ function drawAna(q=p,who=q.who){
   const shoe=(f,a)=>{ctx.save();ctx.translate(f[0],f[1]);ctx.rotate(-a*.25);ctx.fillStyle='#f4f4f4';rr(-1.5,-1.6,5.6,3,1.4);ctx.fillStyle='#9aa0aa';ctx.fillRect(-1.5,.7,5.6,.9);ctx.restore();};
   const sh=seg(hip[0],hip[1],Math.PI-tl,10), head=seg(sh[0],sh[1],Math.PI-tl,6.8);
   const PAL={ana:{skin:'#f3cdb5',skinD:'#dfae95',jean:'#3b5998',jeanD:'#2c4577',top:cold?'#c8343e':'#f6d860',topD:cold?'#9e2630':'#dcb83a',hair:'#4a2818',hairHi:'#7a4a2c'},
-    gabi:{skin:'#f7d8c4',skinD:'#e8bca4',jean:'#2f3348',jeanD:'#23263a',top:'#7cc4ff',topD:'#5aa6e6',hair:'#efcb63',hairHi:'#fbe6a0'},
+    gabi:{skin:'#f7d8c4',skinD:'#e8bca4',jean:'#2f3348',jeanD:'#23263a',top:'#7cc4ff',topD:'#5aa6e6',hair:'#6b4428',hairHi:'#9a6a44'},
     jose:{skin:'#f7d8c4',skinD:'#e8bca4',jean:'#3b5998',jeanD:'#2c4577',top:'#3fae5a',topD:'#2f8a46',hair:'#a8784a',hairHi:'#c89a6a'},
     keka:{skin:'#f3cdb5',skinD:'#dfae95',jean:'#c8186a',jeanD:'#a8105a',top:'#e0287a',topD:'#b81862',hair:'#a87850',hairHi:'#c89a6a'},
     emiel:{skin:'#f7d8c4',skinD:'#e8bca4',jean:'#3a3f4a',jeanD:'#2a2e38',top:'#2f5a9a',topD:'#1f3a6a',hair:'#e8c870',hairHi:'#f8e4a0'},
@@ -1494,7 +1494,9 @@ function drawAna(q=p,who=q.who){
     ctx.lineWidth=2.2;ctx.beginPath();ctx.moveTo(sh[0]-2,sh[1]);ctx.quadraticCurveTo(sh[0]-6,sh[1]+2+Math.sin(time*9)*1.2,sh[0]-9-Math.min(4,Math.abs(q.vx)/40),sh[1]+1+Math.sin(time*11)*2);ctx.stroke();}
   const hx=head[0],hy=head[1],sway=Math.sin(time*7)*.15+(moving?.35*r:0)+(!q.on?-.4:0);
   if(J||E||V){ctx.fillStyle=hair;ctx.beginPath();ctx.ellipse(hx-1.5,hy-3,5.4,4.2,0,0,7);ctx.fill();}
-  else if(G||who==='keka'){ctx.fillStyle=hair;ctx.beginPath();ctx.moveTo(hx-4.5,hy-5);ctx.quadraticCurveTo(hx-7.5-sway*2,hy+4,hx-6.5-sway*3,hy+11);ctx.lineTo(hx-1,hy+10);ctx.quadraticCurveTo(hx-1.5,hy+3,hx+1,hy-2);ctx.closePath();ctx.fill();ctx.strokeStyle=hairHi;ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(hx-4.6,hy-3);ctx.quadraticCurveTo(hx-6.2-sway*2,hy+4,hx-5.2-sway*3,hy+10);ctx.stroke();}
+  if(G){ctx.fillStyle='#2b2b30';ctx.beginPath();ctx.ellipse(hx-3.2,hy-5.6,1.8,1.1,-.5,0,7);ctx.fill();}
+  if(J||E||V){}
+  else if(G||who==='keka'||who==='ana'){ctx.fillStyle=hair;ctx.beginPath();ctx.moveTo(hx-4.5,hy-5);ctx.quadraticCurveTo(hx-7.5-sway*2,hy+4,hx-6.5-sway*3,hy+11);ctx.lineTo(hx-1,hy+10);ctx.quadraticCurveTo(hx-1.5,hy+3,hx+1,hy-2);ctx.closePath();ctx.fill();ctx.strokeStyle=hairHi;ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(hx-4.6,hy-3);ctx.quadraticCurveTo(hx-6.2-sway*2,hy+4,hx-5.2-sway*3,hy+10);ctx.stroke();}
   else{ctx.save();ctx.translate(hx-4.6,hy-2.2);ctx.rotate(.55+sway);ctx.fillStyle=hair;ctx.beginPath();ctx.ellipse(0,4.5,2.3,5.2,0,0,7);ctx.fill();ctx.fillStyle='#6d3d24';ctx.beginPath();ctx.ellipse(.6,3.5,.8,3.2,0,0,7);ctx.fill();ctx.restore();
   ctx.fillStyle='#ff6b8a';ctx.beginPath();ctx.arc(hx-4.4,hy-2.2,1.2,0,7);ctx.fill();}
   const fg=ctx.createRadialGradient(hx+1.5,hy-1.5,1,hx,hy,6);fg.addColorStop(0,'#fbe0cf');fg.addColorStop(1,skin);ctx.fillStyle=fg;ctx.beginPath();ctx.ellipse(hx,hy,5.2,5.8,0,0,7);ctx.fill();
@@ -1502,7 +1504,8 @@ function drawAna(q=p,who=q.who){
   ctx.strokeStyle=hairHi;ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(hx-3.5,hy-5);ctx.quadraticCurveTo(hx,hy-6.2,hx+3.5,hy-4.4);ctx.stroke();
   ctx.fillStyle=skinD;ctx.beginPath();ctx.ellipse(hx-2.4,hy+.4,1,1.4,0,0,7);ctx.fill();
   ctx.fillStyle=E?'#2f7ad8':'#2a2230';ctx.beginPath();ctx.ellipse(hx+2.6,hy-.4,.75,1.05,0,0,7);ctx.fill();ctx.fillStyle='#fff';ctx.fillRect(hx+2.7,hy-1,.4,.4);
-  ctx.strokeStyle=G?'#c9a24a':'#4a2818';ctx.lineWidth=.5;ctx.beginPath();ctx.moveTo(hx+1.6,hy-2.2);ctx.lineTo(hx+3.6,hy-2.4);ctx.stroke();
+  if(who==='ana'){ctx.strokeStyle='#d8b04a';ctx.lineWidth=.55;ctx.beginPath();ctx.arc(hx+2.7,hy-.4,1.9,0,7);ctx.stroke();ctx.beginPath();ctx.moveTo(hx+4.6,hy-.6);ctx.lineTo(hx+5.4,hy-.9);ctx.moveTo(hx+.8,hy-.6);ctx.lineTo(hx-2.6,hy-1.2);ctx.stroke();}
+  ctx.strokeStyle=G?'#5a3a20':'#4a2818';ctx.lineWidth=.5;ctx.beginPath();ctx.moveTo(hx+1.6,hy-2.2);ctx.lineTo(hx+3.6,hy-2.4);ctx.stroke();
   ctx.fillStyle=skinD;ctx.beginPath();ctx.moveTo(hx+5,hy+.2);ctx.lineTo(hx+5.9,hy+1.6);ctx.lineTo(hx+4.9,hy+1.8);ctx.fill();
   ctx.fillStyle='rgba(240,120,120,.4)';ctx.beginPath();ctx.arc(hx+2.6,hy+2,1.2,0,7);ctx.fill();
   ctx.strokeStyle='#b5483c';ctx.lineWidth=.6;ctx.beginPath();ctx.arc(hx+3.6,hy+2.6,1.1,.3,2.4);ctx.stroke();
