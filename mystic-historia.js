@@ -6,6 +6,7 @@
 //   { arquivo: {nome, mime, conteudo}, texto }   arquivo anexado (o texto vira legenda)
 //   { audio }                                    "áudio" (no navegador é falado; no WhatsApp vai transcrito)
 //   { imagem: 'nome', texto }                    ilustração de mystic-imagens.js (o texto vira legenda)
+//   { video: 'nome', texto }                     vídeo de videos/nome.mp4 (o texto vira legenda)
 //   { fantasma: true }                           só aparece "digitando..." e para, sem mandar nada
 // e pode ter:
 //   espera   milissegundos "digitando..." antes de chegar
@@ -56,6 +57,7 @@ export function normalizar(s) {
 const tem = (t, ...palavras) => palavras.some(p => t.includes(p));
 const m = (texto, espera = D, extra) => ({ texto, espera, ...extra });
 const img = (imagem, texto, extra) => ({ imagem, texto, espera: 2000, ...extra });
+const vid = (video, texto, extra) => ({ video, texto, espera: 2500, ...extra });
 const R = { repetir: true };
 
 export function estadoInicial() {
@@ -107,7 +109,7 @@ const FASE3 = [
 // ---------- Fase 4: A Caixa de Ferro ----------
 const FASE4 = [
   m('🌉 *P-O-N-T-E.* A Ponte Wickery! Onde a água passa por baixo da madeira...'),
-  img('ponte', 'Cheguei. A neblina está subindo do rio.'),
+  vid('ponte', 'Gravei pra você. A neblina está subindo do rio.'),
   m('Estou aqui embaixo da ponte agora. Está muito frio. Achei uma caixa de ferro presa nas pedras, com um cadeado de *4 números*.'),
   img('caixa', '', R),
   m('Tem uma frase riscada na tampa, com letra antiga:\n\n_"O ano em que a cidade trancou seus vampiros embaixo da igreja. Elena Gilbert chegou a Mystic Falls em 2009, cento e quarenta e cinco anos depois."_', D, R),
@@ -121,6 +123,7 @@ const FASE5 = [
   m('Eu escrevi isso para mim mesma??', 1500, { efeito: 'glitch' }),
   { fantasma: true, espera: 2500 },
   m('Invadi as câmeras do Baile dos Fundadores, na mansão Lockwood. Isolei três suspeitos.'),
+  vid('cameras', 'As gravações. Olha bem cada um.'),
   img('suspeitos', 'Toque na imagem para ampliar.', R),
   m('🎥 *Suspeito 1: Liam*\nPassou a tarde inteira conversando nos jardins da mansão, sob o sol forte. Usava só uma camiseta, um relógio de plástico e uma pulseira de couro comum.', D, R),
   m('🎥 *Suspeito 2: Tristan*\nEstava sentado no bar. O garçom derramou sem querer *extrato puro de verbena* na xícara de chá dele. Ele bebeu tudo sem fazer careta.', D, R),
@@ -132,7 +135,7 @@ const FASE5 = [
 const FASE6 = [
   m('🩸 *LUCIEN.* O lápis-lazúli protege do sol, e ele recusou a comida. O Liam ficou no sol sem anel e o Tristan bebeu verbena como se fosse chá: os dois são humanos.'),
   m('Avisei o Damon. Ele pegou o Lucien no meio da valsa e prendeu no porão da pensão dos Salvatore, com correntes molhadas de verbena.'),
-  img('porao', 'Ele está acordado.'),
+  vid('porao', 'Ele está acordado. 😨', { efeito: 'tremor' }),
   m('Desci para ver ele. Ele pediu para falar com você. Vou gravar.'),
   { efeito: 'tremor', audio: 'Escuta, caçadora. Eu não sou o seu inimigo. Fui eu que apaguei a memória da bruxa, sim. Mas foi ela que me pediu. Ela escondeu a estaca de carvalho branco num lugar que ninguém pode encontrar... nem ela mesma. Porque esta noite, quem chega a Mystic Falls é um Original. E ele lê pensamentos.', espera: 5000, repetir: true },
   m('Ele está mentindo. Ele tem que estar mentindo.', 1500, { apagar: 3000 }),
@@ -154,7 +157,7 @@ const FINAL_ALIADO = [
   m('🔓 Mandei o Damon *soltar* o Lucien.', 2000),
   m('À meia-noite, o Silas apareceu na praça. Ele entrou na minha cabeça e procurou a estaca... mas ela não estava lá. O Lucien estava com ela, escondido no campanário.'),
   m('Quando o Silas virou as costas, o Lucien pulou. Um golpe só. O Original virou pedra no meio da praça, debaixo da lua cheia. 🌕'),
-  img('final_aliado', ''),
+  vid('final_aliado', ''),
   m('O Lucien me devolveu a estaca, fez uma reverência e sumiu na neblina. Acho que ganhamos um amigo.'),
   m('🌕 *Mystic Falls está a salvo. Obrigada, caçadora.*\n\n— Bonnie Bennett'),
   m('🏆 *FINAL 1 de 2: O Aliado da Neblina*\nVocê confiou em quem ninguém confiaria, e salvou a cidade.\n\nMande *reiniciar* para descobrir o outro final.', 1500, { opcoes: ['reiniciar'] }),
@@ -164,8 +167,8 @@ const FINAL_SOMBRA = [
   m('🔒 Mandei o Damon deixar o Lucien *preso*.', 2000),
   m('À meia-noite, o Silas apareceu na praça. Eu fiquei com a estaca e com a cabeça cheia de feitiços para ele não ler meus pensamentos. Phaesmatos... Phaesmatos...'),
   m('Eu e o Damon conseguimos encurralar ele na Ponte Wickery. Cravei a estaca. O Original virou pedra e caiu no rio. 🌊'),
-  m('Mas quando voltamos para a pensão... o porão estava vazio. As correntes estavam arrebentadas. E na parede, escrito com sangue: _"Você devia ter confiado em mim."_', D, { efeito: 'sangue' }),
-  img('final_sombra', ''),
+  m('Mas quando voltamos para a pensão... o porão estava vazio. As correntes estavam arrebentadas. E na parede, escrito com sangue...', D, { efeito: 'sangue' }),
+  vid('final_sombra', ''),
   m('🌑 *A cidade está a salvo... por enquanto.*\n\n— Bonnie Bennett'),
   m('🏆 *FINAL 2 de 2: A Sombra no Porão*\nVocê salvou Mystic Falls, mas ganhou um inimigo.\n\nMande *reiniciar* para descobrir o outro final.', 1500, { opcoes: ['reiniciar'] }),
 ];

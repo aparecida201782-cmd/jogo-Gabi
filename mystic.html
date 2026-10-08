@@ -51,6 +51,7 @@
   .b .ilu img{display:block;width:100%;border-radius:8px}
   .b.ilu-b{padding:5px 5px 18px}
   .b.ilu-b .cap{padding:0 5px}
+  .b video{display:block;width:100%;max-width:320px;border-radius:8px;background:#000}
   .b.apagada{color:var(--muted);font-style:italic}
   .b.sumindo{animation:some .6s ease-in forwards}
   @keyframes some{to{filter:blur(6px);opacity:0}}
@@ -123,6 +124,7 @@ const fmt = s => esc(s)
   .replace(/(^|[\s"(])_([^_\n]+)_(?=$|[\s.,!?:)"])/gm, '$1<i>$2</i>');
 const hora = () => new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 const rolar = () => chat.scrollTop = chat.scrollHeight;
+const POSTER = { cameras: 'suspeitos', final_sombra: 'parede' };
 const imgURL = nome => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(IMAGENS[nome] || '');
 
 function mostrarFase() {
@@ -206,6 +208,13 @@ function bolha(m, quem, h, apagada) {
     b.classList.add('ilu-b');
     b.innerHTML = `<button class="ilu" aria-label="Ampliar imagem"><img src="${imgURL(m.imagem)}" alt=""></button>${m.texto ? `<div class="cap">${fmt(m.texto)}</div>` : ''}`;
     b.querySelector('.ilu').onclick = () => abrirLupa(m.imagem);
+  } else if (m.video) {
+    b.classList.add('ilu-b');
+    b.innerHTML = `<video src="videos/${esc(m.video)}.mp4" controls playsinline preload="metadata" poster="${imgURL(POSTER[m.video] || m.video)}"></video>${m.texto ? `<div class="cap">${fmt(m.texto)}</div>` : ''}`;
+    // o som ambiente baixa enquanto o vídeo toca
+    const v = b.querySelector('video');
+    v.onplay = () => { document.querySelectorAll('.b video').forEach(o => o !== v && o.pause()); if (audio) audio.mestre.gain.setTargetAtTime(0, audio.ctx.currentTime, .2); };
+    v.onpause = v.onended = () => aplicarSom();
   } else if (m.arquivo) {
     const kb = (new Blob([m.arquivo.conteudo]).size / 1024).toFixed(1);
     b.innerHTML = `<button class="doc"><span class="ic">${esc(m.arquivo.nome.split('.').pop().toUpperCase())}</span><span>${esc(m.arquivo.nome)}<small>${kb} kB · toque para abrir</small></span></button>${m.texto ? fmt(m.texto) : ''}`;

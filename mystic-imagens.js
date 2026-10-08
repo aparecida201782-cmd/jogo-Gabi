@@ -32,6 +32,14 @@ const ceuNoite = `<defs><linearGradient id="ceu" x1="0" y1="0" x2="0" y2="1"><st
 const legenda = (t, cor = '#e7c36a') =>
   `<text x="20" y="${H - 18}" font-family="Georgia,serif" font-size="15" fill="${cor}" opacity=".85" letter-spacing="2">${t}</text>`;
 
+const PAREDE = `${Array.from({ length: 6 }, (_, r) => Array.from({ length: 9 }, (_, c) => `<rect x="${c * 74 + (r % 2) * 37 - 20}" y="${r * 52}" width="70" height="48" fill="#1c1916" stroke="#0b0a09" stroke-width="4"/>`).join('')).join('')}
+    <path d="M160 300 l20 10 l-6 14 l20 6" stroke="#7a8288" stroke-width="5" fill="none"/><path d="M470 300 l-20 12 l8 12 l-22 4" stroke="#7a8288" stroke-width="5" fill="none"/>
+    <path d="M196 330 l8 -6 m2 10 l9 -3" stroke="#aab" stroke-width="2"/><path d="M432 328 l-8 -6 m-2 10 l-9 -3" stroke="#aab" stroke-width="2"/>
+    <ellipse cx="320" cy="370" rx="200" ry="14" fill="#000" opacity=".5"/>`;
+const RECADO = `<text x="320" y="150" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="34" fill="#8a0f1a">Você devia ter</text>
+    <text x="320" y="195" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="34" fill="#8a0f1a">confiado em mim.</text>
+    ${[[200, 206, 30], [262, 206, 18], [345, 206, 40], [430, 206, 24]].map(([x, y, h]) => `<path d="M${x} ${y} v${h}" stroke="#8a0f1a" stroke-width="3" stroke-linecap="round"/><circle cx="${x}" cy="${y + h}" r="3" fill="#8a0f1a"/>`).join('')}`;
+
 export const IMAGENS = {
   // Abertura: a floresta perto da estrada velha, lua cheia e o celular aceso no chão
   floresta: svg(`${ceuNoite}${estrelas(60)}${lua(470, 95)}
@@ -175,13 +183,8 @@ export const IMAGENS = {
     ${legenda('FINAL 1 · O ALIADO DA NEBLINA')}`),
 
   // Final 2: o porão vazio, correntes arrebentadas e o recado na parede
-  final_sombra: svg(`<rect width="${W}" height="${H}" fill="#0b0a09"/>
-    ${Array.from({ length: 6 }, (_, r) => Array.from({ length: 9 }, (_, c) => `<rect x="${c * 74 + (r % 2) * 37 - 20}" y="${r * 52}" width="70" height="48" fill="#1c1916" stroke="#0b0a09" stroke-width="4"/>`).join('')).join('')}
-    <text x="320" y="150" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="34" fill="#8a0f1a">Você devia ter</text>
-    <text x="320" y="195" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="34" fill="#8a0f1a">confiado em mim.</text>
-    ${[[200, 206, 30], [262, 206, 18], [345, 206, 40], [430, 206, 24]].map(([x, y, h]) => `<path d="M${x} ${y} v${h}" stroke="#8a0f1a" stroke-width="3" stroke-linecap="round"/><circle cx="${x}" cy="${y + h}" r="3" fill="#8a0f1a"/>`).join('')}
-    <path d="M160 300 l20 10 l-6 14 l20 6" stroke="#7a8288" stroke-width="5" fill="none"/><path d="M470 300 l-20 12 l8 12 l-22 4" stroke="#7a8288" stroke-width="5" fill="none"/>
-    <path d="M196 330 l8 -6 m2 10 l9 -3" stroke="#aab" stroke-width="2"/><path d="M432 328 l-8 -6 m-2 10 l-9 -3" stroke="#aab" stroke-width="2"/>
-    <ellipse cx="320" cy="370" rx="200" ry="14" fill="#000" opacity=".5"/>
-    ${legenda('FINAL 2 · A SOMBRA NO PORÃO', '#c8344a')}`),
+  final_sombra: svg(PAREDE + RECADO + `${legenda('FINAL 2 · A SOMBRA NO PORÃO', '#c8344a')}`),
+
+  // a parede do final 2 sem o recado (o vídeo escreve o recado letra por letra)
+  parede: svg(PAREDE),
 };

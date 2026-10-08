@@ -12,6 +12,7 @@ for (;;) {
   for (const m of r.msgs) {
     if (m.fantasma) { console.log('(digitando...)'); continue; }
     if (m.imagem) console.log(`[imagem ${m.imagem}]`);
+    if (m.video) console.log(`[vídeo ${m.video}]`);
     if (m.arquivo) console.log(`[arquivo ${m.arquivo.nome}]\n${m.arquivo.conteudo}`);
     console.log(m.audio ? `🎙️ "${m.audio}"` : (m.texto || ''), m.apagar ? '(apagada)' : '', m.opcoes ? '👉 ' + m.opcoes.join(' / ') : '', '\n');
   }

@@ -72,6 +72,13 @@ Um escape room de conversa no universo de *The Vampire Diaries*. Um número desc
 
 Na conversa: *dica* dá uma ajudinha, *repetir* manda a pista de novo e *reiniciar* começa do zero. A história e as respostas ficam em `mystic-historia.js`.
 
+O que deixa o jogo mais misterioso:
+- **Ilustrações** em cada fase (`mystic-imagens.js`, desenhos próprios). No navegador, toque na imagem para ampliar e procurar pistas.
+- **Vídeos** curtos com som (`videos/`): a neblina na Ponte Wickery, as câmeras do Baile dos Fundadores, os olhos no porão e os dois finais. São gerados por `node scripts/gerar-videos.mjs` (precisa do Playwright e do ffmpeg).
+- **Mensagens que se apagam** sozinhas, "digitando..." que para sem mandar nada, tela que pisca, treme ou fica vermelha nos sustos, e som de vento e coração (botão 🔊).
+- **Botões** para escolher o suspeito e o final.
+- **Segredos:** mande nomes da série (Damon, Stefan, Elena, Katherine, Klaus, Caroline, Bonnie) a qualquer momento para ver o que a bruxa responde.
+
 ### No celular, pelo navegador
 Abra `mystic.html` (no site: https://aparecida201782-cmd.github.io/jogo-Gabi/mystic.html). Parece uma conversa de aplicativo de mensagens, com "digitando...", arquivo para abrir e áudio falado. O progresso fica salvo no celular.
 

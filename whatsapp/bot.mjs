@@ -30,6 +30,8 @@ async function enviar(sock, jid, m) {
   let conteudo;
   if (m.imagem) {
     conteudo = { image: readFileSync(PASTA + 'imagens/' + m.imagem + '.png'), caption: legenda || undefined };
+  } else if (m.video) {
+    conteudo = { video: readFileSync(PASTA + '../videos/' + m.video + '.mp4'), mimetype: 'video/mp4', caption: legenda || undefined };
   } else if (m.arquivo) {
     conteudo = { document: Buffer.from(m.arquivo.conteudo, 'utf8'), mimetype: m.arquivo.mime, fileName: m.arquivo.nome, caption: legenda };
   } else if (m.audio) {
