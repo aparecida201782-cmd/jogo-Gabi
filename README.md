@@ -53,6 +53,33 @@ Nave espacial em 5 setores (Nebulosa Rosa, Anéis de Gelo, Cinturão de Asteroid
 - Depois de cada chefão, cada piloto escolhe uma melhoria. Três dificuldades (Fácil, Normal, Insano) e recordes salvos.
 - O modo online usa o PeerJS (`lib/peerjs.min.js`) e o servidor gratuito de salas do PeerJS; as duas precisam de internet.
 
+## Operação Mystic Falls (jogo de mistério por chat)
+Um escape room de conversa no universo de *The Vampire Diaries*. Um número desconhecido (uma bruxa que teve a memória apagada por compulsão) manda mensagens, arquivos e áudios, e a jogadora resolve os enigmas respondendo no chat. São 7 fases e 2 finais:
+1. **O Grimório Digitalizado:** achar a arma escondida num arquivo XML.
+2. **O SMS dos Salvatore:** uma mensagem escrita de trás para frente.
+3. **O Diário de Stefan:** uma palavra escondida na primeira letra de cada linha.
+4. **A Caixa de Ferro:** o código do cadeado embaixo da Ponte Wickery.
+5. **O Interrogatório:** descobrir qual dos três suspeitos é o vampiro.
+6. **A Revelação:** onde a bruxa escondeu a estaca.
+7. **A Escolha:** soltar ou não o Lucien, e cada escolha leva a um final diferente.
+
+Na conversa: *dica* dá uma ajudinha, *repetir* manda a pista de novo e *reiniciar* começa do zero. A história e as respostas ficam em `mystic-historia.js`.
+
+### No celular, pelo navegador
+Abra `mystic.html` (no site: https://jogodamadrinhaana.dynosai.cloud/mystic.html). Parece uma conversa de aplicativo de mensagens, com "digitando...", arquivo para abrir e áudio falado. O progresso fica salvo no celular.
+
+### No WhatsApp de verdade
+O robô fica em `whatsapp/`. Ele precisa de um **número de WhatsApp só para ele** (um chip extra; não use o seu número pessoal, porque o robô usa uma conexão não oficial e o WhatsApp pode bloquear o número) e de um computador ligado com o [Node.js](https://nodejs.org) 20 ou mais novo.
+1. No computador, dentro da pasta `whatsapp`: `npm install` e depois `npm start`.
+2. Vai aparecer um QR code. No celular com o número do robô: WhatsApp > **Aparelhos conectados** > **Conectar aparelho** e leia o QR code.
+   (Sem câmera? Rode `NUMERO=5585999990000 npm start` com o número do robô e use o código de 8 letras em "Conectar com número de telefone".)
+3. A jogadora manda **Mystic Falls** para o número do robô e o jogo começa. O robô só responde quem mandou essa frase.
+- Para deixar só alguns números jogarem: `PERMITIDOS=5585999990000,358401234567 npm start`.
+- Para trocar a frase de início: `GATILHO="diario do vampiro" npm start`.
+- O progresso de cada jogadora fica em `whatsapp/estado.json` e a conexão em `whatsapp/sessao/` (apague essa pasta para conectar outro número).
+- Para testar a história no terminal, sem WhatsApp: `npm run testar`.
+- O robô só funciona enquanto o computador estiver ligado com o `npm start` rodando.
+
 ## Visual e efeitos especiais
 Menus em estilo neon (vidro, brilho e grade animada), painel de vida e pontos futurista, brilho (bloom) nas luzes, raios de sol, vagalumes e poeira no ar, rastro de velocidade, ondas de choque e "POW!" nos golpes, tremida e congelada rápida no impacto, câmera suave e abertura em círculo no começo de cada fase. Se o celular ficar lento, os efeitos mais pesados se desligam sozinhos.
 

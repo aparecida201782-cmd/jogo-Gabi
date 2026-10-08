@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
+<meta name="theme-color" content="#0f1714">
+<title>Operação Mystic Falls</title>
+<style>
+  :root{--bg:#0b100e;--top:#16201c;--ink:#e8efe9;--muted:#8fa59a;--eles:#1c2723;--eu:#5a1420;--eu-ink:#fbe9ec;--acc:#c8344a;--gold:#e7c36a;--line:rgba(255,255,255,.08)}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  body{display:flex;flex-direction:column;height:100dvh;max-width:720px;margin:0 auto}
+  header{display:flex;align-items:center;gap:12px;padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top));background:var(--top);border-bottom:1px solid var(--line)}
+  .av{flex:none;width:42px;height:42px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f2f2e8,#9aa39a 45%,#2b3330 70%);box-shadow:0 0 14px rgba(231,195,106,.35)}
+  header .nm{font-weight:700}
+  header .st{font-size:.8rem;color:var(--muted)}
+  header .st.dig{color:var(--gold)}
+  header .fs{margin-left:auto;font-size:.75rem;color:var(--gold);border:1px solid rgba(231,195,106,.4);border-radius:99px;padding:3px 10px;white-space:nowrap}
+  main{flex:1;overflow-y:auto;padding:14px 12px 6px;background:radial-gradient(120% 60% at 50% 0%,rgba(200,52,74,.10),transparent 60%),repeating-linear-gradient(45deg,rgba(255,255,255,.012) 0 12px,transparent 12px 24px)}
+  .aviso{margin:0 auto 14px;max-width:88%;text-align:center;font-size:.78rem;color:var(--gold);background:rgba(231,195,106,.08);border:1px solid rgba(231,195,106,.2);border-radius:10px;padding:6px 10px}
+  .b{position:relative;max-width:84%;width:fit-content;margin:3px 0 7px;padding:7px 10px 18px;border-radius:12px;line-height:1.38;font-size:.97rem;white-space:pre-wrap;word-wrap:break-word;animation:in .25s ease-out both}
+  @keyframes in{from{transform:translateY(6px);opacity:0}}
+  .b.eles{background:var(--eles);border-top-left-radius:3px}
+  .b.eu{background:var(--eu);color:var(--eu-ink);margin-left:auto;border-top-right-radius:3px}
+  .b time{position:absolute;right:9px;bottom:4px;font-size:.66rem;color:var(--muted)}
+  .b.eu time{color:#d99aa4}
+  .b code{display:block;font-family:ui-monospace,Menlo,Consolas,monospace;background:rgba(0,0,0,.35);border-radius:6px;padding:8px;margin:4px 0;font-size:1.02rem;letter-spacing:.5px}
+  .doc{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.25);border-radius:8px;padding:10px;margin-bottom:5px;cursor:pointer;border:0;color:inherit;font:inherit;width:100%;text-align:left}
+  .doc .ic{flex:none;width:34px;height:40px;border-radius:4px;background:#e7c36a;color:#3a2a00;font-size:.62rem;font-weight:800;display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px}
+  .doc small{display:block;color:var(--muted);font-size:.75rem}
+  .aud{display:flex;align-items:center;gap:10px;min-width:220px}
+  .aud button{flex:none;width:38px;height:38px;border-radius:50%;border:0;background:var(--acc);color:#fff;font-size:15px;cursor:pointer}
+  .aud .onda{flex:1;height:22px;background:repeating-linear-gradient(90deg,var(--muted) 0 3px,transparent 3px 6px);opacity:.7;border-radius:3px;clip-path:polygon(0 40%,8% 20%,16% 55%,24% 10%,32% 45%,40% 25%,48% 60%,56% 15%,64% 50%,72% 30%,80% 55%,88% 20%,100% 45%,100% 60%,88% 85%,80% 65%,72% 80%,64% 55%,56% 90%,48% 70%,40% 80%,32% 60%,24% 95%,16% 70%,8% 85%,0 65%)}
+  .aud.tocando .onda{opacity:1;background:repeating-linear-gradient(90deg,var(--gold) 0 3px,transparent 3px 6px)}
+  .transc{margin-top:6px;font-size:.84rem;color:var(--muted);font-style:italic}
+  .dig{display:inline-flex;gap:4px;padding:12px 14px 12px}
+  .dig i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:pu 1s infinite}
+  .dig i:nth-child(2){animation-delay:.15s}.dig i:nth-child(3){animation-delay:.3s}
+  @keyframes pu{0%,60%,100%{opacity:.3;transform:none}30%{opacity:1;transform:translateY(-3px)}}
+  .rap{display:flex;gap:6px;flex-wrap:wrap;padding:0 12px 6px}
+  .rap button{font:inherit;font-size:.82rem;border:1px solid var(--line);background:var(--top);color:var(--muted);border-radius:99px;padding:5px 12px;cursor:pointer}
+  footer{display:flex;gap:8px;padding:8px 10px;padding-bottom:calc(8px + env(safe-area-inset-bottom));background:var(--top)}
+  footer input{flex:1;min-width:0;font:inherit;font-size:16px;border:0;border-radius:22px;padding:11px 16px;background:#24302b;color:var(--ink);outline:none}
+  footer button{flex:none;width:46px;height:46px;border-radius:50%;border:0;background:var(--acc);color:#fff;font-size:18px;cursor:pointer}
+  dialog{border:0;border-radius:14px;background:#111816;color:var(--ink);width:min(680px,94vw);max-height:86vh;padding:0}
+  dialog::backdrop{background:rgba(0,0,0,.7)}
+  dialog .hd{display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);font-weight:700}
+  dialog .hd button{margin-left:auto;font:inherit;border:0;background:none;color:var(--gold);font-size:1rem;cursor:pointer}
+  dialog pre{margin:0;padding:14px;overflow:auto;max-height:72vh;font-size:.8rem;line-height:1.5;color:#b9d7c6;white-space:pre}
+</style>
+</head>
+<body>
+<header>
+  <div class="av" aria-hidden="true"></div>
+  <div><div class="nm" id="nome">Número desconhecido</div><div class="st" id="st">online</div></div>
+  <div class="fs" id="fs"></div>
+</header>
+<main id="chat" aria-live="polite"><div class="aviso">🔒 As mensagens desta conversa somem quando a lua cheia acabar.</div></main>
+<div class="rap"><button data-t="dica">💡 dica</button><button data-t="repetir">🔁 repetir</button><button data-t="reiniciar">↺ reiniciar</button></div>
+<footer>
+  <input id="txt" placeholder="Mensagem" autocomplete="off" enterkeyhint="send">
+  <button id="env" aria-label="Enviar">➤</button>
+</footer>
+<dialog id="vis"><div class="hd"><span id="visnm"></span><button onclick="vis.close()">fechar ✕</button></div><pre id="viscont"></pre></dialog>
+
+<script type="module">
+import { responder, estadoInicial, CONTATO, TOTAL_FASES } from './mystic-historia.js';
+
+const chat = document.getElementById('chat'), st = document.getElementById('st'), fs = document.getElementById('fs');
+const txt = document.getElementById('txt'), vis = document.getElementById('vis');
+document.getElementById('nome').textContent = CONTATO;
+const CHAVE = 'mysticFalls';
+let salvo = { estado: estadoInicial(), hist: [] };
+try { salvo = JSON.parse(localStorage.getItem(CHAVE)) || salvo; } catch {}
+const guardar = () => { try { localStorage.setItem(CHAVE, JSON.stringify(salvo)); } catch {} };
+
+const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+// formatação do WhatsApp: ```código```, *negrito*, _itálico_
+const fmt = s => esc(s)
+  .replace(/```([\s\S]+?)```/g, '<code>$1</code>')
+  .replace(/\*([^*\n]+)\*/g, '<b>$1</b>')
+  .replace(/(^|[\s"(])_([^_\n]+)_(?=$|[\s.,!?:)"])/gm, '$1<i>$2</i>');
+const hora = () => new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+const rolar = () => chat.scrollTop = chat.scrollHeight;
+
+function mostrarFase() {
+  const f = salvo.estado.fase;
+  fs.textContent = f >= 1 && f <= TOTAL_FASES ? `Fase ${f}/${TOTAL_FASES}` : f > TOTAL_FASES ? '🏆 concluído' : '';
+}
+
+function falar(texto, caixa) {
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(texto);
+  u.lang = 'pt-BR'; u.rate = 0.95; u.pitch = 0.8;
+  const voz = speechSynthesis.getVoices().find(v => v.lang?.toLowerCase().startsWith('pt'));
+  if (voz) u.voice = voz;
+  caixa.classList.add('tocando');
+  u.onend = u.onerror = () => caixa.classList.remove('tocando');
+  speechSynthesis.speak(u);
+}
+
+function bolha(m, quem, h) {
+  const b = document.createElement('div');
+  b.className = 'b ' + quem;
+  if (m.arquivo) {
+    const kb = (new Blob([m.arquivo.conteudo]).size / 1024).toFixed(1);
+    b.innerHTML = `<button class="doc"><span class="ic">${esc(m.arquivo.nome.split('.').pop().toUpperCase())}</span><span>${esc(m.arquivo.nome)}<small>${kb} kB · toque para abrir</small></span></button>${m.texto ? fmt(m.texto) : ''}`;
+    b.querySelector('.doc').onclick = () => {
+      document.getElementById('visnm').textContent = m.arquivo.nome;
+      document.getElementById('viscont').textContent = m.arquivo.conteudo;
+      vis.showModal();
+    };
+  } else if (m.audio) {
+    const seg = Math.min(59, Math.ceil(m.audio.length / 14));
+    b.innerHTML = `<div class="aud"><button aria-label="Ouvir áudio">▶</button><div class="onda"></div><small>0:${String(seg).padStart(2, '0')}</small></div><div class="transc">${esc(m.audio)}</div>`;
+    b.querySelector('button').onclick = () => falar(m.audio, b.querySelector('.aud'));
+  } else {
+    b.innerHTML = fmt(m.texto);
+  }
+  b.insertAdjacentHTML('beforeend', `<time>${h}</time>`);
+  chat.appendChild(b);
+  rolar();
+  return b;
+}
+
+const pausa = ms => new Promise(r => setTimeout(r, ms));
+let fila = Promise.resolve();
+
+async function chegam(msgs) {
+  for (const m of msgs) {
+    st.textContent = m.audio ? 'gravando áudio...' : 'digitando...';
+    st.classList.add('dig');
+    const d = document.createElement('div');
+    d.className = 'b eles dig';
+    d.innerHTML = '<i></i><i></i><i></i>';
+    chat.appendChild(d); rolar();
+    await pausa(Math.min(m.espera ?? 1500, 4000));
+    d.remove();
+    st.textContent = 'online'; st.classList.remove('dig');
+    const h = hora();
+    const b = bolha(m, 'eles', h);
+    salvo.hist.push({ m, quem: 'eles', h }); guardar();
+    if (m.audio) falar(m.audio, b.querySelector('.aud'));
+    await pausa(350);
+  }
+}
+
+function enviar(texto) {
+  texto = texto.trim();
+  if (!texto) return;
+  const m = { texto }, h = hora();
+  bolha(m, 'eu', h);
+  salvo.hist.push({ m, quem: 'eu', h });
+  fila = fila.then(async () => {
+    const r = responder(salvo.estado, texto);
+    if (r.estado.fase === 1 && salvo.estado.fase !== 1 && salvo.estado.fase !== 0) {
+      salvo.hist = salvo.hist.slice(-1); // reiniciou: limpa a conversa antiga
+      chat.querySelectorAll('.b').forEach(b => b.remove());
+      bolha(m, 'eu', h);
+    }
+    salvo.estado = r.estado; guardar(); mostrarFase();
+    await chegam(r.msgs);
+  });
+}
+
+document.getElementById('env').onclick = () => { enviar(txt.value); txt.value = ''; txt.focus(); };
+txt.addEventListener('keydown', e => { if (e.key === 'Enter') { enviar(txt.value); txt.value = ''; } });
+document.querySelectorAll('.rap button').forEach(b => b.onclick = () => enviar(b.dataset.t));
+
+// redesenha a conversa salva, ou a bruxa manda a primeira mensagem
+for (const { m, quem, h } of salvo.hist) bolha(m, quem, h);
+mostrarFase();
+if (salvo.estado.fase === 0) {
+  fila = fila.then(async () => {
+    await pausa(800);
+    const r = responder(salvo.estado, '');
+    salvo.estado = r.estado; guardar(); mostrarFase();
+    await chegam(r.msgs);
+  });
+}
+</script>
+</body>
+</html>
