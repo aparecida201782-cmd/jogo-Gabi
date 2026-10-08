@@ -8,8 +8,8 @@ Um presente para a Gabi. Jogo de plataforma: você é a Madrinha Ana e sai de So
 3. **Helsinque:** neve, frio (o termômetro cai, e os cafezinhos esquentam), bonecos de neve e gaivotas. No fim, a Gabi acena da janela.
 
 ## Controles
-- Celular: botões na tela (◀ ▶ andar, » correr, ⤒ pular, 👊 murro).
-- Teclado: setas ou A/D andam, Shift corre, ↑ ou Espaço pula, X dá murro.
+- Celular: botões na tela (◀ ▶ andar, » correr, ⤒ pular, ▼ abaixar, 👊 murro, 🦶 pesada). Correndo + ▼ = rasteira.
+- Teclado: setas ou A/D andam, Shift corre, ↑ ou Espaço pula, ↓ abaixa, X dá murro, C dá pesada.
 
 ## Instalar no Android
 O GitHub Actions gera o app a cada envio (`.github/workflows/android.yml`). Baixe o `MadrinhaAna.apk` na página **Releases** do repositório, abra no celular e permita a instalação.
