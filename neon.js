@@ -645,7 +645,7 @@ function menu(){
     {t:'👯 Duas naves no mesmo aparelho',pink:1,go:()=>localSetup()},
     {t:'🌐 Online: cada uma no seu celular',pink:1,go:()=>online()},
     {row:[btnDiff(),{t:'❔ Como jogar',alt:1,go:howTo}]},
-    {t:'⬅ Voltar para Madrinha Ana ao Resgate',alt:1,go:()=>{location.href='index.html';}},
+    {t:'⬅ Voltar para a Galáxia da Gabi',alt:1,go:()=>{location.href='index.html';}},
   ]);
 }
 function intro(){story('intro',()=>story('s1',()=>startSector(0)));}

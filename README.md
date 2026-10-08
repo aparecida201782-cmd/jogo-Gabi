@@ -1,4 +1,8 @@
-# Madrinha Ana ao Resgate 🇧🇷💛🇫🇮
+# Galáxia da Gabi 🇧🇷💛🇫🇮
+
+O site com os jogos da Gabi, feitos pela Madrinha Ana: https://jogodamadrinhaana.dynosai.cloud
+
+# Madrinha Ana ao Resgate
 
 Um presente para a Gabi. Jogo de plataforma: você é a Madrinha Ana e sai de Solonópole, no Ceará, para visitar a afilhada em Helsinque.
 
@@ -54,7 +58,7 @@ Corrida em 3 faixas fugindo da NÉVOA, passando pelas cidades da família: Sert�
 - **Online:** duas pessoas correm ao mesmo tempo na mesma pista, cada uma no seu celular (código de sala de 4 letras). Uma vê a outra correndo ao lado; no fim aparece quem fez mais pontos, com botão de revanche.
 
 ## Esquadrão Neon (jogo novo, para jogar junto)
-Nave espacial em 5 setores (Nebulosa Rosa, Anéis de Gelo, Cinturão de Asteroides, Cidade Neon de Órion e Núcleo da NÉVOA), cada um com um chefão. Abre pelo botão no menu do jogo principal ou direto em `neon.html`.
+Nave espacial em 5 setores (Nebulosa Rosa, Anéis de Gelo, Cinturão de Asteroides, Cidade Neon de Órion e Núcleo da NÉVOA), cada um com um chefão. Abre pela Galáxia da Gabi, pelo botão no menu do jogo principal ou direto em `neon.html`.
 - **Pilotos:** Madrinha Ana (+1 vida), Gabi (especial mais rápido), José (nave pequena e veloz), Keka (tiro mais rápido), Emiel (tiro mais forte), Vovó Hermina (ímã de estrelas) e o Ilo (começa com um drone).
 - **Jeitos de jogar:** com uma nave; duas naves no mesmo aparelho (cada uma usa metade da tela); ou **online**, cada uma no seu celular: uma cria a sala e manda o código de 4 letras para a outra.
 - Arraste o dedo para pilotar, o tiro é automático. O botão ESPECIAL limpa a tela. Em dupla, quem cai vira uma cápsula SOS e a outra nave salva.
@@ -109,6 +113,6 @@ O GitHub Actions gera o app a cada envio (`.github/workflows/android.yml`). Baix
 O jogo é publicado pelo GitHub Pages em https://jogodamadrinhaana.dynosai.cloud (domínio configurado com um registro CNAME apontando para aparecida201782-cmd.github.io e em Settings > Pages) (`.github/workflows/site.yml`).
 
 ## Rodar no navegador
-Abra `index.html`. A versão de história com escolhas está em `historia.html`.
+Abra `index.html`: é a **Galáxia da Gabi**, a página de entrada com todos os jogos, que ocupa a tela toda (tem botão de tela cheia). O jogo de plataforma fica em `madrinha.html` e a versão de história com escolhas em `historia.html`.
 
-Para mudar a frase da Madrinha, edite `const ANA` no topo do script em `index.html`.
+Para mudar a frase da Madrinha, edite `const ANA` no topo do script em `madrinha.html`.
