@@ -19,6 +19,12 @@ Em cada parte há 3 câmeras escondidas (📸) que viram fotos no álbum das dua
 2. **Floresta de Nuuksio:** lago com pedras, cogumelos, fogueira.
 3. **Löyly à noite:** sauna à beira-mar, primeira neve e aurora boreal.
 
+## Fase 4: Tallinn de navio (abre depois da Fase 3)
+O José, irmãozinho da Gabi (6 anos), entra no jogo. O ⇄ alterna entre Madrinha, Gabi e José. O José é pequeno e rápido: passa em pé pelos túneis baixos e por baixo dos bichos voadores.
+1. **No convés do navio:** gaivotas, chocolates e túneis.
+2. **Cidade Velha de Tallinn:** casinhas medievais, amêndoas torradas, gatos e morcegos.
+3. **Muralhas e torres:** marzipã e o mirante de Toompea.
+
 ## Controles
 - Celular: botões na tela (◀ ▶ andar, » correr, ⤒ pular, ▼ abaixar, 👊 murro, 🦶 pesada). Correndo + ▼ = rasteira.
 - Teclado: setas ou A/D andam, Shift corre, ↑ ou Espaço pula, ↓ abaixa, X dá murro, C dá pesada.
