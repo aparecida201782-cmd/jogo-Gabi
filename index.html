@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Madrinha Ana ao Resgate</title>
+<style>
+  html,body{margin:0;height:100%;background:#2b1a0e;color:#fff;font-family:system-ui,sans-serif;overflow:hidden;touch-action:none}
+  #wrap{display:flex;align-items:center;justify-content:center;height:100%}
+  canvas{background:#e8c36a;max-width:100vw;max-height:100vh;aspect-ratio:4/3;width:min(100vw,133vh);image-rendering:auto;border-radius:6px}
+</style>
+</head>
+<body>
+<div id="wrap"><canvas id="c" width="800" height="600"></canvas></div>
+<script>
+(()=>{
+const cv=document.getElementById('c'),ctx=cv.getContext('2d');
+const W=800,H=600;
+const rnd=(a,b)=>a+Math.random()*(b-a);
+const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+// ---------- estado ----------
+let state='menu'; // menu | play | over | levelup
+let level,timeLeft,score,best=+localStorage.getItem('anaBest')||0;
+let ana,people,fountains,shades,pickups,floaters,t=0,msg='',msgT=0;
+const keys={};
+const joy={active:false,x:0,y:0,id:null,ox:0,oy:0};
+
+function resetLevelEntities(){
+  fountains=[{x:70,y:80},{x:730,y:520}];
+  shades=[];
+  for(let i=0;i<4;i++)shades.push({x:rnd(120,680),y:rnd(130,480),r:55});
+  const n=Math.min(3+level,8),icons=['👧','👦','🐶','👵','👶','🐱','👴','🧒'];
+  people=[];
+  for(let i=0;i<n;i++)people.push({x:rnd(60,740),y:rnd(60,540),heat:rnd(5,35),icon:icons[i%icons.length],cool:0,vx:0,vy:0,wt:0});
+  pickups=[];floaters=[];
+}
+function startGame(){
+  level=1;score=0;
+  ana={x:400,y:300,heat:0,water:3,speed:190,boost:0};
+  newLevel();state='play';
+}
+function newLevel(){
+  timeLeft=40+level*5;
+  resetLevelEntities();
+  ana.water=Math.max(ana.water,3);
+  flash('Nível '+level+' — mantenha todos fresquinhos!');
+}
+function flash(m){msg=m;msgT=3;}
+function float(x,y,text,col){floaters.push({x,y,text,col,life:1});}
+
+// ---------- entrada ----------
+addEventListener('keydown',e=>{
+  keys[e.key.toLowerCase()]=true;
+  if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(e.key.toLowerCase()))e.preventDefault();
+  if((e.key==='Enter'||e.key===' ')&&state!=='play')startGame();
+});
+addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+function pos(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height};}
+cv.addEventListener('pointerdown',e=>{
+  if(state!=='play'){startGame();return;}
+  const p=pos(e);joy.active=true;joy.id=e.pointerId;joy.ox=p.x;joy.oy=p.y;joy.x=joy.y=0;
+  cv.setPointerCapture(e.pointerId);
+});
+cv.addEventListener('pointermove',e=>{
+  if(!joy.active||e.pointerId!==joy.id)return;
+  const p=pos(e),dx=p.x-joy.ox,dy=p.y-joy.oy,d=Math.hypot(dx,dy);
+  if(d>0){const m=Math.min(1,d/50);joy.x=dx/d*m;joy.y=dy/d*m;}
+});
+const endJoy=e=>{if(e.pointerId===joy.id){joy.active=false;joy.x=joy.y=0;}};
+cv.addEventListener('pointerup',endJoy);cv.addEventListener('pointercancel',endJoy);
+
+// ---------- lógica ----------
+function inShade(o){return shades.some(s=>dist(o,s)<s.r);}
+function update(dt){
+  t+=dt;msgT-=dt;
+  // movimento da Ana
+  let dx=(keys.arrowright||keys.d?1:0)-(keys.arrowleft||keys.a?1:0)+joy.x;
+  let dy=(keys.arrowdown||keys.s?1:0)-(keys.arrowup||keys.w?1:0)+joy.y;
+  const m=Math.hypot(dx,dy);if(m>1){dx/=m;dy/=m;}
+  const sp=ana.speed*(ana.boost>0?1.6:1);
+  ana.x=clamp(ana.x+dx*sp*dt,20,W-20);ana.y=clamp(ana.y+dy*sp*dt,45,H-20);
+  ana.boost=Math.max(0,ana.boost-dt);
+  ana.facing=dx<0?-1:dx>0?1:(ana.facing||1);
+
+  // calor da Ana
+  const nearF=fountains.some(f=>dist(ana,f)<45);
+  if(nearF){ana.water=5;ana.heat=Math.max(0,ana.heat-30*dt);}
+  else if(inShade(ana))ana.heat=Math.max(0,ana.heat-8*dt);
+  else ana.heat+=(2.2+level*0.25)*dt;
+  if(ana.heat>=100)return end('A madrinha Ana desmaiou com o calor! 🥵');
+
+  // pessoas
+  const rate=3.2+level*0.9;
+  for(const p of people){
+    p.cool=Math.max(0,p.cool-dt);
+    p.wt-=dt;
+    if(p.wt<=0){p.wt=rnd(1,3);const a=rnd(0,6.28),s=rnd(0,30);p.vx=Math.cos(a)*s;p.vy=Math.sin(a)*s;}
+    p.x=clamp(p.x+p.vx*dt,25,W-25);p.y=clamp(p.y+p.vy*dt,55,H-25);
+    p.heat+=rate*(inShade(p)?0.3:1)*dt;
+    if(dist(ana,p)<38&&ana.water>0&&p.cool<=0&&p.heat>8){
+      ana.water--;p.heat=Math.max(0,p.heat-45);p.cool=0.6;
+      score+=10;float(p.x,p.y-30,'+10 💧','#2a8cff');
+    }
+    if(p.heat>=100)return end(p.icon+' passou mal com o calor... Ana não chegou a tempo!');
+  }
+
+  // sorvetes
+  if(Math.random()<dt*0.12&&pickups.length<2)pickups.push({x:rnd(60,740),y:rnd(70,540),life:10});
+  for(const k of pickups){
+    k.life-=dt;
+    if(dist(ana,k)<30){k.life=0;ana.boost=5;ana.heat=Math.max(0,ana.heat-35);score+=5;float(k.x,k.y-20,'Sorvete! 🍦','#e0457b');}
+  }
+  pickups=pickups.filter(k=>k.life>0);
+  floaters.forEach(f=>{f.life-=dt;f.y-=25*dt;});floaters=floaters.filter(f=>f.life>0);
+
+  timeLeft-=dt;
+  if(timeLeft<=0){
+    score+=level*50;level++;
+    ana.heat=Math.max(0,ana.heat-40);
+    newLevel();
+  }
+}
+function end(why){
+  state='over';msg=why;
+  if(score>best){best=score;localStorage.setItem('anaBest',best);}
+}
+
+// ---------- desenho ----------
+function emoji(ch,x,y,size){ctx.font=size+'px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(ch,x,y);}
+function bar(x,y,w,h,v,col){
+  ctx.fillStyle='rgba(0,0,0,.45)';ctx.fillRect(x,y,w,h);
+  ctx.fillStyle=col;ctx.fillRect(x,y,w*clamp(v,0,1),h);
+}
+function heatCol(v){return v<.5?'#3fbf5f':v<.8?'#f2b01e':'#e03a2f';}
+function drawWorld(){
+  // chão: areia com pontinhos
+  ctx.fillStyle='#e8c36a';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='rgba(180,130,50,.25)';
+  for(let i=0;i<60;i++)ctx.fillRect((i*137)%W,(i*91)%H,4,3);
+  // brilho do sol (mais forte com o nível)
+  const g=ctx.createRadialGradient(W-60,40,10,W-60,40,500);
+  g.addColorStop(0,'rgba(255,220,80,'+Math.min(.45,.15+level*.04)+')');g.addColorStop(1,'rgba(255,220,80,0)');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  for(const s of shades){
+    ctx.fillStyle='rgba(40,60,40,.28)';ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,6.28);ctx.fill();
+    emoji('🌳',s.x,s.y-6,52);
+  }
+  for(const f of fountains){
+    ctx.fillStyle='rgba(60,150,255,.35)';ctx.beginPath();ctx.arc(f.x,f.y,45,0,6.28);ctx.fill();
+    emoji('⛲',f.x,f.y,44);
+  }
+  for(const k of pickups){emoji('🍦',k.x,k.y+Math.sin(t*5)*3,30);}
+}
+function drawEntities(){
+  for(const p of people){
+    const hv=p.heat/100;
+    emoji(p.icon,p.x+(hv>.7?Math.sin(t*30)*2:0),p.y,32);
+    if(hv>.7)emoji('🥵',p.x+16,p.y-18,16);
+    if(p.cool>0)emoji('💦',p.x,p.y-24,20);
+    bar(p.x-18,p.y+20,36,5,hv,heatCol(hv));
+  }
+  ctx.save();ctx.translate(ana.x,ana.y);ctx.scale(ana.facing||1,1);
+  if(ana.boost>0){ctx.globalAlpha=.4;emoji('💨',-26,4,22);ctx.globalAlpha=1;}
+  emoji('👩',0,0,38);
+  ctx.restore();
+  emoji('🧴',ana.x+18,ana.y+8,14);
+  bar(ana.x-22,ana.y+24,44,5,ana.heat/100,heatCol(ana.heat/100));
+  for(const f of floaters){ctx.globalAlpha=clamp(f.life,0,1);ctx.fillStyle=f.col;ctx.font='bold 16px system-ui';ctx.textAlign='center';ctx.fillText(f.text,f.x,f.y);ctx.globalAlpha=1;}
+}
+function hud(){
+  ctx.fillStyle='rgba(0,0,0,.55)';ctx.fillRect(0,0,W,38);
+  ctx.fillStyle='#fff';ctx.font='bold 16px system-ui';ctx.textBaseline='middle';
+  ctx.textAlign='left';ctx.fillText('🌡️ Nível '+level+'   ⭐ '+score,10,19);
+  ctx.textAlign='center';ctx.fillText('⏱️ '+Math.ceil(timeLeft)+'s',W/2,19);
+  ctx.textAlign='right';ctx.fillText('💧'.repeat(ana.water)+'▫️'.repeat(5-ana.water)+'  Calor da Ana:',W-120,19);
+  bar(W-110,12,100,13,ana.heat/100,heatCol(ana.heat/100));
+  if(msgT>0){ctx.globalAlpha=Math.min(1,msgT);ctx.fillStyle='rgba(0,0,0,.6)';ctx.fillRect(100,H-60,600,36);ctx.fillStyle='#fff';ctx.textAlign='center';ctx.fillText(msg,W/2,H-42);ctx.globalAlpha=1;}
+  if(joy.active){ctx.strokeStyle='rgba(255,255,255,.6)';ctx.lineWidth=3;ctx.beginPath();ctx.arc(joy.ox,joy.oy,50,0,6.28);ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,.5)';ctx.beginPath();ctx.arc(joy.ox+joy.x*50,joy.oy+joy.y*50,20,0,6.28);ctx.fill();}
+}
+function panel(title,lines){
+  ctx.fillStyle='rgba(30,10,0,.8)';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#ffd34d';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.font='bold 44px system-ui';ctx.fillText(title,W/2,120);
+  ctx.fillStyle='#fff';ctx.font='20px system-ui';
+  lines.forEach((l,i)=>ctx.fillText(l,W/2,200+i*34));
+}
+function frame(now){
+  const dt=Math.min(.05,(now-(frame.last||now))/1000);frame.last=now;
+  if(state==='play')update(dt);
+  if(state==='menu'){t+=dt;
+    ctx.fillStyle='#e8c36a';ctx.fillRect(0,0,W,H);
+    panel('☀️ Madrinha Ana ao Resgate 🌡️',[
+      'Está um calorão! Ajude a madrinha Ana a refrescar a turma.',
+      '',
+      'Mover: setas / WASD  (celular: arraste o dedo)',
+      'Encoste nas pessoas com 💧 para refrescá-las',
+      'Reabasteça nas fontes ⛲ — fique na sombra 🌳 para esfriar',
+      'Pegue 🍦 para correr mais rápido',
+      '',
+      'Se alguém — ou a Ana — chegar a 100° de calor, acabou!',
+      '',
+      'Toque na tela ou aperte ENTER para começar'
+    ]);
+  } else {
+    drawWorld();if(ana){drawEntities();hud();}
+    if(state==='over')panel('Fim de jogo',[msg,'','Pontos: '+score+'    Recorde: '+best,'Chegou ao nível '+level,'','Toque ou aperte ENTER para jogar de novo']);
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
