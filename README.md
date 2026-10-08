@@ -25,6 +25,11 @@ O José, irmãozinho da Gabi (6 anos), entra no jogo. O ⇄ alterna entre Madrin
 2. **Cidade Velha de Tallinn:** casinhas medievais, amêndoas torradas, gatos e morcegos.
 3. **Muralhas e torres:** marzipã e o mirante de Toompea.
 
+## Fase 5: Estocolmo, na Suécia (abre depois da Fase 4)
+1. **O navio grandão à noite:** cupcakes, balões de festa, piscina no convés.
+2. **Gamla Stan:** cidade velha de Estocolmo, bolinhas de chocolate, pombos, gatos e morcegos.
+3. **Skansen:** casinhas vermelhas, cavalinhos de Dala e o alce (3 golpes).
+
 ## Controles
 - Celular: botões na tela (◀ ▶ andar, » correr, ⤒ pular, ▼ abaixar, 👊 murro, 🦶 pesada). Correndo + ▼ = rasteira.
 - Teclado: setas ou A/D andam, Shift corre, ↑ ou Espaço pula, ↓ abaixa, X dá murro, C dá pesada.
