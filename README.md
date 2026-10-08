@@ -79,7 +79,7 @@ Na conversa: *dica* dá uma ajudinha, *repetir* manda a pista de novo e *reinici
 
 O que deixa o jogo mais misterioso:
 - **Ilustrações** em cada fase (`mystic-imagens.js`, desenhos próprios). No navegador, toque na imagem para ampliar e procurar pistas.
-- **Vídeos** curtos com som (`videos/`): a neblina na Ponte Wickery, as câmeras do Baile dos Fundadores, os olhos no porão e os dois finais. São gerados por `node scripts/gerar-videos.mjs` (precisa do Playwright e do ffmpeg).
+- **Vídeos** curtos com som (`videos/`, 720p): a abertura na floresta, a Ponte Wickery, as câmeras do Baile dos Fundadores, os olhos no porão, o túmulo e os dois finais. Cinco deles usam cenas realistas geradas no Canva (`fotos/`), animadas com câmera em movimento, neblina, luzes e som. São gerados por `node scripts/gerar-videos.mjs` (precisa do Playwright e do ffmpeg).
 - **Mensagens que se apagam** sozinhas, "digitando..." que para sem mandar nada, tela que pisca, treme ou fica vermelha nos sustos, e som de vento e coração (botão 🔊).
 - **Botões** para escolher o suspeito e o final.
 - **Segredos:** mande nomes da série (Damon, Stefan, Elena, Katherine, Klaus, Caroline, Bonnie) a qualquer momento para ver o que a bruxa responde.

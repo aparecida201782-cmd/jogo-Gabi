@@ -110,7 +110,8 @@ function brilho(ctx, x, y, r, cor, alfa) {
   const g = ctx.createRadialGradient(x, y, 0, x, y, r);
   g.addColorStop(0, cor.replace('A', alfa)); g.addColorStop(.3, cor.replace('A', alfa * .35)); g.addColorStop(1, cor.replace('A', 0));
   ctx.fillStyle = g; ctx.fillRect(x - r, y - r, r * 2, r * 2);
-  // reflexo de lente (estrela de 4 pontas)
+  // reflexo de lente (estrela de 4 pontas), só nos clarões fortes
+  if (alfa < .6) { ctx.restore(); return; }
   ctx.globalAlpha = alfa * .6; ctx.fillStyle = cor.replace('A', 1);
   const l = Math.min(r, 140);
   ctx.fillRect(x - l * 1.3, y - 1, l * 2.6, 2); ctx.fillRect(x - 1, y - l * .6, 2, l * 1.2);
@@ -239,115 +240,90 @@ function fileira(ctx, n, sem, y, hMin, hMax, cor, dx = 0, xMin = -80, xMax = W +
   }
 }
 
+
+// ---------- fotos (cenas realistas geradas no Canva, em fotos/) ----------
+// cam = { x, y, s }: ponto da foto (0 a 1) no centro da tela e o zoom. Devolve uma função que
+// converte um ponto da foto (u, v de 0 a 1) para a tela, para pôr luzes e efeitos no lugar certo.
+function foto(ctx, img, cam, filtro) {
+  const k = Math.max(W / img.width, H / img.height) * cam.s, w = img.width * k, h = img.height * k;
+  const dx = lim(W / 2 - cam.x * w, W - w, 0), dy = lim(H / 2 - cam.y * h, H - h, 0);
+  if (filtro) ctx.filter = filtro;
+  ctx.drawImage(img, dx, dy, w, h);
+  ctx.filter = 'none';
+  return (u, v) => [dx + u * w, dy + v * h];
+}
+const fotoCam = (t, a, b, de, ate) => camEntre(t, a, b, de, ate);
+
 // ---------- os vídeos ----------
 export const VIDEOS = {
-  // Abertura: a câmera desce do céu de lua cheia até o celular aceso no chão da floresta
+  // Abertura: a câmera desce da lua cheia até o celular aceso no chão da floresta (foto)
   abertura: {
     dur: 11, fundo: 'floresta', poster: 'floresta',
     som: { drone: .9, vento: .3, sustos: [3.4], sussurro: [7], toque: [5.2, 5.9, 7.6, 8.3] },
     desenhar(ctx, t, img, q) {
       texturas();
-      const cy = mix(-H * .9, 0, entre(t, .3, 6.5)); // câmera inclinando para baixo
-      const Y = (y, p) => y - cy * p;
-      ceuNoite(ctx, Y(0, .25));
-      estrelasCeu(ctx, t, 220, 5, Y(0, .2), H * .8);
-      const [lx, ly] = [W * .7, Y(H * .16, .3)];
-      lua(ctx, t, lx, ly, 88);
-      raios(ctx, t, lx, ly, Math.PI * .5, Math.PI * .95, 9, 1300, 'rgba(244,236,210,A)', .08, 95);
-      fileira(ctx, 16, 1, Y(H * .74, .5), 200, 330, '#122230');
-      nevoa(ctx, t, Y(H * .5, .55), Y(H * .85, .55), .55, 24, 3);
-      fileira(ctx, 11, 2, Y(H * .86, .75), 300, 480, '#0a1520');
-      nevoa(ctx, t + 7, Y(H * .62, .8), Y(H * 1.02, .8), .5, -16, 2.6);
-      ctx.fillStyle = '#04080c'; ctx.fillRect(0, Y(H * .9, 1), W, H * 2);
-      fileira(ctx, 3, 3, Y(H * 1.05, 1), 700, 900, '#020406', 0, -260, W * .2);
-      fileira(ctx, 3, 4, Y(H * 1.05, 1), 700, 900, '#020406', 0, W * .82, W + 260);
-      // o celular no chão, vibrando e aceso
-      const vib = [5.2, 5.9, 7.6, 8.3].some(a => t > a && t < a + .35) ? (rnd(q) - .5) * 6 : 0;
-      const px = W * .5 + vib, py = Y(H * .9, 1);
-      if (py < H + 60) {
-        brilho(ctx, px, py, 260, 'rgba(127,209,255,A)', .35 + .2 * Math.sin(t * 5));
-        ctx.save(); ctx.translate(px, py); ctx.rotate(-.25);
-        ctx.fillStyle = '#0d0f12'; ctx.fillRect(-26, -44, 52, 88);
-        ctx.fillStyle = '#8fdcff'; ctx.fillRect(-22, -38, 44, 74);
-        ctx.fillStyle = '#123'; ctx.font = 'bold 9px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('1 MENSAGEM', 0, -6);
-        ctx.restore();
-      }
-      particulas(ctx, t, 30, 3, [0, H * .3, W, H], [8, -6], 2.4, 'rgba(190,255,160,A)', 1);
-      cor(ctx, '#0b3b5a', '#4a2a10', .4);
-      vinheta(ctx, .85);
-      escuro(ctx, 1 - entre(t, 0, 1.6));
-      escuro(ctx, entre(t, 3.3, 3.45) * (1 - entre(t, 3.45, 3.9)) * .7);
+      const cam = fotoCam(t, .3, 7, { x: .58, y: .14, s: 1.7 }, { x: .5, y: .72, s: 1.2 });
+      const z = { ...cam, s: cam.s + entre(t, 7, 11) * .25 };
+      const P = foto(ctx, img.f_floresta, z, 'contrast(1.08) saturate(1.05)');
+      const [lx, ly] = P(.587, .075);
+      brilho(ctx, lx, ly, 300, 'rgba(210,230,255,A)', .18 + .04 * Math.sin(t * 1.3));
+      raios(ctx, t, lx, ly, Math.PI * .35, Math.PI * .7, 7, 1000, 'rgba(190,215,255,A)', .05, 40);
+      nevoa(ctx, t, H * .35, H * .85, .32, 18, 3.4, 'rgba(150,180,210,1)');
+      nevoa(ctx, t + 9, H * .6, H, .28, -11, 2.6, 'rgba(120,150,180,1)');
+      // a tela do celular pulsando e vibrando quando chega a mensagem
+      const toque = [5.2, 5.9, 7.6, 8.3].some(a => t > a && t < a + .35);
+      const [cx, cy] = P(.5, .75);
+      brilho(ctx, cx + (toque ? (rnd(q) - .5) * 8 : 0), cy, 330, 'rgba(90,190,255,A)', .22 + .14 * Math.sin(t * 4) + (toque ? .2 : 0));
+      particulas(ctx, t, 40, 3, [0, 0, W, H], [5, 7], 1.4, 'rgba(210,225,255,A)');
+      cor(ctx, '#0b2b4a', '#3a2410', .3);
+      vinheta(ctx, .8);
+      escuro(ctx, 1 - entre(t, 0, 1.8));
+      escuro(ctx, entre(t, 3.3, 3.45) * (1 - entre(t, 3.45, 3.9)) * .6);
       cartela(ctx, t, 1.2, 4.6, '23:47 · MYSTIC FALLS, VIRGÍNIA', 'Operação Mystic Falls');
       faixas(ctx, 1);
       legenda(ctx, 'Uma mensagem de um número desconhecido...', entre(t, 8.6, 9) * (1 - entre(t, 10.6, 11)));
-      grao(ctx, q, .09);
+      grao(ctx, q, .07);
     },
   },
 
-  // Fase 4: a Ponte Wickery na neblina, o reflexo no rio e um brilho nas pedras
+  // Fase 4: a Ponte Wickery de noite (foto), a neblina no rio e a caixa de ferro brilhando nas pedras
   ponte: {
     dur: 11, fundo: 'ponte', poster: 'ponte',
     som: { drone: .7, vento: .25, agua: true, sustos: [6.6], brilho: [6.5] },
     desenhar(ctx, t, img, q) {
       texturas();
-      // câmera aproximando da caixa de ferro nas pedras
-      const z = mix(1, 1.9, entre(t, 0, 10.5)), fx = W * .74, fy = H * .8;
+      const cam = fotoCam(t, 0, 10.5, { x: .45, y: .45, s: 1.05 }, { x: .76, y: .86, s: 2.1 });
       ctx.save();
-      tremer(ctx, q, 10 * entre(t, 6.5, 6.6) * (1 - entre(t, 6.6, 7.3)));
-      ctx.translate(fx, fy); ctx.scale(z, z); ctx.translate(-fx, -fy);
-      ceuNoite(ctx, 0);
-      estrelasCeu(ctx, t, 160, 8, 0, H * .5);
-      lua(ctx, t, W * .2, H * .17, 62);
-      raios(ctx, t, W * .2, H * .17, Math.PI * .05, Math.PI * .5, 8, 1300, 'rgba(244,236,210,A)', .06, 66);
-      fileira(ctx, 18, 11, H * .56, 140, 240, '#102030');
-      nevoa(ctx, t, H * .36, H * .62, .5, 20, 3);
-      // a ponte coberta
-      const b = BUF.getContext('2d');
-      const ponte = c => {
-        const x0 = W * .14, x1 = W * .86, deck = H * .56, alto = H * .2;
-        c.fillStyle = '#2b1a10'; c.beginPath(); c.moveTo(x0 - 30, deck - alto); c.lineTo((x0 + x1) / 2, deck - alto - H * .09); c.lineTo(x1 + 30, deck - alto); c.closePath(); c.fill();
-        c.fillStyle = '#3d2716'; c.fillRect(x0, deck - alto, x1 - x0, alto);
-        for (let x = x0 + 8; x < x1; x += 22) { c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(x, deck - alto, 3, alto); }
-        for (let i = 0; i < 7; i++) { c.fillStyle = '#0a0705'; c.fillRect(mix(x0 + 40, x1 - 110, i / 6), deck - alto * .7, 70, alto * .32); }
-        c.fillStyle = '#1e130b'; c.fillRect(x0 - 10, deck - 8, x1 - x0 + 20, 14);
-        for (const px of [x0 + 20, (x0 + x1) / 2 - 20, x1 - 60]) { c.fillStyle = '#22160d'; c.fillRect(px, deck, 40, H * .14); }
-        c.fillStyle = '#c9a25a'; c.font = '600 22px Georgia, serif'; c.textAlign = 'center'; c.fillText('W I C K E R Y', (x0 + x1) / 2, deck - alto - 18);
-      };
-      ponte(ctx);
-      // rio com o reflexo ondulado da ponte
-      const rio = H * .62;
-      const gr = ctx.createLinearGradient(0, rio, 0, H); gr.addColorStop(0, '#0e2333'); gr.addColorStop(1, '#03080d');
-      ctx.fillStyle = gr; ctx.fillRect(0, rio, W, H - rio);
-      b.setTransform(1, 0, 0, 1, 0, 0); b.clearRect(0, 0, W, H); ponte(b);
-      for (let y = 0; y < H - rio; y += 4) {
-        const src = rio - y * 1.1 - 10, off = Math.sin(y * .09 + t * 2.2) * (2 + y * .03);
-        if (src < 0) break;
-        ctx.globalAlpha = .28 * (1 - y / (H - rio)); ctx.drawImage(BUF, 0, src, W, 4, off, rio + y, W, 4);
+      tremer(ctx, q, 8 * entre(t, 6.5, 6.6) * (1 - entre(t, 6.6, 7.3)));
+      const P = foto(ctx, img.f_ponte, cam, 'contrast(1.06)');
+      const [lx, ly] = P(.338, .142);
+      brilho(ctx, lx, ly, 260 * cam.s, 'rgba(200,235,240,A)', .16 + .05 * Math.sin(t));
+      // as lanternas dentro da ponte tremendo
+      for (const [u, v, i] of [[.505, .42, 0], [.8, .32, 1], [.68, .4, 2]]) {
+        const [x, y] = P(u, v);
+        brilho(ctx, x, y, 90 * cam.s, 'rgba(255,170,80,A)', .25 + .12 * Math.sin(t * 9 + i * 3) + .06 * rnd(Math.floor(t * 12) + i));
       }
-      ctx.globalAlpha = 1;
-      for (let i = 0; i < 70; i++) { // luar brilhando na água
-        const x = W * .2 + (rnd(i) - .5) * 260 * (1 + rnd(i * 2)), y = rio + rnd(i * 3) * (H - rio);
-        const a = lim(Math.sin(t * 3 + i * 2.3) * 1.5 - .4) * .55;
-        if (a > 0) { ctx.fillStyle = `rgba(244,236,210,${a})`; ctx.fillRect(x, y, 10 + rnd(i) * 26, 2); }
+      // brilho da lua mexendo na água
+      for (let i = 0; i < 60; i++) {
+        const [x, y] = P(.22 + rnd(i) * .38, .7 + rnd(i * 3) * .28);
+        const a = lim(Math.sin(t * 2.6 + i * 2.3) * 1.6 - .5) * .35;
+        if (a > 0) { ctx.fillStyle = `rgba(210,235,240,${a})`; ctx.fillRect(x, y, (8 + rnd(i) * 24) * cam.s, 1.5 * cam.s); }
       }
-      // pedras e a caixa de ferro
-      ctx.fillStyle = '#0b0f12';
-      for (let i = 0; i < 7; i++) { ctx.beginPath(); ctx.ellipse(W * .62 + i * 70, H * .86 + rnd(i) * 30, 70 + rnd(i * 2) * 50, 34 + rnd(i * 3) * 20, 0, 0, Math.PI * 2); ctx.fill(); }
-      ctx.fillStyle = '#4c5560'; ctx.fillRect(fx - 40, fy - 26, 80, 50); ctx.fillStyle = '#5f6a76'; ctx.fillRect(fx - 40, fy - 32, 80, 10);
-      ctx.fillStyle = '#c9a25a'; ctx.fillRect(fx - 9, fy - 12, 18, 22);
-      nevoa(ctx, t + 3, H * .5, H * .9, .6, 26, 3.4);
-      nevoa(ctx, t + 11, H * .7, H, .5, -14, 2.4);
-      particulas(ctx, t, 24, 9, [0, 0, W, H], [6, -4], 2, 'rgba(255,240,200,A)', 1);
+      const [ny] = [P(0, .68)[1]];
+      nevoa(ctx, t, ny - H * .25, ny + H * .2, .45, 24, 3.4, 'rgba(150,200,210,1)');
+      nevoa(ctx, t + 6, ny - H * .05, H, .3, -14, 2.4, 'rgba(120,170,185,1)');
+      const [bx, by] = P(.765, .9);
       const flash = entre(t, 6.3, 6.6) * (1 - entre(t, 7, 9.5));
-      brilho(ctx, fx, fy - 4, 420 * flash + 30, 'rgba(255,214,130,A)', .9 * flash);
+      brilho(ctx, bx, by - 20, 420 * flash + 20, 'rgba(255,205,120,A)', .85 * flash);
+      particulas(ctx, t, 26, 9, [0, 0, W, H], [6, -4], 1.6, 'rgba(255,240,210,A)', 1);
       ctx.restore();
-      cor(ctx, '#0a3a4a', '#6a3a10', .45);
-      vinheta(ctx, .8);
+      cor(ctx, '#0a3040', '#4a2a10', .3);
+      vinheta(ctx, .75);
       escuro(ctx, 1 - entre(t, 0, 1.2));
       cartela(ctx, t, .6, 3.8, 'PONTE WICKERY · 23:58', '');
       faixas(ctx, 1);
       legenda(ctx, 'Tem alguma coisa presa nas pedras...', entre(t, 7.6, 8) * (1 - entre(t, 10.5, 11)));
-      grao(ctx, q, .08);
+      grao(ctx, q, .07);
     },
   },
 
@@ -411,80 +387,87 @@ export const VIDEOS = {
     },
   },
 
-  // Fase 6: o porão, a luz falhando e dois olhos vermelhos que se abrem no escuro
+  // Fase 6: o porão (foto), a luz da janelinha falhando e os olhos vermelhos que se abrem no escuro
   porao: {
     dur: 11, fundo: 'porao', poster: 'porao',
     som: { drone: 1, vento: .06, coracao: [3, 11], correntes: [1.4, 2.4, 3.1], sustos: [6.2], sussurro: [8.2] },
     desenhar(ctx, t, img, q) {
       texturas();
-      const cam = camEntre(t, 0, 11, { x: 320, y: 230, s: 1.12 }, { x: 320, y: 168, s: 2.6 });
-      ctx.save(); tremer(ctx, q, (t > 1.3 && t < 3.3 ? 6 : 0) + 12 * entre(t, 6.1, 6.2) * (1 - entre(t, 6.2, 6.9)));
-      cena(ctx, img.porao, cam, 'brightness(.75) contrast(1.25)');
-      // luz da janelinha com poeira no feixe
-      const [jx, jy] = pt(cam, 320, 75);
+      const cam = fotoCam(t, 0, 10.5, { x: .5, y: .45, s: 1.05 }, { x: .72, y: .55, s: 2.4 });
+      ctx.save();
+      tremer(ctx, q, (t > 1.3 && t < 3.3 ? 4 : 0) + 10 * entre(t, 6.1, 6.2) * (1 - entre(t, 6.2, 6.9)));
+      const P = foto(ctx, img.f_porao, cam, 'contrast(1.1)');
+      const [jx, jy] = P(.56, .2);
       const falha = (rnd(Math.floor(t * 10)) > .8 && t < 5.6) || (t > 5.9 && t < 6.2);
-      raios(ctx, t, jx, jy, Math.PI * .38, Math.PI * .62, 6, 1100, 'rgba(170,200,220,A)', falha ? .02 : .12);
-      particulas(ctx, t, 50, 21, [W * .3, 0, W * .7, H], [3, 9], 1.5, 'rgba(220,230,240,A)');
-      escuro(ctx, falha ? .78 : .2 + .08 * Math.sin(t * 3));
-      const [ox, oy] = pt(cam, 320, 160);
-      olhos(ctx, ox, oy, K * cam.s * .5, entre(t, 6.15, 6.7), .65 + .35 * Math.sin(t * 5));
+      brilho(ctx, jx, jy, 200 * cam.s, 'rgba(170,215,255,A)', falha ? .02 : .2);
+      // poeira dentro do feixe de luz
+      const [bx0, by0] = P(.53, .25), [bx1, by1] = P(.68, .78);
+      particulas(ctx, t, 60, 21, [Math.min(bx0, bx1) - 40, by0, Math.max(bx0, bx1) + 40, by1], [3, 7], 1.3, 'rgba(210,230,255,A)');
+      escuro(ctx, falha ? .8 : .1 + .06 * Math.sin(t * 3));
+      const [ox, oy] = P(.715, .515);
+      olhos(ctx, ox, oy, .9 * cam.s, entre(t, 6.15, 6.7), .65 + .35 * Math.sin(t * 5));
       ctx.restore();
-      cor(ctx, '#082a20', '#3a0808', .5);
-      vinheta(ctx, .95);
+      cor(ctx, '#082a30', '#3a0808', .35);
+      vinheta(ctx, .9);
       escuro(ctx, 1 - entre(t, 0, 1));
       escuro(ctx, entre(t, 10.2, 10.6));
       faixas(ctx, 1);
       legenda(ctx, '"Eu sei que você está aí, caçadora."', entre(t, 8, 8.4) * (1 - entre(t, 10, 10.3)), '#ff9a9a');
-      grao(ctx, q, .1);
+      grao(ctx, q, .08);
     },
   },
 
-  // Fase 7: o túmulo embaixo da igreja, as velas acendendo sozinhas e a estaca
+  // Fase 7: o túmulo embaixo da igreja (foto), as velas acendendo e a estaca brilhando
   cripta: {
     dur: 10, fundo: 'cripta', poster: 'cripta',
     som: { drone: .9, vento: .1, velas: [1.2, 1.9, 2.6, 3.3], brilho: [5.5], sino: [8] },
     desenhar(ctx, t, img, q) {
       texturas();
-      const cam = camEntre(t, 0, 10, { x: 320, y: 300, s: 1.15 }, { x: 320, y: 225, s: 1.9 });
-      cena(ctx, img.cripta, cam, `brightness(${mix(.35, 1, entre(t, 1, 3.6))}) contrast(1.15)`);
-      // cada vela acende numa hora
-      [[150, 275, 1.2], [200, 255, 1.9], [440, 255, 2.6], [490, 275, 3.3]].forEach(([x, y, a], i) => {
-        const [vx, vy] = pt(cam, x, y);
-        const f = entre(t, a, a + .15) * (.8 + .2 * Math.sin(t * 13 + i * 4));
-        brilho(ctx, vx, vy, 170, 'rgba(255,180,90,A)', .55 * f);
+      const cam = fotoCam(t, 0, 10, { x: .5, y: .38, s: 1.12 }, { x: .53, y: .62, s: 1.85 });
+      const P = foto(ctx, img.f_cripta, cam, `brightness(${mix(.35, 1, entre(t, 1, 3.6))}) contrast(1.08)`);
+      // as velas acendem em grupos e ficam tremendo
+      const velas = [[.03, .26, 1.2], [.055, .29, 1.2], [.085, .28, 1.2], [.115, .3, 1.2], [.42, .25, 1.9], [.445, .24, 1.9], [.465, .26, 1.9],
+        [.6, .38, 2.6], [.66, .35, 2.6], [.69, .4, 2.6], [.91, .3, 3.3], [.955, .27, 3.3], [.985, .3, 3.3]];
+      velas.forEach(([u, v, a], i) => {
+        const [x, y] = P(u, v);
+        const f = entre(t, a, a + .2) * (.75 + .25 * Math.sin(t * 13 + i * 4) + .1 * rnd(Math.floor(t * 15) + i));
+        brilho(ctx, x, y, 110 * cam.s, 'rgba(255,175,90,A)', .32 * f);
       });
-      const [ex, ey] = pt(cam, 320, 222);
-      brilho(ctx, ex, ey, 420 * entre(t, 5.3, 6) + 10, 'rgba(255,240,200,A)', .6 * entre(t, 5.3, 6) * (.85 + .15 * Math.sin(t * 4)));
-      particulas(ctx, t, 34, 41, [0, H * .2, W, H], [0, -22], 2, 'rgba(255,190,110,A)', 1);
-      nevoa(ctx, t, H * .7, H, .35, 12, 2.5, 'rgba(120,90,70,1)');
-      cor(ctx, '#1a1030', '#6a3410', .5);
-      vinheta(ctx, .85);
+      const [ex, ey] = P(.53, .63);
+      brilho(ctx, ex, ey, 520 * entre(t, 5.3, 6) + 10, 'rgba(255,235,190,A)', .5 * entre(t, 5.3, 6) * (.85 + .15 * Math.sin(t * 4)));
+      particulas(ctx, t, 50, 41, [W * .25, H * .2, W * .8, H * .8], [0, -12], 1.4, 'rgba(255,215,150,A)', 1);
+      cor(ctx, '#1a1030', '#5a3010', .3);
+      vinheta(ctx, .8);
       escuro(ctx, 1 - entre(t, 0, .8));
       faixas(ctx, 1);
       legenda(ctx, 'A estaca de carvalho branco.', entre(t, 6.8, 7.2) * (1 - entre(t, 9.5, 10)));
-      grao(ctx, q, .08);
+      grao(ctx, q, .07);
     },
   },
 
-  // Final 1: a lua cheia sobre a praça, a cidade a salvo
+  // Final 1: a praça da cidade sob a lua cheia (foto), os lampiões e a neblina
   final_aliado: {
     dur: 10, fundo: 'final_aliado', poster: 'final_aliado',
     som: { drone: .6, vento: .15, sino: [1.5, 3.7, 5.9], acorde: 6.5 },
     desenhar(ctx, t, img, q) {
       texturas();
-      const cam = camEntre(t, 0, 10, { x: 330, y: 320, s: 2 }, { x: 320, y: 190, s: 1.08 });
-      cena(ctx, img.final_aliado, cam, 'contrast(1.1) saturate(1.1)');
-      const [lx, ly] = pt(cam, 320, 110);
-      brilho(ctx, lx, ly, 520, 'rgba(255,246,216,A)', .28 + .06 * Math.sin(t * 1.5));
-      raios(ctx, t, lx, ly, 0, Math.PI * 2, 18, 1200, 'rgba(255,246,216,A)', .045, 70 * K * cam.s);
-      nevoa(ctx, t, H * .7, H, .45, 14, 3);
-      particulas(ctx, t, 40, 77, [0, 0, W, H], [5, -18], 1.8, 'rgba(255,230,170,A)', 1);
-      cor(ctx, '#0a2a4a', '#5a3a10', .35);
-      vinheta(ctx, .65);
+      const cam = fotoCam(t, 0, 10, { x: .5, y: .78, s: 1.6 }, { x: .5, y: .45, s: 1.04 });
+      const P = foto(ctx, img.f_praca, cam, 'contrast(1.05) saturate(1.05)');
+      const [lx, ly] = P(.49, .12);
+      brilho(ctx, lx, ly, 380 * cam.s, 'rgba(255,250,235,A)', .2 + .05 * Math.sin(t * 1.5));
+      raios(ctx, t, lx, ly, 0, Math.PI * 2, 18, 900, 'rgba(255,248,225,A)', .03, 70 * cam.s);
+      [[.27, .6], [.415, .69], [.59, .69], [.71, .68], [.825, .66], [.94, .63], [.035, .3], [.34, .26]].forEach(([u, v], i) => {
+        const [x, y] = P(u, v);
+        brilho(ctx, x, y, 80 * cam.s, 'rgba(255,190,100,A)', .2 + .07 * Math.sin(t * 6 + i * 2));
+      });
+      nevoa(ctx, t, P(0, .7)[1] - H * .15, H, .35, 12, 3.2, 'rgba(170,180,210,1)');
+      particulas(ctx, t, 30, 77, [0, 0, W, H], [4, -10], 1.4, 'rgba(255,235,190,A)', 1);
+      cor(ctx, '#0a2040', '#4a3010', .25);
+      vinheta(ctx, .6);
       escuro(ctx, 1 - entre(t, 0, 1.2));
       cartela(ctx, t, 6, 10.2, 'FINAL 1 · O ALIADO DA NEBLINA', 'Mystic Falls está a salvo.');
       faixas(ctx, 1);
-      grao(ctx, q, .07);
+      grao(ctx, q, .06);
     },
   },
 

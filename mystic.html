@@ -127,6 +127,8 @@ const fmt = s => esc(s)
 const hora = () => new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 const rolar = () => chat.scrollTop = chat.scrollHeight;
 const POSTER = { abertura: 'floresta', cameras: 'suspeitos', final_sombra: 'parede' };
+// capas com as fotos realistas (fotos/, geradas no Canva)
+const FOTO = { abertura: 'floresta', ponte: 'ponte', porao: 'porao', cripta: 'cripta', final_aliado: 'praca' };
 const imgURL = nome => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(IMAGENS[nome] || '');
 
 function mostrarFase() {
@@ -212,7 +214,7 @@ function bolha(m, quem, h, apagada) {
     b.querySelector('.ilu').onclick = () => abrirLupa(m.imagem);
   } else if (m.video) {
     b.classList.add('ilu-b');
-    b.innerHTML = `<video src="videos/${esc(m.video)}.mp4" controls playsinline preload="metadata" poster="${imgURL(POSTER[m.video] || m.video)}"></video>${m.texto ? `<div class="cap">${fmt(m.texto)}</div>` : ''}`;
+    b.innerHTML = `<video src="videos/${esc(m.video)}.mp4" controls playsinline preload="metadata" poster="${FOTO[m.video] ? `fotos/${FOTO[m.video]}.jpg` : imgURL(POSTER[m.video] || m.video)}"></video>${m.texto ? `<div class="cap">${fmt(m.texto)}</div>` : ''}`;
     // o som ambiente baixa enquanto o vídeo toca
     const v = b.querySelector('video');
     v.onplay = () => { document.querySelectorAll('.b video').forEach(o => o !== v && o.pause()); if (audio) audio.mestre.gain.setTargetAtTime(0, audio.ctx.currentTime, .2); };

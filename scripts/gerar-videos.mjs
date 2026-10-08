@@ -45,7 +45,7 @@ pagina.setDefaultTimeout(120000);
 await pagina.route('http://jogo.local/**', rota => {
   const caminho = new URL(rota.request().url()).pathname;
   if (caminho === '/') return rota.fulfill({ contentType: 'text/html', body: `<canvas id="c" width="${W}" height="${H}"></canvas>` });
-  rota.fulfill({ contentType: 'text/javascript', body: readFileSync(join(raiz, caminho)) });
+  rota.fulfill({ contentType: caminho.endsWith('.jpg') ? 'image/jpeg' : 'text/javascript', body: readFileSync(join(raiz, decodeURIComponent(caminho))) });
 });
 await pagina.goto('http://jogo.local/');
 await pagina.evaluate(async () => {
@@ -56,6 +56,10 @@ await pagina.evaluate(async () => {
     // sem os letreiros do canto (o vídeo põe os dele)
     const limpo = svg.replace(/<text x="20" y="382"[^>]*>[^<]*<\/text>/g, '');
     const i = new Image(); i.onload = ok; i.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(limpo); imgs[k] = i;
+  })));
+  // as fotos realistas de fotos/ (geradas no Canva) ficam como imgs.f_nome
+  await Promise.all(['floresta', 'ponte', 'porao', 'cripta', 'praca'].map(nome => new Promise(ok => {
+    const i = new Image(); i.onload = ok; i.onerror = ok; i.src = '/fotos/' + nome + '.jpg'; imgs['f_' + nome] = i;
   })));
   await document.fonts.ready;
   window.quadro = (nome, n, fps) => {
