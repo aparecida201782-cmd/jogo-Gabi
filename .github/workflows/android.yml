@@ -28,6 +28,8 @@ jobs:
       - name: Jogo sempre deitado (paisagem)
         run: sed -i 's/<activity/<activity android:screenOrientation="sensorLandscape"/' android/app/src/main/AndroidManifest.xml
       - run: npx cap sync android
+      - name: Assinatura fixa (para atualizar sem desinstalar)
+        run: mkdir -p ~/.android && cp android-signing/debug.keystore ~/.android/debug.keystore
       - name: Gerar APK
         working-directory: android
         run: ./gradlew assembleDebug --no-daemon
