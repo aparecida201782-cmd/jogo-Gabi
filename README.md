@@ -20,6 +20,9 @@ A Gabi joga junto. O botão ⇄ (ou a tecla Q) troca entre a Madrinha e a Gabi. 
 ## Instalar no Android
 O GitHub Actions gera o app a cada envio (`.github/workflows/android.yml`). Baixe o `MadrinhaAna.apk` na página **Releases** do repositório, abra no celular e permita a instalação.
 
+## Site
+O jogo é publicado pelo GitHub Pages em https://jogodamadrinhaana.dynosai.cloud (`.github/workflows/site.yml`).
+
 ## Rodar no navegador
 Abra `index.html`. A versão de história com escolhas está em `historia.html`.
 
