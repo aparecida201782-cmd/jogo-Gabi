@@ -25,18 +25,21 @@ async function enviar(sock, jid, m) {
   await sock.sendPresenceUpdate(m.audio ? 'recording' : 'composing', jid);
   await esperar(m.espera ?? 1500);
   await sock.sendPresenceUpdate('paused', jid);
-  if (m.arquivo) {
-    await sock.sendMessage(jid, {
-      document: Buffer.from(m.arquivo.conteudo, 'utf8'),
-      mimetype: m.arquivo.mime,
-      fileName: m.arquivo.nome,
-      caption: m.texto,
-    });
+  if (m.fantasma) return esperar(900); // começou a digitar... e desistiu
+  const legenda = (m.texto || '') + (m.opcoes ? `\n\n👉 ${m.opcoes.map(o => '*' + o + '*').join(' ou ')}` : '');
+  let conteudo;
+  if (m.imagem) {
+    conteudo = { image: readFileSync(PASTA + 'imagens/' + m.imagem + '.png'), caption: legenda || undefined };
+  } else if (m.arquivo) {
+    conteudo = { document: Buffer.from(m.arquivo.conteudo, 'utf8'), mimetype: m.arquivo.mime, fileName: m.arquivo.nome, caption: legenda };
   } else if (m.audio) {
-    await sock.sendMessage(jid, { text: '🎙️ _Áudio (0:0' + Math.min(9, Math.ceil(m.audio.length / 25)) + ')_\n"' + m.audio + '"' });
+    conteudo = { text: '🎙️ _Áudio (0:' + String(Math.min(59, Math.ceil(m.audio.length / 14))).padStart(2, '0') + ')_\n"' + m.audio + '"' };
   } else {
-    await sock.sendMessage(jid, { text: m.texto });
+    conteudo = { text: legenda };
   }
+  const enviada = await sock.sendMessage(jid, conteudo);
+  // mensagem que some: o WhatsApp mostra "Esta mensagem foi apagada"
+  if (m.apagar && enviada) setTimeout(() => sock.sendMessage(jid, { delete: enviada.key }).catch(() => {}), m.apagar);
 }
 
 async function tratar(sock, key, texto) {
