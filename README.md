@@ -13,6 +13,12 @@ A Gabi joga junto. O botão ⇄ (ou a tecla Q) troca entre a Madrinha e a Gabi. 
 2. **Fortaleza de Suomenlinna:** ilha no mar, pullas (pão de canela), esquilos e patos.
 3. **Parque Linnanmäki:** roda-gigante, sorvetes e balões travessos. No fim, a surpresa de aniversário da Madrinha (12/10).
 
+## Fase 3: Natureza e primeira neve (abre depois da Fase 2)
+Em cada parte há 3 câmeras escondidas (📸) que viram fotos no álbum das duas.
+1. **Zoológico de Korkeasaari:** outono, renas, mirtilos, corujas.
+2. **Floresta de Nuuksio:** lago com pedras, cogumelos, fogueira.
+3. **Löyly à noite:** sauna à beira-mar, primeira neve e aurora boreal.
+
 ## Controles
 - Celular: botões na tela (◀ ▶ andar, » correr, ⤒ pular, ▼ abaixar, 👊 murro, 🦶 pesada). Correndo + ▼ = rasteira.
 - Teclado: setas ou A/D andam, Shift corre, ↑ ou Espaço pula, ↓ abaixa, X dá murro, C dá pesada.
