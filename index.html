@@ -66,9 +66,11 @@
 
   /* tela grande: cinco planetas lado a lado, cada um em pé */
   @media (min-width:900px){
-    .jogos{grid-template-columns:repeat(5,1fr)}
-    .jogo a{grid-template-columns:1fr;grid-template-areas:"orbe" "nome" "desc";justify-items:center;text-align:center;row-gap:8px;padding:22px 16px 20px}
-    .orbe{width:clamp(70px,8vw,96px);font-size:clamp(2rem,3vw,2.6rem);margin-bottom:6px}
+    .jogos{grid-template-columns:repeat(3,1fr)}
+    .jogo a{grid-template-columns:1fr;grid-template-areas:"orbe" "nome" "desc";justify-items:center;text-align:center;row-gap:6px;padding:14px 14px 14px}
+    .orbe{width:clamp(56px,6vw,80px);font-size:clamp(1.7rem,2.5vw,2.2rem);margin-bottom:2px}
+    header{padding-top:clamp(4px,2vh,24px)}
+    h1{font-size:clamp(2.6rem,10vmin,7rem)}
   }
   /* celular deitado (o app Android abre assim): tudo menor para caber numa tela só */
   @media (orientation:landscape) and (max-height:520px){
@@ -76,7 +78,7 @@
     h1 span{display:inline}
     h1{font-size:clamp(1.8rem,9vh,3rem)}
     .sub{display:none}
-    .jogos{grid-template-columns:repeat(5,1fr)}
+    .jogos{grid-template-columns:repeat(6,1fr)}
     .jogo a{grid-template-columns:1fr;grid-template-areas:"orbe" "nome" "desc";justify-items:center;text-align:center;row-gap:6px}
     .desc{display:none}
   }
@@ -91,15 +93,16 @@
   <header>
     <div class="selo">Solonópole ⇄ Helsinque</div>
     <h1><span>Galáxia</span> <span>da Gabi</span></h1>
-    <p class="sub">Cinco jogos feitos com carinho pela <b>Madrinha Ana</b>. Escolha um planeta para começar.</p>
+    <p class="sub">Seis jogos feitos com carinho pela <b>Madrinha Ana</b>. Escolha um planeta para começar.</p>
     <p class="festa" id="festa" hidden>🎂 Hoje é aniversário da Madrinha Ana e Dia das Crianças!</p>
   </header>
 
   <ul class="jogos">
     <li class="jogo" style="--c:#ffc93c;--i:0"><a href="madrinha.html"><span class="orbe" aria-hidden="true">✈️</span><span class="nome">Madrinha Ana ao Resgate</span><span class="desc">Aventura de pular e correr, do sertão do Ceará até a neve da Finlândia.</span></a></li>
-    <li class="jogo" style="--c:#e0384f;--i:1"><a href="mystic.html"><span class="tag">NOVO</span><span class="orbe" aria-hidden="true">🌕</span><span class="nome">Operação Mystic Falls</span><span class="desc">Mistério de vampiros por mensagens. Decifre as pistas e salve a cidade.</span></a></li>
+    <li class="jogo" style="--c:#e0384f;--i:1"><a href="mystic.html"><span class="orbe" aria-hidden="true">🌕</span><span class="nome">Operação Mystic Falls</span><span class="desc">Mistério de vampiros por mensagens. Decifre as pistas e salve a cidade.</span></a></li>
     <li class="jogo" style="--c:#38e8ff;--i:2"><a href="neon.html"><span class="orbe" aria-hidden="true">🚀</span><span class="nome">Esquadrão Neon</span><span class="desc">Nave espacial contra chefões. Jogue sozinha ou em dupla, até online.</span></a></li>
     <li class="jogo" style="--c:#ff4fa3;--i:3"><a href="corrida.html"><span class="orbe" aria-hidden="true">🏃</span><span class="nome">Corrida Neon</span><span class="desc">Corrida sem fim com a família. Desvie, pule e bata o recorde.</span></a></li>
+    <li class="jogo" style="--c:#ff8a1f;--i:5"><a href="turbo.html"><span class="tag">NOVO</span><span class="orbe" aria-hidden="true">🏎️</span><span class="nome">Turbo do José</span><span class="desc">Corrida de carrinho para o José, contra a família toda. Em português e finlandês!</span></a></li>
     <li class="jogo" style="--c:#3dffb4;--i:4"><a href="historia.html"><span class="orbe" aria-hidden="true">📖</span><span class="nome">A Viagem da Madrinha</span><span class="desc">História de escolhas: você decide o caminho até Helsinque.</span></a></li>
   </ul>
 

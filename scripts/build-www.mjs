@@ -2,5 +2,5 @@
 import { rmSync, mkdirSync, cpSync } from 'node:fs';
 rmSync('www', { recursive: true, force: true });
 mkdirSync('www');
-for (const f of ['index.html', 'madrinha.html', 'historia.html', 'neon.html', 'neon.js', 'corrida.html', 'corrida.js', 'mystic.html', 'mystic-historia.js', 'mystic-imagens.js', 'videos', 'fotos', 'lib', 'img', 'CNAME']) cpSync(f, `www/${f}`, { recursive: true });
+for (const f of ['index.html', 'madrinha.html', 'historia.html', 'neon.html', 'neon.js', 'corrida.html', 'corrida.js', 'turbo.html', 'mystic.html', 'mystic-historia.js', 'mystic-imagens.js', 'videos', 'fotos', 'lib', 'img', 'CNAME']) cpSync(f, `www/${f}`, { recursive: true });
 console.log('www/ pronto');
