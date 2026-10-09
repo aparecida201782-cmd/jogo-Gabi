@@ -33,7 +33,7 @@
   const suave = x => x * x * (3 - 2 * x);
   const mola = x => 1 - Math.pow(1 - x, 3);
   const mix = (a, b, x) => a + (b - a) * x;
-  const PELE = '#ffe0cf';
+  const PELE = '#f0c4a2', PELE_SOMBRA = '#d9a07e';
 
   function elipse(x, y, rx, ry, cor, rot = 0) {
     ctx.fillStyle = cor; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, rot, 0, Math.PI * 2); ctx.fill();
@@ -56,36 +56,85 @@
     ctx.fill(); ctx.restore();
   }
 
-  // ---------- personagens (mesmas cores dos retratos do jogo da Madrinha) ----------
-  // quem: 'gabi' (cabelo comprido escuro, blusa azul), 'jose' (menorzinho, cabelo claro, blusa verde) ou 'ana' (a Madrinha)
+  // ---------- personagens: a Madrinha (ana), a Gabi e o José, desenhados com cara de gente ----------
+  // Cabeça centrada em (0,0) com uns 56 de altura; com corpo, o busto vai até y≈90.
+  const CABELO = { gabi: '#5a3820', jose: '#9a6a3e', ana: '#3a2214' };
+  const BLUSA = { gabi: '#5aa9f0', jose: '#3fae5a', ana: '#2f6fe0' };
+  const OLHO = { gabi: '#6b4a2a', jose: '#5f7f4a', ana: '#4a2e1a' };
   function rosto(x, y, s, quem, o = {}) {
-    const cabelo = { gabi: '#6b4428', jose: '#a8784a', ana: '#4a2818' }[quem];
-    const longo = quem !== 'jose';
-    const blusa = quem === 'gabi' ? '#7cc4ff' : '#3fae5a';
+    const cab = CABELO[quem], menino = quem === 'jose', adulta = quem === 'ana';
     ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+    // cabelo comprido de trás
+    if (!menino) {
+      ctx.fillStyle = cab; ctx.beginPath(); ctx.moveTo(-23, -14);
+      ctx.bezierCurveTo(-34, 14, -30, 40, -34, adulta ? 64 : 56); ctx.quadraticCurveTo(-18, 66, -8, 52); ctx.lineTo(8, 52);
+      ctx.quadraticCurveTo(18, 66, 34, adulta ? 64 : 56); ctx.bezierCurveTo(30, 40, 34, 14, 23, -14); ctx.fill();
+    }
     if (o.corpo !== false) {
-      elipse(0, 58, 34, 26, blusa);
-      if (quem === 'gabi') estrelinha(0, 56, 9, '#ffc93c', 0); else { ctx.fillStyle = '#ffc93c'; ctx.font = '900 16px Orbitron, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('J', 0, 63); }
+      // pescoço e ombros com a blusa
+      ctx.fillStyle = PELE_SOMBRA; ctx.fillRect(-7.5, 16, 15, 22);
+      ctx.fillStyle = BLUSA[quem]; ctx.beginPath(); ctx.moveTo(-9, 32);
+      ctx.quadraticCurveTo(-36, 34, -44, 52); ctx.lineTo(-48, 92); ctx.lineTo(48, 92); ctx.lineTo(44, 52);
+      ctx.quadraticCurveTo(36, 34, 9, 32); ctx.quadraticCurveTo(0, 42, -9, 32); ctx.fill();
+      ctx.strokeStyle = 'rgba(0,0,0,.15)'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(-32, 56); ctx.lineTo(-31, 92); ctx.moveTo(32, 56); ctx.lineTo(31, 92); ctx.stroke();
+      if (quem === 'gabi') estrelinha(-16, 62, 7, '#ffc93c', .2);
+      if (menino) { ctx.fillStyle = '#ffc93c'; ctx.fillRect(-44, 62, 88, 6); }
     }
-    if (longo) { ctx.fillStyle = cabelo; ctx.beginPath(); ctx.moveTo(-27, -4); ctx.quadraticCurveTo(-32, 44, -16, 46); ctx.lineTo(16, 46); ctx.quadraticCurveTo(32, 44, 27, -4); ctx.fill(); }
-    elipse(0, 0, 24, 27, PELE);
-    ctx.fillStyle = cabelo; ctx.beginPath();
-    ctx.moveTo(-25, 2); ctx.quadraticCurveTo(-25, -32, 0, -32); ctx.quadraticCurveTo(25, -32, 25, 2);
-    ctx.quadraticCurveTo(14, -16, 0, -16); ctx.quadraticCurveTo(-14, -16, -25, 2); ctx.fill();
-    if (quem === 'jose') { ctx.beginPath(); ctx.moveTo(-6, -31); ctx.quadraticCurveTo(-2, -42, 6, -40); ctx.quadraticCurveTo(0, -36, 2, -30); ctx.fill(); }
-    if (quem === 'gabi') { estrelinha(17, -20, 6, '#ff4fa3', .3); }
-    // olhos: abertos piscando, ou fechadinhos de alegria
-    ctx.fillStyle = '#2a2a3a'; ctx.strokeStyle = '#2a2a3a'; ctx.lineWidth = 2.4; ctx.lineCap = 'round';
-    if (o.feliz) {
-      for (const ex of [-9, 9]) { ctx.beginPath(); ctx.arc(ex, 4, 4, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke(); }
+    // orelhas
+    elipse(-21, 2, 3.6, 6.5, PELE_SOMBRA); elipse(21, 2, 3.6, 6.5, PELE_SOMBRA);
+    // rosto oval com queixo (criança tem bochecha mais redondinha)
+    const g = ctx.createRadialGradient(-6, -8, 4, 0, 0, 30);
+    g.addColorStop(0, '#f8d6b8'); g.addColorStop(1, PELE);
+    ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-21, -6);
+    ctx.bezierCurveTo(-21, -31, 21, -31, 21, -6);
+    if (adulta) { ctx.bezierCurveTo(21, 12, 11, 27, 0, 27); ctx.bezierCurveTo(-11, 27, -21, 12, -21, -6); }
+    else { ctx.bezierCurveTo(22, 15, 13, 25, 0, 25); ctx.bezierCurveTo(-13, 25, -22, 15, -21, -6); }
+    ctx.fill();
+    // cabelo da frente
+    ctx.fillStyle = cab; ctx.beginPath();
+    if (menino) {
+      ctx.moveTo(-22, 0); ctx.bezierCurveTo(-25, -34, 23, -36, 22, -2);
+      const pontas = [[18, -14], [13, -11], [9, -16], [4, -12], [-1, -17], [-6, -12], [-11, -16], [-15, -10], [-20, -12]];
+      for (const [px, py] of pontas) ctx.lineTo(px, py);
+      ctx.closePath(); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(-2, -30); ctx.quadraticCurveTo(2, -40, 9, -37); ctx.quadraticCurveTo(3, -35, 3, -29); ctx.fill();
     } else {
-      const pisca = o.pisca ? .25 : 1;
-      for (const ex of [-9, 9]) { elipse(ex + (o.olhar || 0), 3, 3.2, 3.6 * pisca, '#2a2a3a'); elipse(ex + 1 + (o.olhar || 0), 1.6, 1, 1 * pisca, '#fff'); }
+      ctx.moveTo(-23, 4); ctx.bezierCurveTo(-27, -36, 22, -40, 24, -4);
+      ctx.quadraticCurveTo(16, -20, -3, -21); ctx.quadraticCurveTo(-15, -16, -19, -4); ctx.lineTo(-20, 18);
+      ctx.closePath(); ctx.fill();
+      // mechas que caem do lado do rosto
+      ctx.beginPath(); ctx.moveTo(22, -6); ctx.quadraticCurveTo(26, 16, 22, 36); ctx.lineTo(18, 34); ctx.quadraticCurveTo(21, 14, 18, -4); ctx.fill();
     }
-    elipse(-15, 11, 4.5, 3, 'rgba(255,140,140,.55)'); elipse(15, 11, 4.5, 3, 'rgba(255,140,140,.55)');
-    ctx.beginPath();
-    if (o.boca === 'o') { elipse(0, 15, 4, 5, '#b3405a'); }
-    else { ctx.arc(0, 11, 7, .15 * Math.PI, .85 * Math.PI); ctx.stroke(); }
+    ctx.strokeStyle = 'rgba(255,255,255,.16)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(-4, -6, 22, Math.PI * 1.15, Math.PI * 1.45); ctx.stroke();
+    if (quem === 'gabi') estrelinha(16, -20, 5, '#ff4fa3', .3);
+    // sobrancelhas
+    ctx.strokeStyle = cab; ctx.lineWidth = 2.2; ctx.lineCap = 'round';
+    for (const l of [-1, 1]) { ctx.beginPath(); ctx.moveTo(l * 4, -10); ctx.quadraticCurveTo(l * 9, -13.5, l * 14, -10.5); ctx.stroke(); }
+    // olhos: branquinho, íris, pupila e brilho; fechadinhos quando está feliz
+    const pisca = o.pisca ? .15 : 1, olhar = o.olhar || 0;
+    for (const l of [-1, 1]) {
+      const ex = l * 8.5, ey = -1;
+      ctx.strokeStyle = '#3a2418'; ctx.lineWidth = 1.6;
+      if (o.feliz) { ctx.beginPath(); ctx.arc(ex, ey + 2, 4.5, Math.PI * 1.15, Math.PI * 1.85); ctx.stroke(); continue; }
+      ctx.save(); ctx.beginPath(); ctx.ellipse(ex, ey, 5.4, 3.7 * pisca, 0, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); ctx.clip();
+      elipse(ex + olhar * .6, ey + .3, 3, 3, OLHO[quem]); elipse(ex + olhar * .6, ey + .3, 1.5, 1.5, '#1a1010'); elipse(ex + olhar * .6 + 1.1, ey - .9, .9, .9, '#fff');
+      ctx.restore();
+      ctx.beginPath(); ctx.ellipse(ex, ey, 5.4, 3.7 * pisca, 0, Math.PI * 1.05, Math.PI * 1.95); ctx.stroke();
+      if (!menino) { ctx.beginPath(); ctx.moveTo(ex + l * 5, ey - 1.5); ctx.lineTo(ex + l * 7, ey - 3.5); ctx.stroke(); }
+    }
+    // nariz
+    ctx.strokeStyle = PELE_SOMBRA; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(.5, 1); ctx.quadraticCurveTo(-3, 9, 0, 10); ctx.quadraticCurveTo(2, 10.5, 3, 9.5); ctx.stroke();
+    // bochechas
+    elipse(-12, 9, 4.5, 2.6, 'rgba(235,110,110,.22)'); elipse(12, 9, 4.5, 2.6, 'rgba(235,110,110,.22)');
+    // boca: sorriso com lábios, ou aberta falando
+    if (o.boca === 'o') {
+      elipse(0, 16, 4.6, 4.4, '#6a2430'); ctx.fillStyle = '#fff'; ctx.fillRect(-3, 12.2, 6, 1.8); elipse(0, 18.5, 2.6, 1.4, '#e07a86');
+    } else {
+      ctx.fillStyle = '#c4646a'; ctx.beginPath(); ctx.moveTo(-6.5, 14); ctx.quadraticCurveTo(0, 21, 6.5, 14); ctx.quadraticCurveTo(0, 16.5, -6.5, 14); ctx.fill();
+    }
     ctx.restore();
   }
 
@@ -101,7 +150,7 @@
     ctx.fillStyle = '#1a1446'; ctx.fillRect(-100, -120, 200, 120);
     const aceno = o.aceno ? Math.sin(t * 9) * .5 : 0;
     // bracinho acenando
-    if (o.aceno) { ctx.save(); ctx.translate(24, -22); ctx.rotate(-1.1 + aceno); elipse(0, -18, 7, 20, '#7cc4ff'); elipse(0, -38, 8, 8, PELE); ctx.restore(); }
+    if (o.aceno) { ctx.save(); ctx.translate(24, -22); ctx.rotate(-1.1 + aceno); elipse(0, -18, 7, 20, '#5aa9f0'); elipse(0, -38, 8, 8, PELE); ctx.restore(); }
     rosto(0, -52, 1.05, 'gabi', { pisca: (t % 3.2) < .12, olhar: o.olhar || 0, boca: o.boca });
     ctx.fillStyle = vidro; ctx.fillRect(-100, -120, 200, 120);
     ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.beginPath(); ctx.ellipse(-40, -70, 12, 30, .6, 0, Math.PI * 2); ctx.fill();
@@ -158,43 +207,48 @@
   }
 
   // Super Madrinha: roupa azul, saia e botas vermelhas, capa vermelha e o escudo com M no peito.
-  // Pés em (0,0); voando = deitada no ar com o braço esticado para a frente.
+  // Proporção de gente grande. Pés em (0,0); voando = deitada no ar com o punho esticado para a frente.
   function superMadrinha(x, y, s, t, voando) {
-    const AZUL = '#2f6fe0', VERM = '#e0384f', OURO = '#ffc93c';
+    const AZUL = '#2f6fe0', AZUL2 = '#2459c4', VERM = '#e0384f', OURO = '#ffc93c';
     ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
     if (voando) ctx.rotate(Math.PI / 2);
     const onda = Math.sin(t * 9) * 8;
-    // capa (voando ela fica esticada para trás)
+    // capa presa nos ombros (voando ela fica esticada para trás)
     ctx.fillStyle = '#b8203a';
-    ctx.beginPath(); ctx.moveTo(-20, -104);
-    if (voando) { ctx.quadraticCurveTo(-34, -40, -26 + onda, 30); ctx.lineTo(26 + onda, 36); ctx.quadraticCurveTo(34, -40, 20, -104); }
-    else { ctx.quadraticCurveTo(-50, -50, -58 + onda, -6); ctx.lineTo(54 + onda, -4); ctx.quadraticCurveTo(48, -50, 20, -104); }
+    ctx.beginPath(); ctx.moveTo(-22, -146);
+    if (voando) { ctx.quadraticCurveTo(-36, -60, -26 + onda, 30); ctx.lineTo(26 + onda, 38); ctx.quadraticCurveTo(36, -60, 22, -146); }
+    else { ctx.quadraticCurveTo(-52, -70, -64 + onda, -4); ctx.lineTo(60 + onda, -2); ctx.quadraticCurveTo(50, -70, 22, -146); }
     ctx.fill();
-    // pernas e botas
-    ctx.fillStyle = AZUL; ctx.fillRect(-14, -58, 11, 32); ctx.fillRect(3, -58, 11, 32);
+    // pernas com botas vermelhas até o joelho
+    ctx.fillStyle = AZUL2;
+    for (const l of [-1, 1]) { ctx.beginPath(); ctx.moveTo(l * 3, -86); ctx.lineTo(l * 15, -86); ctx.lineTo(l * (voando ? 11 : 13), -40); ctx.lineTo(l * (voando ? 3 : 5), -40); ctx.fill(); }
     ctx.fillStyle = VERM;
-    ctx.beginPath(); ctx.roundRect(-16, -30, 14, 30, 4); ctx.fill();
-    ctx.beginPath(); ctx.roundRect(2, -30, 14, 30, 4); ctx.fill();
+    for (const l of [-1, 1]) {
+      const bx = voando ? l * 7 : l * 9;
+      ctx.beginPath(); ctx.moveTo(bx - 5.5, -44); ctx.lineTo(bx + 5.5, -44); ctx.lineTo(bx + 5, -4); ctx.quadraticCurveTo(bx + l * 9, -2, bx + l * 9, 0); ctx.lineTo(bx - 5, 0); ctx.closePath(); ctx.fill();
+    }
     // saia com cinto dourado
-    ctx.beginPath(); ctx.moveTo(-17, -66); ctx.lineTo(17, -66); ctx.lineTo(24, -50); ctx.lineTo(-24, -50); ctx.fill();
-    ctx.fillStyle = OURO; ctx.fillRect(-17, -69, 34, 5);
-    // corpo azul
-    ctx.fillStyle = AZUL; ctx.beginPath(); ctx.roundRect(-19, -108, 38, 42, 10); ctx.fill();
-    // braços: voando, um esticado para a frente (para cima, antes de girar); em pé, mãos na cintura
-    ctx.strokeStyle = AZUL; ctx.lineWidth = 9; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(-15, -100); ctx.lineTo(15, -100); ctx.lineTo(22, -78); ctx.lineTo(-22, -78); ctx.fill();
+    ctx.fillStyle = OURO; ctx.fillRect(-15, -103, 30, 5);
+    // tronco
+    ctx.fillStyle = AZUL; ctx.beginPath(); ctx.moveTo(-13, -101); ctx.lineTo(-20, -138);
+    ctx.quadraticCurveTo(-20, -148, -9, -149); ctx.lineTo(9, -149); ctx.quadraticCurveTo(20, -148, 20, -138); ctx.lineTo(13, -101); ctx.fill();
+    // braços: em pé, mãos na cintura; voando, um punho para a frente
+    ctx.strokeStyle = AZUL; ctx.lineWidth = 7.5; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     if (voando) {
-      ctx.beginPath(); ctx.moveTo(14, -100); ctx.lineTo(12, -150); ctx.stroke(); elipse(12, -154, 6, 6, PELE);
-      ctx.beginPath(); ctx.moveTo(-14, -100); ctx.lineTo(-16, -70); ctx.stroke(); elipse(-16, -66, 5, 5, PELE);
+      ctx.beginPath(); ctx.moveTo(14, -142); ctx.lineTo(13, -176); ctx.lineTo(12, -204); ctx.stroke(); elipse(12, -208, 4.6, 5, PELE);
+      ctx.beginPath(); ctx.moveTo(-15, -142); ctx.lineTo(-18, -118); ctx.lineTo(-15, -96); ctx.stroke(); elipse(-15, -92, 4, 4.5, PELE);
     } else {
-      for (const l of [-1, 1]) { ctx.beginPath(); ctx.moveTo(l * 17, -102); ctx.lineTo(l * 32, -84); ctx.lineTo(l * 18, -70); ctx.stroke(); elipse(l * 18, -70, 5, 5, PELE); }
+      for (const l of [-1, 1]) { ctx.beginPath(); ctx.moveTo(l * 18, -143); ctx.lineTo(l * 33, -120); ctx.lineTo(l * 17, -104); ctx.stroke(); elipse(l * 16, -103, 4.2, 4.6, PELE); }
     }
     // escudo com M
-    ctx.fillStyle = OURO; ctx.beginPath(); ctx.moveTo(-12, -102); ctx.lineTo(12, -102); ctx.lineTo(15, -94); ctx.lineTo(0, -78); ctx.lineTo(-15, -94); ctx.closePath(); ctx.fill();
-    ctx.strokeStyle = VERM; ctx.lineWidth = 2; ctx.stroke();
-    ctx.fillStyle = VERM; ctx.font = '900 13px Orbitron, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('M', 0, -88);
-    // cabeça
-    ctx.save(); ctx.translate(0, -132); if (voando) ctx.rotate(-Math.PI / 2 + .4);
-    rosto(0, 0, .72, 'ana', { corpo: false, pisca: (t % 2.8) < .1, boca: voando ? null : (t * 6 % 2 < 1 && ((t > 25.2 && t < 27) || (t > 38.4 && t < 41)) ? 'o' : null) });
+    ctx.fillStyle = OURO; ctx.beginPath(); ctx.moveTo(-10, -140); ctx.lineTo(10, -140); ctx.lineTo(13, -133); ctx.lineTo(0, -119); ctx.lineTo(-13, -133); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = VERM; ctx.lineWidth = 1.8; ctx.stroke();
+    ctx.fillStyle = VERM; ctx.font = '900 11px Orbitron, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('M', 0, -127);
+    // pescoço e cabeça
+    ctx.fillStyle = PELE_SOMBRA; ctx.fillRect(-4.5, -158, 9, 11);
+    ctx.save(); ctx.translate(0, -172); if (voando) ctx.rotate(-Math.PI / 2 + .4);
+    rosto(0, 0, .58, 'ana', { corpo: false, pisca: (t % 2.8) < .1, boca: voando ? null : (t * 6 % 2 < 1 && ((t > 25.2 && t < 27) || (t > 38.4 && t < 41)) ? 'o' : null) });
     ctx.restore();
     ctx.restore();
   }
@@ -203,7 +257,7 @@
   // e o Branquinho (amarelinho, menor e super gordo, olhos azuis e coleira azul, amigão).
   // Sentados com as patinhas em (0,0); voando = deitados no ar, cabeça para a frente.
   const fotos = {};
-  for (const n of ['mimi', 'branquinho']) { const i = new Image(); i.src = `fotos/${n}-q.jpg`; fotos[n] = i; }
+  for (const n of ['mimi', 'branquinho']) { const i = new Image(); i.src = `fotos/${n}-recorte.webp`; fotos[n] = i; }
   function gato(x, y, s, t, quem, o = {}) {
     const mimi = quem === 'mimi';
     const pelo = mimi ? '#fbfbf6' : '#fde6c8', ponta = mimi ? '#f4c4cf' : '#e39a55';
@@ -212,7 +266,7 @@
     const arrepio = o.arrepio || 0;
     if (arrepio) { const tr = Math.sin(t * 60) * arrepio * 1.5; ctx.translate(tr, 0); ctx.scale(1 + arrepio * .12, 1 + arrepio * .14); }
     const onda = Math.sin(t * 9 + (mimi ? 0 : 2)) * 5;
-    const rx = mimi ? 36 : 44, ry = mimi ? 38 : 33, hy = -ry * 2 - 12;
+    const rx = mimi ? 36 : 50, ry = mimi ? 38 : 35, hy = -ry * 2 - 12;
     // capa: o Mimi de roxo, o Branquinho de vermelho
     ctx.fillStyle = mimi ? '#8a3fe0' : '#d42f4a';
     ctx.beginPath(); ctx.moveTo(-16, hy + 20);
@@ -231,7 +285,9 @@
     // corpo gordinho, barriga e patinhas
     elipse(0, -ry, rx, ry, pelo);
     elipse(0, -ry * .8, rx * .55, ry * .6, mimi ? 'rgba(255,190,205,.35)' : 'rgba(255,255,255,.5)');
-    elipse(-14, -5, 10, 7, pelo); elipse(14, -5, 10, 7, pelo);
+    elipse(-14, -5, 10, 7, pelo);
+    if (o.manda) { ctx.save(); ctx.translate(rx * .55, -ry * 1.1); ctx.rotate(-.5 + Math.sin(t * 10) * .15); elipse(0, -16, 8, 18, pelo); elipse(0, -32, 9, 8, pelo); ctx.restore(); }
+    else elipse(14, -5, 10, 7, pelo);
     ctx.strokeStyle = 'rgba(0,0,0,.12)'; ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.ellipse(0, -ry, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
     // orelhas
@@ -288,16 +344,18 @@
     }
   }
 
-  // foto de verdade do gato num porta-retrato torto
+  // foto de verdade do gato, recortada, flutuando com um brilho e o nome embaixo
   function polaroide(x, y, ang, img, nome, a) {
     if (a <= 0) return;
-    ctx.save(); ctx.globalAlpha = a; ctx.translate(x, y); ctx.rotate(ang); ctx.scale(.7 + a * .3, .7 + a * .3);
-    ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(-72, -82, 152, 178);
-    ctx.fillStyle = '#fffaf0'; ctx.fillRect(-78, -88, 156, 180);
-    if (img.complete && img.naturalWidth) ctx.drawImage(img, -68, -78, 136, 136);
-    else { ctx.fillStyle = '#ddd'; ctx.fillRect(-68, -78, 136, 136); }
-    ctx.fillStyle = '#3a2a50'; ctx.font = '900 17px Orbitron, sans-serif'; ctx.textAlign = 'center';
-    ctx.fillText(nome, 0, 80);
+    ctx.save(); ctx.globalAlpha = a; ctx.translate(x, y + Math.sin(performance.now() / 600 + x) * 6); ctx.rotate(ang * .5); ctx.scale(.7 + a * .3, .7 + a * .3);
+    brilho(0, -10, 120, 'rgba(255,190,240,.35)');
+    if (img.complete && img.naturalWidth) {
+      const e = Math.min(170 / img.naturalWidth, 170 / img.naturalHeight), w = img.naturalWidth * e, h = img.naturalHeight * e;
+      ctx.drawImage(img, -w / 2, 70 - h - 8, w, h);
+    }
+    ctx.fillStyle = '#fff'; ctx.font = '900 17px Orbitron, sans-serif'; ctx.textAlign = 'center';
+    ctx.shadowColor = 'rgba(176,107,255,.9)'; ctx.shadowBlur = 10;
+    ctx.fillText(nome, 0, 86);
     ctx.restore();
   }
 
@@ -353,10 +411,10 @@
     [18.8, 22.4, 'Bem-vindo à Galáxia da Gabi, <b class="j">José</b>! 💛', 'Tervetuloa Gabin galaksiin, José!'],
     [22.6, 25, '<b class="j">José:</b> “Ué… quem é aquela voando lá fora?” 👀', 'José: ”Häh… kuka tuolla ulkona lentää?”'],
     [25.2, 27.2, 'É um cometa? É um foguete? É a <b class="m">SUPER MADRINHA</b>! 🦸‍♀️', 'Onko se komeetta? Raketti? Se on Superkummitäti!'],
-    [27.4, 30.4, 'E com ela, os supergatos: o <b class="m">Mimi</b>, o mandão, e o <b class="m">Branquinho</b>, o amigão! 🐱🐱', 'Ja hänen kanssaan superkissat: pomo Mimi ja kaveri Branquinho!'],
-    [30.6, 33, '<b class="m">Mimi:</b> “Miau! Aqui quem manda sou eu!” 😼', 'Mimi: ”Miau! Täällä minä määrään!”'],
+    [27.4, 30.4, 'E com ela, os supergatos <b class="m">Mimi</b> e <b class="m">Branquinho</b>! 🐱🐱', 'Ja hänen kanssaan superkissat Mimi ja Branquinho!'],
+    [30.6, 33, '<b class="m">Mimi:</b> “Miau! Todo mundo sentado, agora!” 😼', 'Mimi: ”Miau! Kaikki istumaan, heti!”'],
     [33.2, 35.4, '<b class="m">Branquinho:</b> “Miau, José! Vamos brincar?” 🐾', 'Branquinho: ”Miau, José! Leikitäänkö?”'],
-    [35.6, 38.2, '<b class="j">Ilo:</b> “Au au!” 🐶 Ih… os gatos não gostam muito do Ilo!', 'Ilo: ”Hau hau!” Voi ei… kissat eivät oikein tykkää Ilosta!'],
+    [35.6, 38.2, '<b class="j">Ilo:</b> “Au au! Au au!” 🐶', 'Ilo: ”Hau hau! Hau hau!”'],
     [38.4, 42.5, '<b class="m">Super Madrinha:</b> “Calma, turma! Na galáxia todo mundo é amigo!” 💛', 'Superkummitäti: ”Rauhassa, porukka! Galaksissa kaikki ovat ystäviä!”'],
   ];
   const html = t => t.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]);
@@ -484,7 +542,7 @@
       if (dentro) {
         const pouso = mola(prog(t, 25.2, 25.9));
         brilho(0, -20, 260 * (1 - prog(t, 25.2, 26.4)) + 1, 'rgba(255,240,200,.7)');
-        superMadrinha(0, mix(-260, 215, pouso), 2.6, t, false);
+        superMadrinha(0, mix(-260, 215, pouso), 2.25, t, false);
       }
       for (let i = -8; i <= 8; i++) { const on = Math.sin(t * 5 + i) > 0; elipse(i * 40, 230, 6, 6, on ? ['#ffc93c', '#38e8ff', '#3dffb4', '#ff4fa3'][(i + 8) % 4] : '#3a2a60'); }
 
@@ -496,13 +554,14 @@
       // bracinhos do abraço
       if (junto > 0 && abre < 1) {
         ctx.save(); ctx.globalAlpha = junto * (1 - abre);
-        ctx.strokeStyle = '#7cc4ff'; ctx.lineWidth = 22; ctx.lineCap = 'round';
+        ctx.strokeStyle = '#5aa9f0'; ctx.lineWidth = 22; ctx.lineCap = 'round';
         ctx.beginPath(); ctx.moveTo(gx + 10, 150 - pulo); ctx.quadraticCurveTo(jx, 110 - pulo, jx + 40, 150 - pulo); ctx.stroke();
         ctx.restore();
       }
       const espia = chega > 0 && !dentro;
-      rosto(gx, 70 - pulo, 2.3, 'gabi', { feliz: junto > .6 && !espia, pisca: (t % 2.6) < .1, olhar: espia ? -3 : 0, boca: espia ? 'o' : null });
-      rosto(jx, 100 - pulo, 1.95, 'jose', { feliz: junto > .6 && !espia, pisca: (t % 3.1) < .1, olhar: espia ? -3 : 0, boca: espia ? 'o' : null });
+      const senta = suave(prog(t, 31, 31.5)) * (1 - suave(prog(t, 33.2, 33.7))) * 22;
+      rosto(gx, 70 - pulo + senta, 2.3, 'gabi', { feliz: junto > .6 && !espia, pisca: (t % 2.6) < .1, olhar: espia ? -3 : 0, boca: espia ? 'o' : null });
+      rosto(jx, 100 - pulo + senta, 1.95, 'jose', { feliz: junto > .6 && !espia, pisca: (t % 3.1) < .1, olhar: espia ? -3 : 0, boca: espia ? 'o' : null });
       if (junto > 0 && abre < 1) {
         ctx.save(); ctx.globalAlpha = junto * (1 - abre);
         ctx.strokeStyle = '#3fae5a'; ctx.lineWidth = 18; ctx.lineCap = 'round';
@@ -515,11 +574,19 @@
         const susto = suave(prog(t, 35.6, 36)) * (1 - suave(prog(t, 38.6, 39.4)));
         const calma = t > 39.4;
         const fala = (a, b) => t > a && t < b && (t * 6 % 2) < 1;
-        gato(-74, mix(-300, 232, pg), 1.9, t, 'mimi', { arrepio: susto, boca: fala(30.6, 33), feliz: calma });
+        gato(-74, mix(-300, 232, pg), 1.9, t, 'mimi', { arrepio: susto, boca: fala(30.6, 33), manda: t > 30.6 && t < 33.2 });
         // o Branquinho pula no colo da Madrinha de medo
         const colo = suave(prog(t, 35.7, 36.2)) * (1 - suave(prog(t, 39, 39.6)));
-        gato(mix(72, 30, colo), mix(mix(-300, 232, mola(prog(t, 25.7, 26.5))), 40, colo), 1.45, t, 'branquinho', { arrepio: susto * .6, boca: fala(33.2, 35.4), feliz: calma || (t > 33.2 && t < 35.4 && !fala(33.2, 35.4)) });
-        if (t > 35.4) ilo(mix(VW / 2 + 80, Math.min(300, VW / 2 - 70), mola(prog(t, 35.4, 36))), 222, 1.5, t, t < 38.4);
+        const iloX = Math.min(300, VW / 2 - 70);
+        const vaiJose = suave(prog(t, 33.2, 33.8)) * (1 - suave(prog(t, 35, 35.6)));
+        const vaiIlo = suave(prog(t, 39.8, 41));
+        const bx = mix(mix(mix(72, jx - 40, vaiJose), 30, colo), iloX - 85, vaiIlo);
+        const esfrega = vaiJose > .9 ? Math.sin(t * 7) * 8 : 0;
+        if (vaiJose > .9 || vaiIlo > .9) for (let i = 0; i < 3; i++) { const q = (t * .8 + i / 3) % 1; ctx.globalAlpha = 1 - q; coracao(bx + (vaiIlo > .9 ? 40 : -6) + Math.sin(i * 2 + t * 3) * 10, 120 - q * 90, 1.1, '#ff6b9a'); ctx.globalAlpha = 1; }
+        ctx.save(); ctx.translate(bx + esfrega, 0); ctx.rotate(esfrega * .01);
+        gato(0, mix(mix(-300, 232, mola(prog(t, 25.7, 26.5))), 40, colo), 1.45, t, 'branquinho', { arrepio: susto * .6, boca: fala(33.2, 35.4), feliz: calma || vaiJose > .9 });
+        ctx.restore();
+        if (t > 35.4) ilo(mix(VW / 2 + 80, iloX, mola(prog(t, 35.4, 36))), 222, 1.5, t, t < 38.4);
         // as fotos de verdade dos dois
         const fa = suave(prog(t, 27.4, 28.2)) * (1 - suave(prog(t, 35, 35.6)));
         const pxF = Math.min(VW / 2 - 105, 440), pyF = VW > 1000 ? -120 : -440;

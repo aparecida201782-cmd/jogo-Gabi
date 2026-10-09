@@ -97,10 +97,12 @@
   .gatos h2{margin:0 0 12px;font-family:var(--titulo);font-size:clamp(1rem,2.6vmin,1.35rem);letter-spacing:.04em;color:var(--sol)}
   .gatos h2 .fi{font-size:.8em;letter-spacing:.06em}
   .fotos-gatos{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:clamp(10px,2vmin,18px)}
-  .fotos-gatos figure{margin:0;padding:8px 8px 10px;border-radius:18px;background:linear-gradient(160deg,rgba(24,30,82,.72),rgba(8,10,34,.82));border:1px solid var(--linha)}
-  .fotos-gatos img,.fotos-gatos video{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;border-radius:12px;background:#0a0c26}
-  .fotos-gatos figcaption{margin-top:8px;font-size:.88rem;color:var(--suave);line-height:1.35}
-  .fotos-gatos figcaption b{color:var(--tinta)}
+  /* só os gatos, recortados, flutuando no céu do site */
+  .fotos-gatos figure{margin:0;display:grid;justify-items:center;align-content:end;animation:flutua 4s ease-in-out infinite alternate;animation-delay:calc(var(--n,0) * -1.1s)}
+  .fotos-gatos figure:nth-child(2){--n:1}.fotos-gatos figure:nth-child(3){--n:2}.fotos-gatos figure:nth-child(4){--n:3}
+  @keyframes flutua{to{transform:translateY(-10px)}}
+  .fotos-gatos img{display:block;width:100%;max-width:240px;height:auto;max-height:300px;object-fit:contain;filter:drop-shadow(0 0 14px rgba(255,200,240,.35)) drop-shadow(0 8px 16px rgba(0,0,0,.4))}
+  .fotos-gatos figcaption{margin-top:6px;font-family:var(--titulo);font-weight:700;font-size:.9rem;letter-spacing:.06em;color:var(--tinta)}
   @media (orientation:landscape) and (max-height:520px){.gatos{display:none}}
   /* vídeo de abertura: a Gabi recebe o José na nave (abertura.js) */
   #filme{position:fixed;inset:0;z-index:10;background:#02030c;transition:opacity .6s ease}
@@ -123,7 +125,7 @@
   #filme-barra{height:100%;background:linear-gradient(90deg,var(--sol),var(--rosa),var(--neon));transform-origin:0 50%;transform:scaleX(0)}
   body.com-filme{overflow:hidden}
   body.com-filme #cheia{display:none}
-  @media (prefers-reduced-motion:reduce){h1,.jogo a{animation:none}}
+  @media (prefers-reduced-motion:reduce){h1,.jogo a,.fotos-gatos figure{animation:none}}
 </style>
 </head>
 <body>
@@ -162,14 +164,14 @@
   <section class="gatos" aria-labelledby="gatos-titulo">
     <h2 id="gatos-titulo">🐱 Os supergatos da Super Madrinha<span class="fi" lang="fi">Superkummitädin superkissat</span></h2>
     <div class="fotos-gatos">
-      <figure><img src="fotos/mimi.jpg" alt="O Mimi, gato branco grandão, sentado na cama como gente" loading="lazy" width="750" height="1000">
-        <figcaption><b>Mimi</b> · grandão e mandão<span class="fi" lang="fi">Iso ja pomottava</span></figcaption></figure>
-      <figure><img src="fotos/branquinho.jpg" alt="O Branquinho, gato amarelinho de olhos azuis, apoiado numa caixa" loading="lazy" width="562" height="1000">
-        <figcaption><b>Branquinho</b> · menor, super gordo e amigão<span class="fi" lang="fi">Pienempi, pullea ja kiltti kaveri</span></figcaption></figure>
-      <figure><video src="videos/mimi.mp4" poster="fotos/mimi-video.jpg" controls muted playsinline preload="none" width="478" height="850" aria-label="Vídeo do Mimi"></video>
-        <figcaption>🎥 Vídeo do Mimi<span class="fi" lang="fi">Mimin video</span></figcaption></figure>
-      <figure><img src="fotos/branquinho2.jpg" alt="O Branquinho, de coleira azul, olhando para cima" loading="lazy" width="562" height="1000">
-        <figcaption>Branquinho de coleira azul<span class="fi" lang="fi">Branquinho ja sininen panta</span></figcaption></figure>
+      <figure><img src="fotos/mimi-recorte.webp" alt="O Mimi sentado" loading="lazy" width="520" height="447">
+        <figcaption>Mimi</figcaption></figure>
+      <figure><img src="fotos/branquinho-recorte.webp" alt="O Branquinho" loading="lazy" width="469" height="493">
+        <figcaption>Branquinho</figcaption></figure>
+      <figure><img src="fotos/mimi-anim.webp" alt="O Mimi se mexendo" loading="lazy" width="360" height="527">
+        <figcaption>Mimi</figcaption></figure>
+      <figure><img src="fotos/branquinho2-recorte.webp" alt="O Branquinho de coleira azul olhando para cima" loading="lazy" width="406" height="603">
+        <figcaption>Branquinho</figcaption></figure>
     </div>
   </section>
 
