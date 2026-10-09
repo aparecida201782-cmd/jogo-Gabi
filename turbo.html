@@ -291,23 +291,41 @@ function poli(g, pts, cor) { g.fillStyle = cor; g.beginPath(); g.moveTo(pts[0], 
 function sombra(g, w, h) { g.fillStyle = 'rgba(0,0,0,.28)'; g.beginPath(); g.ellipse(w / 2, h - 8, w * .42, 9, 0, 0, Math.PI * 2); g.fill(); }
 
 // carro visto de trás
+// clareia (f > 0) ou escurece (f < 0) uma cor #rrggbb
+function tom(hex, f) {
+  const n = parseInt(hex.slice(1), 16), c = [n >> 16, (n >> 8) & 255, n & 255].map(v => Math.round(f > 0 ? v + (255 - v) * f : v * (1 + f)));
+  return `rgb(${c[0]},${c[1]},${c[2]})`;
+}
 function desenharCarro(cor, tipo, luz = 0, placa = 'JOSÉ') {
   return tela(240, 160, (g, w, h) => {
     sombra(g, w, h);
-    g.fillStyle = '#16161a'; rr(g, 16, 104, 46, 48, 9); rr(g, 178, 104, 46, 48, 9);
+    // pneus com sulcos
+    for (const px of [16, 178]) {
+      g.fillStyle = '#121214'; rr(g, px, 104, 46, 48, 9);
+      g.fillStyle = 'rgba(255,255,255,.08)'; for (let y = 110; y < 150; y += 7) g.fillRect(px + 4, y, 38, 2);
+      g.fillStyle = 'rgba(255,255,255,.12)'; rr(g, px + 4, 106, 8, 44, 4);
+    }
     const corBaixo = tipo === 'policia' ? '#14161c' : cor;
-    const cab = tipo === 'policia' ? '#f4f6fa' : cor;
+    const corCab = tipo === 'policia' ? '#f4f6fa' : cor;
+    const cab = g.createLinearGradient(0, 18, 0, 74); cab.addColorStop(0, tom(corCab, .35)); cab.addColorStop(1, tom(corCab, -.12));
     if (tipo === 'fusca' || tipo === 'ilo') {
       g.fillStyle = cab; g.beginPath(); g.ellipse(120, 78, 96, 66, 0, Math.PI, 0); g.fill();
-      g.fillStyle = 'rgba(160,215,255,.9)'; g.beginPath(); g.ellipse(120, 62, 52, 34, 0, Math.PI, 0); g.fill();
+      const vidro = g.createLinearGradient(0, 30, 0, 62); vidro.addColorStop(0, '#6a8aa8'); vidro.addColorStop(1, '#1a2a3a');
+      g.fillStyle = vidro; g.beginPath(); g.ellipse(120, 62, 52, 34, 0, Math.PI, 0); g.fill();
+      g.fillStyle = 'rgba(255,255,255,.25)'; g.beginPath(); g.ellipse(102, 48, 10, 18, .5, 0, 7); g.fill();
     } else {
       poli(g, [52, 72, 188, 72, 168, 22, 72, 22], cab);
-      poli(g, [66, 66, 174, 66, 158, 30, 82, 30], 'rgba(150,210,255,.95)');
-      g.fillStyle = 'rgba(255,255,255,.35)'; poli(g, [90, 34, 110, 34, 96, 62, 76, 62], 'rgba(255,255,255,.35)');
+      const vidro = g.createLinearGradient(0, 30, 0, 66); vidro.addColorStop(0, '#5a7a98'); vidro.addColorStop(1, '#1a2a3a');
+      poli(g, [66, 66, 174, 66, 158, 30, 82, 30], vidro);
+      poli(g, [92, 32, 116, 32, 98, 64, 74, 64], 'rgba(255,255,255,.28)'); poli(g, [124, 32, 132, 32, 114, 64, 106, 64], 'rgba(255,255,255,.18)');
     }
-    g.fillStyle = corBaixo; rr(g, 8, 66, 224, 66, 20);
+    const lata = g.createLinearGradient(0, 66, 0, 132); lata.addColorStop(0, tom(corBaixo, .3)); lata.addColorStop(.45, corBaixo); lata.addColorStop(1, tom(corBaixo, -.4));
+    g.fillStyle = lata; rr(g, 8, 66, 224, 66, 20);
+    // escapamento
+    for (const ex of [64, 176]) { g.fillStyle = '#9aa0a8'; g.beginPath(); g.ellipse(ex, 130, 9, 6, 0, 0, 7); g.fill(); g.fillStyle = '#222'; g.beginPath(); g.ellipse(ex, 130, 5, 3.5, 0, 0, 7); g.fill(); }
     if (tipo === 'policia') { g.fillStyle = '#f4f6fa'; rr(g, 8, 66, 224, 26, 14); }
-    g.fillStyle = 'rgba(255,255,255,.18)'; rr(g, 14, 70, 212, 8, 4);
+    g.fillStyle = 'rgba(255,255,255,.35)'; rr(g, 18, 69, 204, 5, 3); // brilho da pintura
+    g.fillStyle = 'rgba(255,255,255,.12)'; rr(g, 30, 76, 60, 3, 2);
     // lanternas
     g.fillStyle = '#ff2a2a'; rr(g, 18, 80, 44, 18, 6); rr(g, 178, 80, 44, 18, 6);
     g.fillStyle = '#ffd0d0'; rr(g, 24, 84, 14, 8, 3); rr(g, 202, 84, 14, 8, 3);
@@ -743,7 +761,7 @@ function novoPiloto(id, quem, carroId, remoto = false) {
   const spr = [desenharCarro(carro.cor, tipo, 0, placa), desenharCarro(carro.cor, tipo, 1, placa)];
   const j = { ...h, id, quem, cor: carro.cor, carro, spr, remoto,
     pos: 0, dist: 0, x: 0, vel: 0, turbo: 0, moedas: 0, volta: 0, tremor: 0, ceuOff: 0, morroOff: 0, avisos: [],
-    teclas: { esq: false, dir: false, freio: false }, sireneLigada: false, cuidadoT: -9, terminouT: 0, fim: 0, lugar: 0, atras: new Map(), alvoX: 0, alvoD: 0, rodar: 0, tiroT: 0 };
+    teclas: { esq: false, dir: false, freio: false }, sireneLigada: false, cuidadoT: -9, terminouT: 0, fim: 0, lugar: 0, atras: new Map(), alvoX: 0, alvoD: 0, rodar: 0, tiroT: 0, part: [], velAnt: 0, freando: false, faisca: 0 };
   // o carro dele como os outros o veem na pista
   j.obj = { humano: id, nome: h.nome, nomeFi: h.nomeFi, pt: h.pt, fi: h.fi, cor: carro.cor, spr: spr[0], sprLuz: spr[1], x: 0, z: 0, dist: 0, vel: 0 };
   return j;
@@ -845,7 +863,7 @@ function andarJogador(dt) {
     if (s.pego !== undefined || !S[s.tipo]) continue;
     const w = S[s.tipo].w / ESTRADA * .6;
     if (sobrepoe(x, LARG_CARRO / ESTRADA, s.x + (s.x < 0 ? -w / 2 : w / 2), w)) {
-      vel = VMAX / 5; x += x > 0 ? -.35 : .35; tremor = .4; som.batida(); cuidado(); break;
+      vel = VMAX / 5; x += x > 0 ? -.35 : .35; tremor = .4; som.batida(); cuidado(); J.faisca = 14; break;
     }
   }
   // moedas e raios (cada piloto pega as suas)
@@ -862,9 +880,10 @@ function andarJogador(dt) {
     if (vel <= c.vel) continue;
     const d = c.dist - (dist + JOGADOR_Z);
     if (d > 0 && d < SEG * 1.2 && sobrepoe(x, LARG_CARRO / ESTRADA, c.x, LARG_CARRO / ESTRADA, .85)) {
-      vel = c.vel * .85; x += x < c.x ? -.18 : .18; tremor = .3; som.batida(); cuidado();
+      vel = c.vel * .85; x += x < c.x ? -.18 : .18; tremor = .3; som.batida(); cuidado(); J.faisca = 10;
     }
   }
+  J.freando = vel < J.velAnt - VMAX * .004 || teclas.freio; J.velAnt = vel;
   // anda
   dist += vel * dt;
   pos = mod(LARGADA * SEG + dist - JOGADOR_Z, comprimento);
@@ -983,6 +1002,40 @@ function chegouRemoto(j) {
   j.fim = tempo; chegada.push({ nome: j.nome, nomeFi: j.nomeFi, eu: true, humano: j.id, cor: j.cor }); j.lugar = chegada.length;
 }
 
+// ---------------- partículas do carro (poeira, neve, folhas, bolhas, fumaça, faíscas) ----------------
+const TERRA = { sertao: ['#d9b27a', '#c99a5e'], jeri: ['#f3dca0', '#e9c47a'], boqueirao: ['#c9a466', '#b08850'], praia: ['#f4dea2', '#e9d08f'],
+  neve: ['#ffffff', '#e6eef6'], papainoel: ['#ffffff', '#e6eef6'], aurora: ['#dfe8f4', '#b8c6e2'], nuuksio: ['#e8641e', '#ffc23a', '#7aa14a'], mergulho: ['bolha'] };
+function particulasCarro(dw, dh, sy) {
+  const P2 = J.part, cores = TERRA[P.id] || ['#ccc'], fora = Math.abs(x) > 1, pct = vel / VMAX;
+  const novo = (px, py, vx, vy, vida, cor, r, tipo) => { if (P2.length < 160) P2.push({ x: px, y: py, vx, vy, vida, max: vida, cor, r, tipo }); };
+  if (modo === 'corrida' || modo === 'chegada') {
+    // poeira, neve ou folhas quando sai da pista
+    if (fora && pct > .08) for (const lado of [-1, 1]) for (let k = 0; k < 2; k++) {
+      const c = cores[Math.floor(Math.random() * cores.length)];
+      novo(W / 2 + lado * dw * .34, sy - dh * .05, (Math.random() - .5 + lado * .6) * dw * 1.2, -Math.random() * dh * 2.2, .6 + Math.random() * .4, c, dw * (.02 + Math.random() * .03), c === 'bolha' ? 'bolha' : P.id === 'nuuksio' ? 'folha' : 'po');
+    }
+    // fumacinha do escapamento acelerando
+    if (!J.freando && pct < .97 && pct > .02 && Math.random() < .5) for (const lado of [-1, 1])
+      novo(W / 2 + lado * dw * .23, sy - dh * .19, lado * dw * .1 * Math.random(), dh * (.2 + Math.random() * .3), .7, P.id === 'mergulho' ? 'bolha' : 'fumaca', dw * .025, P.id === 'mergulho' ? 'bolha' : 'fumaca');
+    // faíscas da batida
+    if (J.faisca > 0) { J.faisca--; for (let k = 0; k < 4; k++) novo(W / 2 + (Math.random() - .5) * dw * .8, sy - dh * .5, (Math.random() - .5) * dw * 3, -Math.random() * dh * 3, .4, '#ffd23f', dw * .012, 'faisca'); }
+  }
+  const dt = 1 / 60;
+  for (const q of P2) {
+    q.x += q.vx * dt; q.y += q.vy * dt; q.vida -= dt;
+    if (q.tipo === 'po' || q.tipo === 'faisca' || q.tipo === 'folha') q.vy += dh * 6 * dt;
+    if (q.tipo === 'bolha') q.vy -= dh * 3 * dt;
+    if (q.tipo === 'fumaca') q.r += dw * .05 * dt;
+    const a = Math.max(0, q.vida / q.max);
+    if (q.tipo === 'fumaca') { ctx.fillStyle = `rgba(200,200,205,${a * .35})`; ctx.beginPath(); ctx.arc(q.x, q.y, q.r, 0, 7); ctx.fill(); }
+    else if (q.tipo === 'bolha') { ctx.strokeStyle = `rgba(230,250,255,${a * .8})`; ctx.lineWidth = 1.5 * DPR; ctx.beginPath(); ctx.arc(q.x, q.y, q.r, 0, 7); ctx.stroke(); }
+    else if (q.tipo === 'faisca') { ctx.strokeStyle = `rgba(255,220,90,${a})`; ctx.lineWidth = 2 * DPR; ctx.beginPath(); ctx.moveTo(q.x, q.y); ctx.lineTo(q.x - q.vx * .03, q.y - q.vy * .03); ctx.stroke(); }
+    else if (q.tipo === 'folha') { ctx.save(); ctx.translate(q.x, q.y); ctx.rotate(q.vida * 9); ctx.globalAlpha = a; ctx.fillStyle = q.cor; ctx.beginPath(); ctx.ellipse(0, 0, q.r * 1.6, q.r * .8, 0, 0, 7); ctx.fill(); ctx.restore(); }
+    else { ctx.globalAlpha = a * .8; ctx.fillStyle = q.cor; ctx.beginPath(); ctx.arc(q.x, q.y, q.r, 0, 7); ctx.fill(); ctx.globalAlpha = 1; }
+  }
+  J.part = P2.filter(q => q.vida > 0);
+}
+
 // ---------------- desenho ----------------
 function projetar(p, cx, cy, cz) {
   p.cam.x = -cx; p.cam.y = p.mundo.y - cy; p.cam.z = p.mundo.z - cz;
@@ -1006,7 +1059,13 @@ function desenharSeg(s, neb) {
       const u0 = -1 + 2 * i / n, u1 = -1 + 2 * (i + 1) / n;
       poli(ctx, [a.x + a.w * u0, a.y, a.x + a.w * u1, a.y, b.x + b.w * u1, b.y, b.x + b.w * u0, b.y], (i + s.i) % 2 ? '#111' : '#fff');
     }
-  } else if (s.claro) {
+  } else {
+    // faixa contínua nas bordas, como estrada de verdade
+    const e1 = a.w / 45, e2 = b.w / 45;
+    quad(a.x - a.w * .95, a.y, e1, b.x - b.w * .95, b.y, e2, '#f2f2ee');
+    quad(a.x + a.w * .95, a.y, e1, b.x + b.w * .95, b.y, e2, '#f2f2ee');
+  }
+  if (!s.xadrez && s.claro) {
     const l1 = a.w / Math.max(32, 8 * FAIXAS), l2 = b.w / Math.max(32, 8 * FAIXAS);
     for (let f = 1; f < FAIXAS; f++) {
       const u = -1 + 2 * f / FAIXAS;
@@ -1024,6 +1083,16 @@ function desenharSprite(img, wMundo, esc, sx, sy, ox, oy, clip) {
   if (corte < dh) ctx.drawImage(img, 0, 0, img.width, img.height - img.height * corte / dh, dx, dy, dw, dh - corte);
 }
 
+// nuvens fofas que andam devagar e se mexem nas curvas
+function nuvens(rgb, hz, n = 7) {
+  for (let i = 0; i < n; i++) {
+    const larg = W * 1.6, nx = mod(rnd(i * 4.1) * larg - ceuOff * W * .5 - tempo * (3 + rnd(i) * 4) * DPR, larg) - W * .3;
+    const ny = hz * (.12 + rnd(i * 2.7) * .38), r = H * (.035 + rnd(i * 5.3) * .045);
+    ctx.fillStyle = `rgba(${rgb},.88)`;
+    for (const [dx, dy, k] of [[0, 0, 1], [r * 1.1, r * .15, .8], [-r * 1.1, r * .2, .75], [r * .5, -r * .45, .8], [-r * .4, -r * .35, .7]]) { ctx.beginPath(); ctx.ellipse(nx + dx, ny + dy, r * k * 1.3, r * k, 0, 0, 7); ctx.fill(); }
+    ctx.fillStyle = 'rgba(120,140,170,.18)'; ctx.beginPath(); ctx.ellipse(nx, ny + r * .55, r * 2.2, r * .35, 0, 0, 7); ctx.fill();
+  }
+}
 // fundo de cada pista com camadas que andam nas curvas
 function serra(cor, base, amp, freq, off, sem) {
   ctx.fillStyle = cor; ctx.beginPath(); ctx.moveTo(0, H);
@@ -1041,10 +1110,10 @@ function desenharFundo() {
   const sol = (x, y, r, cor) => { const g = ctx.createRadialGradient(x, y, 0, x, y, r * 3); g.addColorStop(0, cor); g.addColorStop(.33, cor); g.addColorStop(.34, 'rgba(255,255,255,.25)'); g.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = g; ctx.fillRect(x - r * 3, y - r * 3, r * 6, r * 6); };
   const sx = mod(.72 - ceuOff * .3, 1.4) * W - W * .2;
   if (P.id === 'sertao') {
-    ceu('#ff9d4a', '#ffe2a0'); sol(sx, hz * .42, H * .07, '#fff3b0');
+    ceu('#ff9d4a', '#ffe2a0'); sol(sx, hz * .42, H * .07, '#fff3b0'); nuvens('255,236,214', hz, 5);
     serra('#c7703a', hz + 4, H * .16, 1.6, ceuOff, 1); serra('#a85a2c', hz + 6, H * .09, 3, morroOff, 4);
   } else if (P.id === 'neve') {
-    ceu('#7fb8ec', '#e6f3ff'); sol(sx, hz * .35, H * .05, '#fffbe0');
+    ceu('#7fb8ec', '#e6f3ff'); sol(sx, hz * .35, H * .05, '#fffbe0'); nuvens('255,255,255', hz);
     serra('#dfeaf6', hz + 4, H * .2, 1.4, ceuOff, 2); serra('#b9cde2', hz + 4, H * .11, 2.6, morroOff, 5);
     // a catedral branca de Helsinque lá longe
     const cx = mod(.3 - ceuOff * .6, 1.3) * W - W * .15, cy = hz - H * .02, e = H * .0016;
@@ -1065,7 +1134,7 @@ function desenharFundo() {
     serra('#26304f', hz + 4, H * .14, 1.5, ceuOff, 3); serra('#3b4868', hz + 4, H * .07, 3, morroOff, 7);
   } else if (P.id === 'jeri') {
     // pôr do sol de Jericoacoara: sol grande perto do mar, dunas e kitesurf
-    ceu('#ff6a5a', '#ffd08a'); sol(sx, hz * .78, H * .09, '#fff0b0');
+    ceu('#ff6a5a', '#ffd08a'); sol(sx, hz * .78, H * .09, '#fff0b0'); nuvens('255,200,190', hz, 5);
     ctx.fillStyle = '#2a9fd0'; ctx.fillRect(0, hz - H * .05, W, H * .055);
     ctx.fillStyle = 'rgba(255,220,150,.6)'; ctx.fillRect(sx - H * .05, hz - H * .05, H * .1, H * .05);
     for (let i = 0; i < 4; i++) { // pipas de kitesurf no céu
@@ -1094,7 +1163,7 @@ function desenharFundo() {
     serra('#1a5a6a', hz + 4, H * .12, 1.6, ceuOff, 3); serra('#2a7a6a', hz + 4, H * .06, 3, morroOff, 6);
   } else if (P.id === 'boqueirao') {
     // o açude do Boqueirão: céu do sertão, serra, a água grande e o paredão da barragem
-    ceu('#ffa24f', '#ffe6b0'); sol(sx, hz * .4, H * .07, '#fff3b0');
+    ceu('#ffa24f', '#ffe6b0'); sol(sx, hz * .4, H * .07, '#fff3b0'); nuvens('255,240,220', hz, 5);
     serra('#b8743e', hz - H * .03, H * .16, 1.4, ceuOff, 5);
     const ag = ctx.createLinearGradient(0, hz - H * .06, 0, hz); ag.addColorStop(0, '#2a8fc8'); ag.addColorStop(1, '#5fc0e8');
     ctx.fillStyle = ag; ctx.fillRect(0, hz - H * .06, W, H * .065);
@@ -1117,12 +1186,12 @@ function desenharFundo() {
     for (let i = 0; i < 60; i++) { ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.beginPath(); ctx.arc(mod(rnd(i) * W + Math.sin(tempo + i) * 15 * DPR, W), mod(rnd(i * 3) * H + tempo * (20 + rnd(i) * 30) * DPR, hz), (1 + rnd(i * 7) * 2) * DPR, 0, 7); ctx.fill(); }
   } else if (P.id === 'nuuksio') {
     // floresta finlandesa no outono, com lago
-    ceu('#8fc8f0', '#eaf6ff'); sol(sx, hz * .35, H * .05, '#fffbe0');
+    ceu('#8fc8f0', '#eaf6ff'); sol(sx, hz * .35, H * .05, '#fffbe0'); nuvens('255,255,255', hz);
     serra('#3f6a3a', hz + 4, H * .18, 1.5, ceuOff, 4);
     ctx.fillStyle = '#5aa8d8'; ctx.fillRect(0, hz - H * .03, W, H * .035);
     serra('#d8641e', hz + 4, H * .1, 3.2, morroOff, 8); serra('#a8401a', hz + 4, H * .05, 5, morroOff * 1.3, 2);
   } else {
-    ceu('#3fb6f5', '#c8efff'); sol(sx, hz * .4, H * .06, '#fffbe0');
+    ceu('#3fb6f5', '#c8efff'); sol(sx, hz * .4, H * .06, '#fffbe0'); nuvens('255,255,255', hz);
     ctx.fillStyle = '#1b8fd1'; ctx.fillRect(0, hz - H * .045, W, H * .05);
     for (let i = 0; i < 26; i++) { ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.fillRect(mod(rnd(i) * W - ceuOff * W * .4, W), hz - H * .04 + rnd(i * 3) * H * .04, 18 * DPR, 2 * DPR); }
     for (let i = 0; i < 3; i++) { // jangadas
@@ -1203,11 +1272,33 @@ function render() {
         }
       }
       desenharSprite(img, LARG_CARRO, esc, 0, 0, -.5, -1, 0);
+      const dw = LARG_CARRO * esc * W / 2, dh = dw * 160 / 240;
+      // pneus girando: sulcos que correm conforme a velocidade
+      ctx.fillStyle = 'rgba(255,255,255,.14)';
+      for (const px of [16, 178]) {
+        const rx = -dw / 2 + px / 240 * dw, ry = -dh + 104 / 160 * dh, rw = 46 / 240 * dw, rh = 48 / 160 * dh, passo = rh / 5;
+        const off = (dist * .03) % passo;
+        for (let k = -1; k < 6; k++) { const yy = ry + k * passo + off; if (yy > ry && yy < ry + rh - 2) ctx.fillRect(rx + rw * .15, yy, rw * .7, Math.max(1, rh * .04)); }
+      }
+      // luz de freio
+      if (J.freando && modo === 'corrida') {
+        ctx.globalCompositeOperation = 'lighter';
+        for (const lx of [40, 200]) {
+          const gx = -dw / 2 + lx / 240 * dw, gy = -dh + 89 / 160 * dh, gr = ctx.createRadialGradient(gx, gy, 0, gx, gy, dw * .16);
+          gr.addColorStop(0, 'rgba(255,60,40,.9)'); gr.addColorStop(1, 'rgba(255,0,0,0)'); ctx.fillStyle = gr; ctx.fillRect(gx - dw * .16, gy - dw * .16, dw * .32, dw * .32);
+        }
+        ctx.globalCompositeOperation = 'source-over';
+      }
       ctx.restore();
+      particulasCarro(dw, dh, sy);
       if (J.rodar > 0) { ctx.globalAlpha = .7; desenharSprite(S.bolha.img, LARG_CARRO * 1.3, esc, W / 2, sy, -.5, -.95, 0); ctx.globalAlpha = 1; }
     }
   }
   ctx.setTransform(1, 0, 0, 1, 0, 0);
+  if (vel / VMAX > .85 && turbo <= 0 && modo === 'corrida') { // riscos nas bordas em alta velocidade
+    ctx.strokeStyle = 'rgba(255,255,255,.22)'; ctx.lineWidth = 1.5 * DPR;
+    for (let i = 0; i < 10; i++) { const lado = i % 2 ? 1 : -1, yy = H * (.35 + rnd(i + Math.floor(tempo * 24)) * .5), x0 = lado < 0 ? W * .02 : W * .98; ctx.beginPath(); ctx.moveTo(x0, yy); ctx.lineTo(x0 - lado * W * .12, yy + H * .03); ctx.stroke(); }
+  }
   if (turbo > 0) { // linhas de velocidade
     ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2 * DPR;
     for (let i = 0; i < 18; i++) { const a = rnd(i + Math.floor(tempo * 20)) * Math.PI * 2, r1 = W * .25, r2 = W * .7; ctx.beginPath(); ctx.moveTo(W / 2 + Math.cos(a) * r1, H * .55 + Math.sin(a) * r1 * .6); ctx.lineTo(W / 2 + Math.cos(a) * r2, H * .55 + Math.sin(a) * r2 * .6); ctx.stroke(); }
@@ -1585,13 +1676,33 @@ const som = (() => {
         motorF = ac.createBiquadFilter(); motorF.type = 'lowpass'; motorF.frequency.value = 700;
         motorG = ac.createGain(); motorG.gain.value = .05;
         motorOsc.connect(motorF).connect(motorG).connect(mestre); motorOsc.start();
-      } else if (!on && motorOsc) { motorOsc.stop(); motorOsc = null; }
+        // segunda voz do motor (ronco mais cheio) e o chiado do pneu
+        this._m2 = ac.createOscillator(); this._m2.type = 'square'; this._g2 = ac.createGain(); this._g2.gain.value = 0;
+        this._m2.connect(motorF); this._m2.connect(this._g2).connect(motorG); this._m2.start();
+        const d = 2, buf = ac.createBuffer(1, ac.sampleRate * d, ac.sampleRate), ch = buf.getChannelData(0);
+        for (let i = 0; i < ch.length; i++) ch[i] = Math.random() * 2 - 1;
+        this._pneu = ac.createBufferSource(); this._pneu.buffer = buf; this._pneu.loop = true;
+        const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2600; bp.Q.value = 6;
+        this._gp = ac.createGain(); this._gp.gain.value = 0;
+        this._pneu.connect(bp).connect(this._gp).connect(mestre); this._pneu.start();
+      } else if (!on && motorOsc) { motorOsc.stop(); motorOsc = null; try { this._m2.stop(); this._pneu.stop(); } catch {} }
     },
     atualizar() {
       if (!motorOsc) return;
-      const p = vel / VMAX;
-      motorOsc.frequency.setTargetAtTime(55 + p * 120 + (turbo > 0 ? 40 : 0), ac.currentTime, .05);
-      motorG.gain.setTargetAtTime(pausado ? 0 : .03 + p * .05, ac.currentTime, .1);
+      const p = Math.min(1.35, vel / VMAX), t0 = ac.currentTime;
+      // marchas: dentro de cada marcha o giro sobe, e cai quando troca
+      const M = [0, .18, .36, .55, .75, .95, 1.4];
+      let m = 0; while (m < M.length - 2 && p > M[m + 1]) m++;
+      const giro = (p - M[m]) / (M[m + 1] - M[m]);
+      const f = 48 + m * 9 + giro * 95 + (turbo > 0 ? 25 : 0);
+      motorOsc.frequency.setTargetAtTime(f, t0, .04);
+      if (this._m2) { this._m2.frequency.setTargetAtTime(f * .5, t0, .04); this._g2.gain.setTargetAtTime(.35, t0, .1); }
+      motorF.frequency.setTargetAtTime(500 + giro * 900, t0, .05);
+      motorG.gain.setTargetAtTime(pausado ? 0 : .03 + p * .045, t0, .1);
+      // pneu cantando: curva forte em alta velocidade, ou freada
+      const curva = Math.abs(segDe(pos + JOGADOR_Z)?.curva || 0), virando = teclas.esq || teclas.dir;
+      const chiado = !pausado && modo === 'corrida' && ((virando && p > .7 && curva > 2) || (teclas.freio && p > .3) || J?.rodar > 0) ? .05 : 0;
+      if (this._gp) this._gp.gain.setTargetAtTime(chiado, t0, .06);
     },
     bip: (f, d = .18) => nota(f, d, 'square', .12),
     moeda: () => { nota(1318, .08, 'triangle', .18); setTimeout(() => nota(1760, .14, 'triangle', .18), 70); },
