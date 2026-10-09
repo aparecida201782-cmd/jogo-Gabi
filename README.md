@@ -101,11 +101,13 @@ O robô fica em `whatsapp/`. Ele precisa de um **número de WhatsApp só para el
 
 ## Turbo do José (corrida de carrinho para o José)
 Abre em `turbo.html` ou pela Galáxia da Gabi. Feito para criança de 6 anos: o carro acelera sozinho, é só virar ◀ ▶, e uma ajudinha no volante puxa o carro de volta para a estrada. Bater não tira ponto, só freia.
-- **Corre contra a família:** Gabi, Madrinha Ana, Keka, Emiel e Vovó Hermina, em 2 voltas, com semáforo na largada, pódio e troféu no fim.
+- **Qualquer pessoa da família pode ser o piloto:** José, Gabi, Madrinha Ana, Keka, Emiel, Vovó Hermina e o Ilo 🐶 (que tem carro com orelhas). Quem não está pilotando corre como rival. São 2 voltas, com semáforo na largada, pódio e troféu no fim.
 - **6 carros:** Relâmpago, Polícia e Bombeiro (com sirene 🚨), Táxi, Fusquinha e Foguete Verde. Todos têm buzina 📯.
 - **4 pistas:** Sertão de Solonópole, Neve de Helsinque, Aurora na Lapônia e Praia de Fortaleza.
 - **Moedas 🪙 e raios de turbo ⚡ na pista**, e recados que pulam na tela ("Passou a Gabi!", "Última volta!").
 - **Em português e finlandês:** o botão 🇧🇷 / 🇫🇮 no menu troca os textos, os nomes, as placas da estrada e a voz.
+- **Três jeitos de jogar:** 👦 sozinho; 👫 dois juntos no mesmo celular (a tela se divide e cada um usa os ◀ ▶ do seu lado; no teclado A/D e as setas); 🌐 online, cada um no seu celular: um cria a sala e manda o código de 4 letras, o outro entra. Quem cria a sala comanda os rivais e escolhe a próxima corrida. O online usa o PeerJS (`lib/peerjs.min.js`) e o servidor gratuito de salas, como o Esquadrão Neon.
+- **Voz em finlandês com legenda em português:** "Kolme, kaksi, yksi... Aja!", "Ohitit Gabin!" (Você passou a Gabi!), "Viimeinen kierros!" (Última volta!), "Varo!" (Cuidado!) e os parabéns no fim. Tem musiquinha durante a corrida e torcida na chegada.
 - Teclado: setas viram, ↓ freia, Espaço buzina, Esc pausa.
 
 ## Visual e efeitos especiais
