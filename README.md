@@ -108,7 +108,9 @@ Abre em `turbo.html` ou pela Galáxia da Gabi. Feito para criança de 6 anos: o 
 - **Em português e finlandês:** o botão 🇧🇷 / 🇫🇮 no menu troca os textos, os nomes, as placas da estrada e a voz.
 - **Três jeitos de jogar:** 👦 sozinho; 👫 dois juntos no mesmo celular (a tela se divide e cada um usa os ◀ ▶ do seu lado; no teclado A/D e as setas); 🌐 online, cada um no seu celular: um cria a sala e manda o código de 4 letras, o outro entra. Quem cria a sala comanda os rivais e escolhe a próxima corrida. O online usa o PeerJS (`lib/peerjs.min.js`) e o servidor gratuito de salas, como o Esquadrão Neon.
 - **Voz em finlandês com legenda em português:** "Kolme, kaksi, yksi... Aja!", "Ohitit Gabin!" (Você passou a Gabi!), "Viimeinen kierros!" (Última volta!), "Varo!" (Cuidado!) e os parabéns no fim. Tem musiquinha durante a corrida e torcida na chegada.
-- Teclado: setas viram, ↓ freia, Espaço buzina, Esc pausa.
+- **Bolhas mágicas 🫧:** o botão 🫧 joga uma bolha para a frente. O carro acertado rodopia dentro da bolha e fica lento por um instante, e dá para passar na frente ("Osuma!" / Acertou!). No modo de dois e online, os pilotos também podem acertar um ao outro.
+- **Festa na chegada:** pódio com os três primeiros pulando em cima dos carros, taça dourada girando, fogos de artifício, holofotes e a torcida comemorando com bandeiras do Brasil e da Finlândia ("Uhuu!", "Hurraa!"), mais o ranking completo ao lado. Quem sobe no pódio ganha uma taça de ouro, prata ou bronze, e a estante de taças aparece no menu.
+- Teclado: setas viram, ↓ freia, Espaço/W/↑ jogam bolha, B buzina, Esc pausa. No modo de dois: A/D/W para o piloto 1 e ←/→/↑ para o piloto 2.
 
 ## Visual e efeitos especiais
 Menus em estilo neon (vidro, brilho e grade animada), painel de vida e pontos futurista, brilho (bloom) nas luzes, raios de sol, vagalumes e poeira no ar, rastro de velocidade, ondas de choque e "POW!" nos golpes, tremida e congelada rápida no impacto, câmera suave e abertura em círculo no começo de cada fase. Se o celular ficar lento, os efeitos mais pesados se desligam sozinhos.
