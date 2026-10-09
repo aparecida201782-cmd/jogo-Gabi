@@ -79,6 +79,9 @@
   .lado{display:flex;gap:10px;align-items:flex-end}
   .tecla{pointer-events:auto;width:clamp(74px,17vmin,120px);aspect-ratio:1;border-radius:50%;border:4px solid rgba(255,255,255,.55);background:rgba(16,8,30,.45);color:#fff;font-size:clamp(2rem,8vmin,3.4rem);font-weight:700;display:grid;place-items:center;touch-action:none;cursor:pointer}
   .tecla[hidden]{display:none}
+  .tecla.bolha{width:clamp(64px,14vmin,96px);font-size:clamp(1.8rem,6.5vmin,2.8rem);border-color:#9fe7ff;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.35),rgba(80,190,255,.35) 60%,rgba(255,95,162,.35));box-shadow:0 0 18px rgba(120,220,255,.5)}
+  .tecla.bolha.recarga{opacity:.45;box-shadow:none}
+  #dupla .tecla{width:clamp(58px,12vmin,92px);font-size:clamp(1.6rem,6vmin,2.6rem)}
   .tecla.ativa{background:rgba(255,210,63,.55);transform:scale(.94)}
   .tecla.pequena{width:clamp(54px,12vmin,78px);font-size:clamp(1.4rem,5vmin,2rem)}
   #pausa{position:fixed;z-index:4;top:calc(env(safe-area-inset-top) + 74px);right:max(10px,env(safe-area-inset-right));pointer-events:auto;border:2px solid rgba(255,255,255,.3);background:rgba(16,8,30,.55);color:#fff;border-radius:12px;width:44px;height:44px;font-size:1.1rem;cursor:pointer}
@@ -89,6 +92,21 @@
   .linha .bola{width:18px;height:18px;border-radius:50%}
   .grande{text-align:center;font-size:clamp(2.4rem,10vmin,4.4rem);font-weight:700;line-height:1;margin:4px 0}
   @media (max-height:500px){.grande{font-size:2.2rem}.podio{gap:4px;margin:6px 0}.linha{padding:3px 10px}.acoes{margin-top:8px}.btn{padding:10px 14px;font-size:1.05rem}#fim .sub{margin:2px 0 4px}}
+  /* fim da corrida: a festa aparece no fundo e o ranking fica num painel do lado (ou embaixo, com o celular em pé) */
+  #fim{background:none;-webkit-backdrop-filter:none;backdrop-filter:none;justify-content:flex-end;align-items:center}
+  #fimCartao{width:min(44vw,440px);max-height:100%;background:rgba(26,15,46,.86)}
+  @media (orientation:portrait){#fim{align-items:flex-end;justify-content:center}#fimCartao{width:100%;max-height:50vh}}
+  #fimCartao .grande{font-size:clamp(1.8rem,7vmin,3rem)}
+  #fimCartao .btn{flex:1 1 120px;font-size:1rem;padding:11px 12px;white-space:nowrap}
+  .taca{margin:4px 0;text-align:center;font-weight:700;color:var(--amarelo);font-size:1.05rem}
+  .tacas{margin:4px 0 0;text-align:center;font-weight:600;color:#ffe9a8}
+  .tacas:empty{display:none}
+  .tabela{display:grid;gap:4px;margin:8px 0}
+  .tabela .linha{grid-template-columns:auto auto 1fr auto}
+  .tabela .pts{font-weight:700;color:var(--amarelo)}
+  .tabela .mais{color:#7dff9a;font-size:.8em;margin-left:6px}
+  h3.copa{margin:10px 0 4px;text-align:center;color:#ffd23f;font-size:1rem}
+  #tituloPista[hidden],#pistas[hidden]{display:none}
   @media (prefers-reduced-motion:reduce){.escolha,.btn{transition:none}h1,.escolha img,.escolha .ic{animation:none!important}}
 </style>
 </head>
@@ -103,17 +121,18 @@
 <button id="pausa" hidden aria-label="Pausar">⏸</button>
 <div id="controles" hidden>
   <div class="lado"><button class="tecla" id="esq" aria-label="Virar para a esquerda">◀</button><button class="tecla pequena" id="buzina" aria-label="Buzinar">📯</button></div>
-  <div class="lado"><button class="tecla pequena" id="sirene" aria-label="Ligar a sirene" hidden>🚨</button><button class="tecla" id="dir" aria-label="Virar para a direita">▶</button></div>
+  <div class="lado"><button class="tecla pequena" id="sirene" aria-label="Ligar a sirene" hidden>🚨</button><button class="tecla bolha" id="tiro" aria-label="Jogar bolha mágica">🫧</button><button class="tecla" id="dir" aria-label="Virar para a direita">▶</button></div>
 </div>
 <div id="dupla" hidden>
-  <div class="lado"><button class="tecla" id="p1esq" aria-label="José vira para a esquerda">◀</button><button class="tecla" id="p1dir" aria-label="José vira para a direita">▶</button></div>
-  <div class="lado"><button class="tecla" id="p2esq" aria-label="Gabi vira para a esquerda">◀</button><button class="tecla" id="p2dir" aria-label="Gabi vira para a direita">▶</button></div>
+  <div class="lado"><button class="tecla" id="p1esq" aria-label="Piloto 1 vira para a esquerda">◀</button><button class="tecla" id="p1dir" aria-label="Piloto 1 vira para a direita">▶</button><button class="tecla bolha" id="p1tiro" aria-label="Piloto 1 joga bolha">🫧</button></div>
+  <div class="lado"><button class="tecla bolha" id="p2tiro" aria-label="Piloto 2 joga bolha">🫧</button><button class="tecla" id="p2esq" aria-label="Piloto 2 vira para a esquerda">◀</button><button class="tecla" id="p2dir" aria-label="Piloto 2 vira para a direita">▶</button></div>
 </div>
 
 <div class="ov" id="menu">
   <div class="cartao">
     <div class="linguas"><button class="lingua" data-l="pt">🇧🇷 Português</button><button class="lingua" data-l="fi">🇫🇮 Suomi</button></div>
     <h1 data-t="titulo">Turbo do José</h1>
+    <p class="tacas" id="tacas"></p>
     <p class="sub" data-t="sub"></p>
     <h2 data-t="comoJogar"></h2>
     <div class="grade" id="modos"></div>
@@ -121,8 +140,13 @@
     <div id="quemBox"><h2 id="quemTit"></h2><div class="grade gente" id="quem"></div><h2 id="quem2Tit"></h2><div class="grade gente" id="quem2"></div></div>
     <h2 data-t="escolhaCarro"></h2>
     <div class="grade" id="carros"></div>
-    <h2 data-t="escolhaPista"></h2>
+    <h2 data-t="dificuldade"></h2>
+    <div class="grade" id="difs"></div>
+    <h2 data-t="tipoCorrida"></h2>
+    <div class="grade" id="tipos"></div>
+    <h2 data-t="escolhaPista" id="tituloPista"></h2>
     <div class="grade" id="pistas"></div>
+    <p class="dica" id="dicaCopa"></p>
     <div class="acoes">
       <button class="btn" id="correr"></button>
       <button class="btn" id="entrar" hidden></button>
@@ -133,9 +157,11 @@
 </div>
 
 <div class="ov" id="fim" hidden>
-  <div class="cartao" style="max-width:520px">
+  <div class="cartao" id="fimCartao">
     <div class="grande" id="lugar">🏆 1º lugar!</div>
+    <p class="taca" id="taca"></p>
     <p class="sub" id="frase"></p>
+    <div id="classif"></div>
     <div class="podio" id="podio"></div>
     <div class="acoes">
       <button class="btn" id="denovo" data-t="denovo"></button>
@@ -179,15 +205,15 @@ const easeInOut = (a, b, p) => a + (b - a) * (-Math.cos(p * Math.PI) / 2 + .5);
 const mod = (v, m) => ((v % m) + m) % m;
 function sobrepoe(x1, w1, x2, w2, pct = 1) { const h = pct / 2; return !(x1 + w1 * h < x2 - w2 * h || x1 - w1 * h > x2 + w2 * h); }
 
-let salvo = { carro: 'corrida', pista: 'sertao', som: true, trofeus: {}, modo: 'solo', eu: 'jose', eu2: 'gabi', lingua: /^fi/i.test(navigator.language || '') ? 'fi' : 'pt' };
+let salvo = { dif: 'medio', tipo: 'rapida', copas: {}, tacas: { ouro: 0, prata: 0, bronze: 0 }, carro: 'corrida', pista: 'sertao', som: true, trofeus: {}, modo: 'solo', eu: 'jose', eu2: 'gabi', lingua: /^fi/i.test(navigator.language || '') ? 'fi' : 'pt' };
 try { salvo = { ...salvo, ...JSON.parse(localStorage.getItem('turboJose') || '{}') }; } catch {}
 const guardar = () => { try { localStorage.setItem('turboJose', JSON.stringify(salvo)); } catch {} };
 
 // ---------------- textos em português e finlandês ----------------
 const TXT = {
   pt: {
-    titulo: 'Turbo do José', sub: '🏎️ Corrida da família: José, Gabi, Madrinha, Keka, Emiel, Vovó e até o Ilo! O carro acelera sozinho: é só virar ◀ ▶ e pegar as moedas 🪙.',
-    escolhaCarro: '3. Escolha o carro', escolhaPista: '4. Escolha a pista', correr: '🏁 CORRER!', som: '🔊 Som', semSom: '🔇 Sem som',
+    titulo: 'Turbo do José', sub: '🏎️ Corrida da família: José, Gabi, Madrinha, Keka, Emiel, Vovó e até o Ilo! O carro acelera sozinho: é só virar ◀ ▶, pegar as moedas 🪙 e jogar bolhas mágicas 🫧 nos outros carros para passar na frente!',
+    escolhaCarro: '3. Escolha o carro', escolhaPista: '6. Escolha a pista', dificuldade: '4. Dificuldade', tipoCorrida: '5. Corrida ou campeonato?', correr: '🏁 CORRER!', som: '🔊 Som', semSom: '🔇 Sem som',
     galaxia: '⬅ Galáxia da Gabi', denovo: '🔁 Correr de novo', outra: '🗺️ Outra pista', continuar: '▶ Continuar', menu: '🗺️ Menu',
     sirene: 'tem sirene!', semTrofeu: 'ainda sem troféu', trofeu: ['🏆 campeão', '🥈 2º lugar', '🥉 3º lugar'], melhor: n => `melhor: ${n}º`,
     ord: n => `${n}º`, volta: (a, b) => `Volta ${a}/${b}`, prepare: 'Prepare-se!', vai: 'VAI!', chegada: 'CHEGADA!',
@@ -196,9 +222,17 @@ const TXT = {
     fraseOutra: 'Você terminou a corrida! Bora tentar de novo?', moedas: n => `🪙 ${n} moedas.`,
     falaVai: 'Vai, José!', falaCampeao: 'Parabéns, José! Você é o campeão!', falaLugar: n => `Parabéns, José! ${n}º lugar!`, voz: 'pt-BR',
     policia: 'POLÍCIA', taxi: 'TÁXI',
+    taca: ['Você ganhou a TAÇA DE OURO! 🏆', 'Você ganhou a TAÇA DE PRATA! 🥈', 'Você ganhou a TAÇA DE BRONZE! 🥉'], tacas: (o, p, b) => `Suas taças: 🏆 ${o} · 🥈 ${p} · 🥉 ${b}`,
+    campeao: 'CAMPEÃO!', vivas: ['Uhuu!', 'Bravo!', 'Isso aí!', 'É campeão!', 'Viva!'],
+    difs: { facil: ['🐢', 'Fácil', 'rivais devagar'], medio: ['🚗', 'Médio', 'corrida de verdade'], dificil: ['🔥', 'Difícil', 'rivais jogam bolhas!'] },
+    rapida: ['🏁', 'Corrida rápida', 'uma pista'], copas: { br: 'Copa Brasil', fi: 'Copa Finlândia', familia: 'Grande Copa da Família' },
+    corridas: n => `${n} corridas`, corridaN: (a, b) => `Corrida ${a} de ${b}`, classificacao: 'Classificação da copa', proxima: (a, b) => `▶ Próxima corrida (${a}/${b})`,
+    novaCopa: '🔁 Nova copa', campeaoCopa: n => `${n} é campeão da copa! 🏆`, copaTit: 'CAMPEÃO DA COPA!', dicaCopa: 'A copa passa por estas pistas, uma depois da outra. Cada corrida dá pontos: 1º 10, 2º 8, 3º 6, 4º 5, 5º 4, 6º 3, 7º 2.',
+    copaGanha: ['Você ganhou a COPA DE OURO! 🏆', 'Você ganhou a COPA DE PRATA! 🥈', 'Você ganhou a COPA DE BRONZE! 🥉'], ptsAbrev: 'pts',
+    acertado: n => `${n} te acertou!`,
     comoJogar: '1. Como vamos jogar?', quemEh: '2. Quem é o piloto?',
     modos: { solo: ['👦 Sozinho', 'contra a família'], dupla: ['👫 Dois juntos', 'no mesmo celular'], online: ['🌐 Online', 'cada um no seu celular'] },
-    dicaDupla: (a, b) => `${a} usa ◀ ▶ da esquerda e ${b} usa ◀ ▶ da direita. No teclado: A/D e as setas.`, piloto1: 'Piloto 1 (◀ ▶ da esquerda)', piloto2: 'Piloto 2 (◀ ▶ da direita)',
+    dicaDupla: (a, b) => `${a} usa ◀ ▶ 🫧 da esquerda e ${b} usa 🫧 ◀ ▶ da direita. No teclado: A/D/W e as setas.`, piloto1: 'Piloto 1 (◀ ▶ da esquerda)', piloto2: 'Piloto 2 (◀ ▶ da direita)',
     dicaOnline: 'Um cria a sala e manda o código de 4 letras para o outro. Os dois precisam de internet.',
     criarSala: '🌐 Criar sala', entrar: '🔑 Entrar na sala', criando: 'Criando a sala...', codigo: 'Código da sala',
     mande: 'Mande este código para quem vai correr com você!', esperando: 'Esperando o outro piloto entrar...',
@@ -208,8 +242,8 @@ const TXT = {
     voltar: '⬅ Voltar', cancelar: 'Cancelar', sairSala: '🚪 Sair', venceu: n => `${n} ganhou!`, aguardando: n => `Esperando ${n} escolher a próxima corrida...`,
   },
   fi: {
-    titulo: 'Josén Turbo', sub: '🏎️ Perheen kisa: José, Gabi, Kummi, Keka, Emiel, Mummi ja jopa Ilo! Auto kiihdyttää itse: käännä vain ◀ ▶ ja kerää kolikoita 🪙.',
-    escolhaCarro: '3. Valitse auto', escolhaPista: '4. Valitse rata', correr: '🏁 AJA!', som: '🔊 Ääni', semSom: '🔇 Ei ääntä',
+    titulo: 'Josén Turbo', sub: '🏎️ Perheen kisa: José, Gabi, Kummi, Keka, Emiel, Mummi ja jopa Ilo! Auto kiihdyttää itse: käännä vain ◀ ▶, kerää kolikoita 🪙 ja heitä taikakuplia 🫧 muiden autojen päälle!',
+    escolhaCarro: '3. Valitse auto', escolhaPista: '6. Valitse rata', dificuldade: '4. Vaikeustaso', tipoCorrida: '5. Kisa vai mestaruus?', correr: '🏁 AJA!', som: '🔊 Ääni', semSom: '🔇 Ei ääntä',
     galaxia: '⬅ Gabin galaksi', denovo: '🔁 Aja uudestaan', outra: '🗺️ Toinen rata', continuar: '▶ Jatka', menu: '🗺️ Valikko',
     sirene: 'siinä on sireeni!', semTrofeu: 'ei vielä pokaalia', trofeu: ['🏆 mestari', '🥈 2. sija', '🥉 3. sija'], melhor: n => `paras: ${n}.`,
     ord: n => `${n}.`, volta: (a, b) => `Kierros ${a}/${b}`, prepare: 'Valmiina!', vai: 'AJA!', chegada: 'MAALI!',
@@ -218,9 +252,17 @@ const TXT = {
     fraseOutra: 'Pääsit maaliin! Yritetäänkö uudestaan?', moedas: n => `🪙 ${n} kolikkoa.`,
     falaVai: 'Aja, José!', falaCampeao: 'Onneksi olkoon, José! Olet mestari!', falaLugar: n => `Onneksi olkoon, José! ${n}. sija!`, voz: 'fi-FI',
     policia: 'POLIISI', taxi: 'TAKSI',
+    taca: ['Voitit KULTAPOKAALIN! 🏆', 'Voitit HOPEAPOKAALIN! 🥈', 'Voitit PRONSSIPOKAALIN! 🥉'], tacas: (o, p, b) => `Pokaalisi: 🏆 ${o} · 🥈 ${p} · 🥉 ${b}`,
+    campeao: 'MESTARI!', vivas: ['Hurraa!', 'Jee!', 'Mahtavaa!', 'Hienoa!', 'Bravo!'],
+    difs: { facil: ['🐢', 'Helppo', 'hitaat kilpailijat'], medio: ['🚗', 'Keskitaso', 'oikea kisa'], dificil: ['🔥', 'Vaikea', 'kilpailijat heittävät kuplia!'] },
+    rapida: ['🏁', 'Pikakisa', 'yksi rata'], copas: { br: 'Brasilian mestaruus', fi: 'Suomen mestaruus', familia: 'Perheen suurmestaruus' },
+    corridas: n => `${n} kisaa`, corridaN: (a, b) => `Kisa ${a}/${b}`, classificacao: 'Mestaruuden pisteet', proxima: (a, b) => `▶ Seuraava kisa (${a}/${b})`,
+    novaCopa: '🔁 Uusi mestaruus', campeaoCopa: n => `${n} on mestari! 🏆`, copaTit: 'MESTARUUS!', dicaCopa: 'Mestaruudessa ajetaan nämä radat peräkkäin. Jokaisesta kisasta saa pisteitä: 1. 10, 2. 8, 3. 6, 4. 5, 5. 4, 6. 3, 7. 2.',
+    copaGanha: ['Voitit KULTAPOKAALIN! 🏆', 'Voitit HOPEAPOKAALIN! 🥈', 'Voitit PRONSSIPOKAALIN! 🥉'], ptsAbrev: 'p',
+    acertado: n => `${n} osui sinuun!`,
     comoJogar: '1. Miten pelataan?', quemEh: '2. Kuka ajaa?',
     modos: { solo: ['👦 Yksin', 'perhettä vastaan'], dupla: ['👫 Kaksi yhdessä', 'samalla puhelimella'], online: ['🌐 Netissä', 'kumpikin omalla puhelimella'] },
-    dicaDupla: (a, b) => `${a} ohjaa vasemmilla ◀ ▶ ja ${b} oikeilla ◀ ▶. Näppäimistöllä: A/D ja nuolet.`, piloto1: 'Kuljettaja 1 (vasemmat ◀ ▶)', piloto2: 'Kuljettaja 2 (oikeat ◀ ▶)',
+    dicaDupla: (a, b) => `${a} ohjaa vasemmilla ◀ ▶ 🫧 ja ${b} oikeilla 🫧 ◀ ▶. Näppäimistöllä: A/D/W ja nuolet.`, piloto1: 'Kuljettaja 1 (vasemmat ◀ ▶)', piloto2: 'Kuljettaja 2 (oikeat ◀ ▶)',
     dicaOnline: 'Toinen luo huoneen ja lähettää 4 kirjaimen koodin toiselle. Molemmat tarvitsevat internetin.',
     criarSala: '🌐 Luo huone', entrar: '🔑 Liity huoneeseen', criando: 'Luodaan huonetta...', codigo: 'Huoneen koodi',
     mande: 'Lähetä tämä koodi kaverille, joka ajaa kanssasi!', esperando: 'Odotetaan toista kuljettajaa...',
@@ -234,7 +276,7 @@ const T = () => TXT[salvo.lingua] || TXT.pt;
 const nomeL = o => (salvo.lingua === 'fi' && o.nomeFi) || o.nome;
 
 // ---------------- números da estrada ----------------
-const SEG = 200, RUMBLE = 3, ESTRADA = 2000, FAIXAS = 3, CAM_ALT = 1000, VISTA = 260;
+const SEG = 200, RUMBLE = 3, ESTRADA = 2000, FAIXAS = 3, CAM_ALT = 1550, VISTA = 320; // câmera alta: carro menor e mais paisagem
 const CAM_PROF = 1 / Math.tan((100 / 2) * Math.PI / 180);
 const JOGADOR_Z = CAM_ALT * CAM_PROF;
 const VMAX = SEG * 60;                 // velocidade máxima normal
@@ -394,6 +436,14 @@ function criarSprites() {
     for (let i = 0; i < 10; i++) { const r = i % 2 ? 14 : 30, a = -Math.PI / 2 + i * Math.PI / 5; g.lineTo(60 + Math.cos(a) * r, 60 + Math.sin(a) * r); }
     g.closePath(); g.fill();
   }));
+  sprite('bolha', 300, tela(120, 120, (g, w, h) => {
+    const gr = g.createRadialGradient(60, 60, 20, 60, 60, 56);
+    gr.addColorStop(0, 'rgba(255,255,255,.05)'); gr.addColorStop(.75, 'rgba(160,230,255,.35)'); gr.addColorStop(.92, 'rgba(255,140,220,.75)'); gr.addColorStop(1, 'rgba(120,220,255,0)');
+    g.fillStyle = gr; g.beginPath(); g.arc(60, 60, 56, 0, 7); g.fill();
+    g.strokeStyle = 'rgba(255,255,255,.8)'; g.lineWidth = 3; g.beginPath(); g.arc(60, 60, 50, 0, 7); g.stroke();
+    g.fillStyle = 'rgba(255,255,255,.9)'; g.beginPath(); g.ellipse(40, 36, 14, 8, -.6, 0, 7); g.fill();
+    g.beginPath(); g.arc(78, 80, 4, 0, 7); g.fill();
+  }));
   sprite('raio', 300, tela(130, 150, (g, w, h) => {
     const gr = g.createRadialGradient(65, 75, 4, 65, 75, 66); gr.addColorStop(0, 'rgba(120,220,255,.9)'); gr.addColorStop(1, 'rgba(120,220,255,0)');
     g.fillStyle = gr; g.fillRect(0, 0, w, h);
@@ -451,6 +501,22 @@ const placaDe = f => salvo.lingua === 'fi' && f.placaFi || f.placa;
 // cada pessoa tem o seu carro (usado pelo segundo piloto no modo de dois)
 for (const f of FAMILIA) CARROS.push({ id: 'p_' + f.id, tipo: f.tipo, nome: f.nome, cor: f.cor, oculto: true });
 
+// dificuldade: velocidade dos rivais, força da ajudinha no volante e se os rivais jogam bolhas
+const DIFS = {
+  facil: { fator: .86, ajuda: 3.2, espera: 1500, alcanca: .86, bolhas: false },
+  medio: { fator: 1, ajuda: 2.4, espera: 2600, alcanca: .9, bolhas: false },
+  dificil: { fator: 1.09, ajuda: 1.1, espera: 4500, alcanca: .97, bolhas: true },
+};
+let DIF = DIFS.medio;
+// campeonatos: várias pistas seguidas, com pontos
+const COPAS = [
+  { id: 'br', ic: '🇧🇷', pistas: ['sertao', 'praia'] },
+  { id: 'fi', ic: '🇫🇮', pistas: ['neve', 'aurora'] },
+  { id: 'familia', ic: '🏆', pistas: ['sertao', 'neve', 'aurora', 'praia'] },
+];
+const PONTOS = [10, 8, 6, 5, 4, 3, 2];
+let copa = null; // { id, pistas, i, pontos: { pessoa: pts }, ganhou: { pessoa: pts desta corrida } }
+
 let segs = [], comprimento = 0, P = PISTAS[0], LARGADA = 8;
 function ultimoY() { return segs.length ? segs[segs.length - 1].p2.mundo.y : 0; }
 function novoSeg(curva, y) {
@@ -496,7 +562,7 @@ let modo = 'menu', pos = 0, dist = 0, x = 0, vel = 0, turbo = 0, moedas = 0, vol
 let rivais = [], tempo = 0, largadaT = 0, terminouT = 0, chegada = [], ceuOff = 0, morroOff = 0, tremor = 0, pausado = false;
 let SPR_JOGADOR = [], carroEscolhido = CARROS[0], sireneLigada = false, avisos = [], cuidadoT = -9;
 let teclas = { esq: false, dir: false, freio: false };
-let jogadores = [], J = null, jogo = 'solo', fimT = 0, fimMostrado = false;
+let jogadores = [], J = null, jogo = 'solo', fimT = 0, fimMostrado = false, tiros = [];
 function usar(j) { J = j; ({ pos, dist, x, vel, turbo, moedas, volta, tremor, ceuOff, morroOff, avisos, teclas, sireneLigada, cuidadoT, terminouT } = j); SPR_JOGADOR = j.spr; carroEscolhido = j.carro; }
 function guardarJ(j) { Object.assign(j, { pos, dist, x, vel, turbo, moedas, volta, tremor, ceuOff, morroOff, avisos, teclas, sireneLigada, cuidadoT, terminouT }); }
 
@@ -530,7 +596,7 @@ function novoPiloto(id, quem, carroId, remoto = false) {
   const spr = [desenharCarro(carro.cor, tipo, 0, placa), desenharCarro(carro.cor, tipo, 1, placa)];
   const j = { ...h, id, quem, cor: carro.cor, carro, spr, remoto,
     pos: 0, dist: 0, x: 0, vel: 0, turbo: 0, moedas: 0, volta: 0, tremor: 0, ceuOff: 0, morroOff: 0, avisos: [],
-    teclas: { esq: false, dir: false, freio: false }, sireneLigada: false, cuidadoT: -9, terminouT: 0, fim: 0, lugar: 0, atras: new Map(), alvoX: 0, alvoD: 0 };
+    teclas: { esq: false, dir: false, freio: false }, sireneLigada: false, cuidadoT: -9, terminouT: 0, fim: 0, lugar: 0, atras: new Map(), alvoX: 0, alvoD: 0, rodar: 0, tiroT: 0 };
   // o carro dele como os outros o veem na pista
   j.obj = { humano: id, nome: h.nome, nomeFi: h.nomeFi, pt: h.pt, fi: h.fi, cor: carro.cor, spr: spr[0], sprLuz: spr[1], x: 0, z: 0, dist: 0, vel: 0 };
   return j;
@@ -538,6 +604,8 @@ function novoPiloto(id, quem, carroId, remoto = false) {
 
 // config: { pista, pilotos: [{ quem, carro, remoto }] }
 function novaCorrida(cfg) {
+  DIF = DIFS[cfg.dif] || DIFS.medio;
+  if (cfg.copa !== undefined) copa = cfg.copa; // online: quem entrou recebe a copa de quem criou a sala
   criarSprites();
   montarPista(PISTAS.find(p => p.id === cfg.pista) || PISTAS[0]);
   const zLarg = LARGADA * SEG;
@@ -548,7 +616,7 @@ function novaCorrida(cfg) {
   const ordemRivais = ['gabi', 'ana', 'ilo', 'keka', 'emiel', 'vovo', 'jose'];
   rivais = ordemRivais.filter(id => !humanos.includes(id)).slice(0, 5).map(pessoa).map((r, k) => {
     const d = (grid[k][0] + 1) * 3.2 * SEG;
-    const c = { ...r, fator: r.vel, x: grid[k][1], dist: d, vel: 0, spr: desenharCarro(r.cor, r.tipo, 0, placaDe(r)), fim: 0, alvoD: d, alvoX: grid[k][1] };
+    const c = { ...r, fator: Math.min(.99, r.vel * DIF.fator), tiroT: 6 + k * 2.5, x: grid[k][1], dist: d, vel: 0, spr: desenharCarro(r.cor, r.tipo, 0, placaDe(r)), fim: 0, alvoD: d, alvoX: grid[k][1] };
     c.z = mod(zLarg + d, comprimento);
     return c;
   });
@@ -562,7 +630,7 @@ function novaCorrida(cfg) {
     segDe(j.obj.z).carros.push(j.obj);
   });
   for (const j of jogadores) for (const o of jogadores) if (o !== j) j.atras.set(o.obj, o.dist < j.dist);
-  chegada = []; modo = 'largada'; largadaT = 0; tempo = 0; fimT = 0; fimMostrado = false; pausado = false;
+  chegada = []; tiros = []; modo = 'largada'; largadaT = 0; tempo = 0; fimT = 0; fimMostrado = false; pausado = false;
   usar(jogadores.find(j => !j.remoto));
   configurarControles();
   mostrar('jogo');
@@ -600,6 +668,7 @@ function passo(dt) {
     j.obj.dist = j.dist; j.obj.x = j.x; j.obj.vel = j.vel; moverNoSeg(j.obj, mod(LARGADA * SEG + j.dist, comprimento));
   }
   if (rede.papel === 'conv') rivaisRemotos(dt); else andarRivais(dt);
+  andarBolhas(dt);
   // fim da corrida: todos os pilotos chegaram (ou 25 s depois do primeiro)
   const primeiro = jogadores.find(j => j.fim);
   if (primeiro && (jogadores.every(j => j.fim) || tempo - primeiro.fim > 25)) { fimT += dt; if (fimT > 2.4) mostrarFim(); }
@@ -609,9 +678,11 @@ function passo(dt) {
 function andarJogador(dt) {
   const segJ = segDe(pos + JOGADOR_Z), pct = vel / VMAX, dx = dt * 2.2 * Math.max(pct, .25);
   const correndo = !J.fim;
-  if (correndo) {
+  const rodando = J.rodar > 0;
+  if (rodando) J.rodar = Math.max(0, J.rodar - dt);
+  if (correndo && !rodando) {
     if (teclas.esq) x -= dx; else if (teclas.dir) x += dx;
-    else { const alvo = lim(x, -.7, .7); x += (alvo - x) * Math.min(1, dt * 2.4); } // ajudinha: volta para a estrada
+    else { const alvo = lim(x, -.7, .7); x += (alvo - x) * Math.min(1, dt * DIF.ajuda); } // ajudinha: volta para a estrada
   } else x = interp(x, J.id ? -.4 : .4, dt); // depois da chegada vai sozinho
   x -= dx * pct * segJ.curva * CENTRIFUGA;
   const vmax = VMAX * (turbo > 0 ? 1.35 : 1);
@@ -619,7 +690,7 @@ function andarJogador(dt) {
   else if (teclas.freio) vel += FREIO * dt;
   else vel += ACEL * (turbo > 0 ? 1.8 : 1) * dt;
   if (Math.abs(x) > 1 && vel > FORA_LIM) { vel += FORA * dt; tremor = .5; }
-  vel = lim(vel, 0, vmax);
+  vel = lim(vel, 0, rodando ? VMAX * .35 : vmax);
   x = lim(x, -2.6, 2.6);
   turbo = Math.max(0, turbo - dt);
   // batida em árvore/placa fora da estrada: só freia e empurra de volta
@@ -669,8 +740,9 @@ function andarRivais(dt) {
   for (const c of rivais) {
     const gap = c.dist - lider;
     let alvo = VMAX * c.fator;
-    if (gap > 2600) alvo *= .86;                 // muito na frente: espera um pouco
-    else if (gap < -5000) alvo = VMAX * .9;       // muito atrás: corre para alcançar
+    if (gap > DIF.espera) alvo *= .86;                     // muito na frente: espera um pouco
+    else if (gap < -5000) alvo = VMAX * DIF.alcanca;       // muito atrás: corre para alcançar
+    if (c.rodar > 0) { c.rodar = Math.max(0, c.rodar - dt); alvo = VMAX * .25; c.vel = Math.min(c.vel, VMAX * .45); } // acertado por uma bolha
     c.vel += (alvo - c.vel) * Math.min(1, dt * .9);
     // desvia dos pilotos e dos outros carros
     for (const j of jogadores) if (Math.abs(c.dist - (j.dist + JOGADOR_Z)) < 9 * SEG && c.dist < j.dist + JOGADOR_Z && sobrepoe(c.x, .6, j.x, .6)) c.x += (c.x > j.x ? 1 : -1) * dt * .9;
@@ -680,11 +752,25 @@ function andarRivais(dt) {
     moverNoSeg(c, mod(LARGADA * SEG + c.dist, comprimento));
     if (!c.fim && c.dist >= VOLTAS * comprimento) { c.fim = tempo; chegada.push(c); }
   }
+  // no difícil, os rivais que estão logo atrás de um piloto jogam bolhas nele
+  if (DIF.bolhas && modo === 'corrida') rivais.forEach((c, k) => {
+    if (c.fim || c.rodar > 0 || tempo < c.tiroT) return;
+    for (const j of jogadores) {
+      const d = j.dist + JOGADOR_Z - c.dist;
+      if (!j.fim && d > SEG * 2 && d < SEG * 9 && Math.abs(j.x - c.x) < .45) {
+        c.tiroT = tempo + 7 + rnd(tempo + k) * 6;
+        novaBolha(-1 - k, c.dist + SEG * .6, c.x, c.vel);
+        rede.enviar({ t: 'tiro', r: k, d: Math.round(c.dist + SEG * .6), x: +c.x.toFixed(3), v: Math.round(c.vel) });
+        break;
+      }
+    }
+  });
   rede.rivais();
 }
 // quem entrou na sala recebe os rivais de quem criou: só anda entre uma mensagem e outra
 function rivaisRemotos(dt) {
   for (const c of rivais) {
+    if (c.rodar > 0) c.rodar = Math.max(0, c.rodar - dt);
     c.alvoD += c.vel * dt;
     c.dist = interp(c.dist + c.vel * dt, c.alvoD, Math.min(1, dt * 4));
     c.x = interp(c.x, c.alvoX, Math.min(1, dt * 6));
@@ -696,8 +782,44 @@ function remotoAndar(j, dt) {
   j.alvoD += j.vel * dt;
   j.dist = interp(j.dist + j.vel * dt, j.alvoD, Math.min(1, dt * 4));
   j.x = interp(j.x, j.alvoX, Math.min(1, dt * 8));
-  j.obj.dist = j.dist; j.obj.x = j.x; j.obj.vel = j.vel; j.obj.spr = j.sireneLigada && Math.floor(tempo * 6) % 2 ? j.obj.sprLuz : j.spr[0];
+  j.obj.dist = j.dist; j.obj.x = j.x; j.obj.vel = j.vel; j.obj.rodar = j.rodar = Math.max(0, j.rodar - dt); j.obj.spr = j.sireneLigada && Math.floor(tempo * 6) % 2 ? j.obj.sprLuz : j.spr[0];
   moverNoSeg(j.obj, mod(LARGADA * SEG + j.dist, comprimento));
+}
+
+// ---------------- bolhas mágicas: quem é acertado rodopia e fica lento ----------------
+function atirar(j) {
+  if (!j || j.remoto || modo !== 'corrida' || j.fim || j.rodar > 0 || tempo < j.tiroT) return;
+  j.tiroT = tempo + .9;
+  novaBolha(j.id, j.dist + JOGADOR_Z + SEG * .6, j.x, j.vel);
+  som.bolha();
+  rede.enviar({ t: 'tiro', d: Math.round(j.dist + JOGADOR_Z + SEG * .6), x: +j.x.toFixed(3), v: Math.round(j.vel) });
+}
+function novaBolha(dono, d, bx, v) {
+  const b = { tiro: true, dono, dist: d, x: bx, vel: v + VMAX * .85, vida: 2.4, z: mod(LARGADA * SEG + d, comprimento) };
+  tiros.push(b); segDe(b.z).carros.push(b);
+}
+function tirarDaPista(b) { const sg = segDe(b.z), k = sg.carros.indexOf(b); if (k >= 0) sg.carros.splice(k, 1); }
+function andarBolhas(dt) {
+  for (const b of tiros) {
+    b.dist += b.vel * dt; b.vida -= dt;
+    moverNoSeg(b, mod(LARGADA * SEG + b.dist, comprimento));
+    const rival = b.dono < 0 ? rivais[-1 - b.dono] : null; // bolha jogada por um rival só acerta os pilotos
+    const alvos = rival ? jogadores.map(j => j.obj) : [...rivais, ...jogadores.filter(j => j.id !== b.dono).map(j => j.obj)];
+    for (const c of alvos) {
+      if (c.fim || c.rodar > 0 || Math.abs(c.dist - b.dist) > SEG * .9 || Math.abs(c.x - b.x) > .38) continue;
+      b.vida = 0; som.pop();
+      const atirador = jogadores[b.dono];
+      if (c.humano !== undefined) { // acertou um piloto de verdade
+        const j = jogadores[c.humano];
+        if (!j.remoto) { j.rodar = 1.4; j.vel *= .4; usar(j); voz('Voi ei!', rival ? T().acertado(nomeL(rival)) : 'Ah, não!', { cor: '#ff8a8a', importante: true }); tremor = .4; guardarJ(j); }
+        else c.rodar = 1.4;
+      } else c.rodar = 1.4;
+      if (atirador && !atirador.remoto) { usar(atirador); voz('Osuma! 🫧', `Acertou ${c.pt}!`, { cor: '#9fe7ff' }); guardarJ(atirador); }
+      break;
+    }
+  }
+  for (const b of tiros) if (b.vida <= 0) tirarDaPista(b);
+  tiros = tiros.filter(b => b.vida > 0);
 }
 
 function cuidado() { if (tempo - cuidadoT > 6) { cuidadoT = tempo; voz('Varo!', 'Cuidado!', { cor: '#ff8a8a' }); } }
@@ -838,7 +960,13 @@ function render() {
       const esc = interp(s.p1.tela.esc, s.p2.tela.esc, pct);
       const sx = interp(s.p1.tela.x, s.p2.tela.x, pct) + esc * c.x * ESTRADA * W / 2;
       const sy = interp(s.p1.tela.y, s.p2.tela.y, pct);
-      desenharSprite(c.spr, LARG_CARRO, esc, sx, sy, -.5, -1, s.clip);
+      if (c.tiro) { desenharSprite(S.bolha.img, S.bolha.w, esc, sx, sy, -.5, -1.5 + .12 * Math.sin(tempo * 9), s.clip); continue; }
+      if (c.rodar > 0) { // rodopio: o carro gira e fica dentro de uma bolha
+        ctx.save(); ctx.translate(sx, sy); ctx.scale(Math.cos(c.rodar * 22), 1);
+        desenharSprite(c.spr, LARG_CARRO, esc, 0, 0, -.5, -1, s.clip ? s.clip - sy + 0 : 0);
+        ctx.restore();
+        ctx.globalAlpha = .7; desenharSprite(S.bolha.img, LARG_CARRO * 1.3, esc, sx, sy, -.5, -.95, s.clip); ctx.globalAlpha = 1;
+      } else desenharSprite(c.spr, LARG_CARRO, esc, sx, sy, -.5, -1, s.clip);
       if (esc * W > .4 && n < 40) { // nome em cima do carro quando está perto
         ctx.font = `600 ${Math.max(11, esc * 34000 * DPR / 10)}px Fredoka, sans-serif`; ctx.textAlign = 'center';
         ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.fillText(nomeL(c), sx + 2, sy - LARG_CARRO * esc * W / 2 * .72 + 2);
@@ -860,6 +988,7 @@ function render() {
       ctx.save();
       const inclina = (teclas.esq && modo === 'corrida' ? -1 : teclas.dir && modo === 'corrida' ? 1 : 0) * .06;
       ctx.translate(W / 2, sy); ctx.rotate(inclina);
+      if (J.rodar > 0) ctx.scale(Math.cos(J.rodar * 22), 1);
       if (turbo > 0) { // fogo do turbo
         const f = LARG_CARRO * esc * W / 2;
         for (const lado of [-.28, .28]) {
@@ -870,6 +999,7 @@ function render() {
       }
       desenharSprite(img, LARG_CARRO, esc, 0, 0, -.5, -1, 0);
       ctx.restore();
+      if (J.rodar > 0) { ctx.globalAlpha = .7; desenharSprite(S.bolha.img, LARG_CARRO * 1.3, esc, W / 2, sy, -.5, -.95, 0); ctx.globalAlpha = 1; }
     }
   }
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -930,10 +1060,10 @@ let hudCache = '';
 function hud() {
   const lugar = colocacao();
   const v = Math.round(vel / VMAX * 180);
-  const k = `${lugar}|${volta}|${moedas}|${v}`;
+  const k = `${lugar}|${volta}|${moedas}|${v}|${copa ? copa.i : -1}`;
   if (k === hudCache) return; hudCache = k;
   elPos.innerHTML = `${T().ord(lugar)}<small> / ${rivais.length + jogadores.length}</small>`;
-  elVolta.textContent = `${T().volta(Math.min(volta + 1, VOLTAS), VOLTAS)} · 🪙 ${moedas}`;
+  elVolta.textContent = `${copa ? `🏆 ${copa.i + 1}/${copa.pistas.length} · ` : ''}${T().volta(Math.min(volta + 1, VOLTAS), VOLTAS)} · 🪙 ${moedas}`;
   elVel.innerHTML = `${v}<small>km/h${turbo > 0 ? ' ⚡' : ''}</small>`;
   elBarra.style.width = `${lim(dist / (VOLTAS * comprimento), 0, 1) * 100}%`;
 }
@@ -950,15 +1080,171 @@ function hudCanvas() {
     ctx.fillStyle = cor; ctx.fillText(txt, x, y);
   };
   caixa(`${nomeL(J)} ${T().ord(colocacao())}`, p * 1.5, p * 1.5, r, '#ffd23f', 'left');
-  caixa(`${T().volta(Math.min(volta + 1, VOLTAS), VOLTAS)} · 🪙 ${moedas}`, p * 1.5, p * 2.5 + r * 1.1, r * .55, '#fff', 'left');
+  caixa(`${copa ? `🏆 ${copa.i + 1}/${copa.pistas.length} · ` : ''}${T().volta(Math.min(volta + 1, VOLTAS), VOLTAS)} · 🪙 ${moedas}`, p * 1.5, p * 2.5 + r * 1.1, r * .55, '#fff', 'left');
   caixa(`${Math.round(vel / VMAX * 180)} km/h${turbo > 0 ? ' ⚡' : ''}`, W - p * 1.5, p * 1.5, r * .6, '#fff', 'right');
   ctx.textBaseline = 'alphabetic';
+}
+
+// ---------------- festa de chegada: pódio, taça, fogos e torcida ----------------
+let festa = null;
+const PELE = ['#ffdbac', '#f1c27d', '#e0ac69', '#c68642', '#8d5524'];
+const CAMISA = ['#ff3b3b', '#ffd23f', '#2d9cff', '#38d67a', '#ff5fa2', '#9b5cff', '#ffffff', '#ff8a1f'];
+function taca(cx, cy, r, t) {
+  // raios girando atrás da taça
+  ctx.save(); ctx.translate(cx, cy); ctx.rotate(t * .6); ctx.globalCompositeOperation = 'lighter';
+  for (let i = 0; i < 12; i++) {
+    ctx.rotate(Math.PI / 6);
+    const g = ctx.createLinearGradient(0, 0, 0, -r * 3); g.addColorStop(0, 'rgba(255,220,90,.45)'); g.addColorStop(1, 'rgba(255,220,90,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-r * .3, -r * 3); ctx.lineTo(r * .3, -r * 3); ctx.closePath(); ctx.fill();
+  }
+  ctx.restore();
+  const ouro = ctx.createLinearGradient(cx - r, 0, cx + r, 0);
+  ouro.addColorStop(0, '#b8860b'); ouro.addColorStop(.35, '#ffe066'); ouro.addColorStop(.6, '#fff6c0'); ouro.addColorStop(1, '#c99400');
+  ctx.fillStyle = ouro; ctx.strokeStyle = '#ffd23f'; ctx.lineWidth = r * .14;
+  ctx.beginPath(); ctx.arc(cx - r * .85, cy - r * .55, r * .38, Math.PI * .5, Math.PI * 1.5); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx + r * .85, cy - r * .55, r * .38, -Math.PI * .5, Math.PI * .5); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx - r, cy - r * 1.1); ctx.lineTo(cx + r, cy - r * 1.1); ctx.quadraticCurveTo(cx + r * .95, cy + r * .2, cx, cy + r * .35); ctx.quadraticCurveTo(cx - r * .95, cy + r * .2, cx - r, cy - r * 1.1); ctx.fill();
+  ctx.fillRect(cx - r * .14, cy + r * .3, r * .28, r * .5);
+  ctx.fillRect(cx - r * .55, cy + r * .78, r * 1.1, r * .22);
+  ctx.fillStyle = '#7a4a00'; ctx.fillRect(cx - r * .7, cy + r * 1, r * 1.4, r * .26);
+  ctx.fillStyle = '#fff6c0'; ctx.beginPath();
+  for (let i = 0; i < 10; i++) { const rr2 = i % 2 ? r * .14 : r * .32, a = -Math.PI / 2 + i * Math.PI / 5; ctx.lineTo(cx + Math.cos(a) * rr2, cy - r * .45 + Math.sin(a) * rr2); }
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,.6)'; ctx.beginPath(); ctx.ellipse(cx - r * .5, cy - r * .7, r * .12, r * .35, .2, 0, 7); ctx.fill();
+}
+function torcedor(px, py, e, i, t) { // alguém na arquibancada comemorando
+  const pele = PELE[i % PELE.length], camisa = CAMISA[(i * 7) % CAMISA.length];
+  const pulo = Math.max(0, Math.sin(t * 7 + i * 1.7)) * e * .25;
+  py -= pulo;
+  const ombro = py - e * .9;
+  ctx.strokeStyle = pele; ctx.lineWidth = e * .16; ctx.lineCap = 'round';
+  for (const lado of [-1, 1]) {
+    const a = -Math.PI / 2 + lado * (.5 + .45 * Math.sin(t * 9 + i + lado));
+    ctx.beginPath(); ctx.moveTo(px + lado * e * .3, ombro); ctx.lineTo(px + lado * e * .3 + Math.cos(a) * e * .75, ombro + Math.sin(a) * e * .75); ctx.stroke();
+  }
+  if (i % 5 === 0) { // bandeira do Brasil ou da Finlândia
+    const fx = px + e * .3 + Math.cos(-Math.PI / 2 + (.5 + .45 * Math.sin(t * 9 + i + 1))) * e * .75, fy = ombro + Math.sin(-Math.PI / 2 + (.5 + .45 * Math.sin(t * 9 + i + 1))) * e * .75;
+    ctx.strokeStyle = '#ddd'; ctx.lineWidth = e * .06; ctx.beginPath(); ctx.moveTo(fx, fy); ctx.lineTo(fx, fy - e * 1.1); ctx.stroke();
+    const w = e * .9, h = e * .6, ox = fx, oy = fy - e * 1.1, onda = Math.sin(t * 6 + i) * e * .06;
+    if (i % 2) { ctx.fillStyle = '#009c3b'; ctx.fillRect(ox, oy + onda, w, h); poli(ctx, [ox + w * .5, oy + onda + h * .1, ox + w * .92, oy + onda + h * .5, ox + w * .5, oy + onda + h * .9, ox + w * .08, oy + onda + h * .5], '#ffdf00'); ctx.fillStyle = '#002776'; ctx.beginPath(); ctx.arc(ox + w * .5, oy + onda + h * .5, h * .22, 0, 7); ctx.fill(); }
+    else { ctx.fillStyle = '#fff'; ctx.fillRect(ox, oy + onda, w, h); ctx.fillStyle = '#003580'; ctx.fillRect(ox + w * .28, oy + onda, w * .16, h); ctx.fillRect(ox, oy + onda + h * .4, w, h * .2); }
+  }
+  if (i % 7 === 3) { // balão
+    const bx = px - e * .6, by = py - e * 3 - Math.sin(t * 2 + i) * e * .3;
+    ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(px - e * .3, ombro); ctx.lineTo(bx, by + e * .5); ctx.stroke();
+    ctx.fillStyle = CAMISA[(i * 3) % CAMISA.length]; ctx.beginPath(); ctx.ellipse(bx, by, e * .4, e * .5, 0, 0, 7); ctx.fill();
+  }
+  ctx.fillStyle = camisa; rr(ctx, px - e * .38, ombro - e * .05, e * .76, e * 1.1, e * .25);
+  ctx.fillStyle = pele; ctx.beginPath(); ctx.arc(px, ombro - e * .42, e * .36, 0, 7); ctx.fill();
+  ctx.fillStyle = '#2a1a10'; ctx.beginPath(); ctx.arc(px, ombro - e * .55, e * .36, Math.PI, 0); ctx.fill();
+  ctx.fillStyle = '#2a1a10'; ctx.beginPath(); ctx.arc(px, ombro - e * .32, e * .13, 0, Math.PI); ctx.fill(); // boca aberta gritando
+}
+function desenharFesta() {
+  const t = tempo - festa.t0, tx = T();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  const deitado = W >= H;
+  const aw = deitado ? W * .56 : W, ah = deitado ? H : H * .5, ax = 0, ay = 0;
+  // céu do estádio
+  const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#120a3a'); g.addColorStop(.6, '#3a1660'); g.addColorStop(1, '#6a2470');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  // holofotes
+  ctx.save(); ctx.globalCompositeOperation = 'lighter';
+  for (let i = 0; i < 4; i++) {
+    const hx = ax + aw * (.1 + i * .27), a = Math.PI / 2 + Math.sin(t * .8 + i * 1.3) * .45;
+    const gr = ctx.createLinearGradient(hx, H, hx + Math.cos(a) * H, H - Math.sin(a) * H);
+    gr.addColorStop(0, 'rgba(255,240,180,.28)'); gr.addColorStop(1, 'rgba(255,240,180,0)');
+    ctx.fillStyle = gr; ctx.beginPath(); ctx.moveTo(hx, H);
+    ctx.lineTo(hx + Math.cos(a - .09) * H * 1.3, H - Math.sin(a - .09) * H * 1.3); ctx.lineTo(hx + Math.cos(a + .09) * H * 1.3, H - Math.sin(a + .09) * H * 1.3); ctx.closePath(); ctx.fill();
+  }
+  // fogos de artifício
+  for (let k = 0; k < 6; k++) {
+    const per = 2.3, tt = t + k * .41, ciclo = Math.floor(tt / per), f = tt % per;
+    const fx = ax + aw * (.08 + .84 * rnd(k * 31 + ciclo * 7)), fy = ay + ah * (.08 + .3 * rnd(k * 17 + ciclo * 3));
+    const cor = ['255,80,80', '255,220,80', '90,200,255', '120,255,150', '255,120,220'][(k + ciclo) % 5];
+    if (f < .45) { ctx.fillStyle = `rgba(${cor},.9)`; ctx.fillRect(fx - 2, fy + (1 - f / .45) * ah * .5, 4 * DPR, 10 * DPR); }
+    else {
+      const chave = k + ':' + ciclo;
+      if (!festa.estouros[chave]) { festa.estouros[chave] = 1; som.estouro(); }
+      const p = (f - .45) / (per - .45), raio = Math.min(aw, ah) * .2 * Math.sqrt(p);
+      for (let i = 0; i < 28; i++) {
+        const a = i / 28 * Math.PI * 2;
+        ctx.fillStyle = `rgba(${cor},${Math.max(0, 1 - p * 1.2)})`;
+        ctx.beginPath(); ctx.arc(fx + Math.cos(a) * raio, fy + Math.sin(a) * raio + p * p * ah * .08, 2.6 * DPR * (1 - p * .5), 0, 7); ctx.fill();
+      }
+    }
+  }
+  ctx.restore();
+  // pódio
+  const multidao = H * .2, chao = H - multidao * .55;
+  const base = Math.min(ay + ah * .9, chao);
+  const u = Math.min(aw * .9, ah * 1.5), bw = u * .26, cx = ax + aw / 2;
+  const alturas = [ah * .2, ah * .14, ah * .1], xs = [cx, cx - bw * 1.02, cx + bw * 1.02];
+  const cores = [['#ffe066', '#c99400'], ['#eef2f7', '#9aa6b5'], ['#f0a35c', '#9a5a22']];
+  for (const i of [1, 2, 0]) {
+    const p = festa.podio[i]; if (!p) continue;
+    const top = base - alturas[i], bx = xs[i] - bw / 2;
+    const gb = ctx.createLinearGradient(bx, 0, bx + bw, 0); gb.addColorStop(0, cores[i][0]); gb.addColorStop(1, cores[i][1]);
+    ctx.fillStyle = gb; ctx.fillRect(bx, top, bw, alturas[i]);
+    ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(bx, top, bw, alturas[i] * .08);
+    ctx.font = `700 ${alturas[i] * .55}px Fredoka, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillText(String(i + 1), xs[i], top + alturas[i] * .58);
+    // o carro e o piloto pulando em cima do bloco
+    const pulo = Math.abs(Math.sin(t * (i ? 5 : 6.5) + i)) * u * (i ? .025 : .05);
+    const cw = bw * .92, ch = cw * p.spr.height / p.spr.width;
+    ctx.drawImage(p.spr, xs[i] - cw / 2, top - ch + ch * .06, cw, ch);
+    ctx.font = `${bw * .42}px sans-serif`; ctx.textBaseline = 'alphabetic';
+    ctx.fillText(p.ic || '🙂', xs[i], top - ch - pulo + bw * .05);
+    ctx.font = `700 ${Math.max(12, bw * .14)}px Fredoka, sans-serif`;
+    ctx.lineWidth = bw * .03; ctx.strokeStyle = '#2a0f3d'; ctx.strokeText(p.nome, xs[i], top - ch - bw * .45 - pulo);
+    ctx.fillStyle = '#fff'; ctx.fillText(p.nome, xs[i], top - ch - bw * .45 - pulo);
+    if (i === 0) taca(xs[0], top - ch - bw * .95 - pulo - Math.sin(t * 4) * u * .01, bw * .26, t);
+  }
+  // faixa de campeão
+  const venc = festa.podio[0];
+  if (venc) {
+    const r = Math.min(aw, ah) * .075, y = ay + r * 1.3;
+    ctx.font = `700 ${r}px Fredoka, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    const txt = `🏆 ${festa.titulo || tx.campeao} ${venc.nome}`, k = 1 + Math.sin(t * 5) * .04;
+    ctx.save(); ctx.translate(cx, y); ctx.scale(k, k);
+    ctx.lineWidth = r * .16; ctx.strokeStyle = '#3a1600'; ctx.strokeText(txt, 0, 0);
+    ctx.fillStyle = '#ffd23f'; ctx.fillText(txt, 0, 0); ctx.restore();
+  }
+  // a torcida na arquibancada (três fileiras)
+  const e = Math.max(10, multidao * .3);
+  ctx.fillStyle = '#2a1240'; ctx.fillRect(0, H - multidao, W, multidao);
+  let n = 0;
+  for (let fila = 0; fila < 3; fila++) {
+    const py = H - multidao + e * 1.7 + fila * e * .95;
+    for (let px = (fila % 2) * e * .55; px < W + e; px += e * 1.1) torcedor(px, py, e * (.85 + fila * .08), n++ + fila * 13, t);
+  }
+  // gritos da torcida
+  const iv = Math.floor(t / .9);
+  if (iv !== festa.viva) festa.viva = iv;
+  for (let k = 0; k < 2; k++) {
+    const id = iv * 2 + k, f = (t % .9) / .9, vx = rnd(id * 5.1) * W * (deitado ? .56 : 1), vy = H - multidao - e * .3;
+    const txt = tx.vivas[Math.floor(rnd(id * 3.3) * tx.vivas.length)];
+    ctx.globalAlpha = Math.min(1, (1 - f) * 2); ctx.font = `700 ${e * .8 * (.8 + f * .3)}px Fredoka, sans-serif`; ctx.textAlign = 'center';
+    ctx.fillStyle = '#fff'; const w = ctx.measureText(txt).width;
+    rr(ctx, vx - w / 2 - e * .3, vy - e * .9 - f * e, w + e * .6, e * 1.2, e * .4);
+    ctx.fillStyle = '#5a1f6e'; ctx.textBaseline = 'middle'; ctx.fillText(txt, vx, vy - e * .3 - f * e);
+    ctx.globalAlpha = 1;
+  }
+  ctx.textBaseline = 'alphabetic';
+  terminouT = t; confete2();
+}
+function confete2() {
+  for (let i = 0; i < 140; i++) {
+    const t = tempo, xx = rnd(i) * W + Math.sin(t * 3 + i) * 30 * DPR, yy = mod(rnd(i * 2) * H + t * (120 + rnd(i * 3) * 180) * DPR, H);
+    ctx.fillStyle = ['#ff3b3b', '#ffd23f', '#38d67a', '#2d9cff', '#ff5fa2'][i % 5];
+    ctx.save(); ctx.translate(xx, yy); ctx.rotate(t * 5 + i); ctx.fillRect(-5 * DPR, -3 * DPR, 10 * DPR, 6 * DPR); ctx.restore();
+  }
 }
 
 // as telas de cada piloto: uma só, ou dividida ao meio para dois no mesmo celular
 const bufs = [document.createElement('canvas'), document.createElement('canvas')];
 function desenharTudo() {
   const locais = modo === 'menu' ? [menuJ] : jogadores.filter(j => !j.remoto);
+  if (modo === 'fim' && festa) { desenharFesta(); return; }
   if (locais.length < 2) { usar(locais[0]); render(); guardarJ(locais[0]); return; }
   const Wt = W, Ht = H, deitado = W >= H;
   const vw = deitado ? Math.floor(Wt / 2) : Wt, vh = deitado ? Ht : Math.floor(Ht / 2);
@@ -1013,25 +1299,27 @@ const rede = {
     const eu = { quem: salvo.eu, carro: salvo.carro };
     const ele = { quem: this.outro.quem === salvo.eu ? FAMILIA.find(f => f.id !== salvo.eu).id : this.outro.quem, carro: this.outro.carro };
     if (ele.carro === eu.carro) ele.carro = 'p_' + ele.quem; // carros iguais confundem: usa o carro da cor da pessoa
-    this.enviar({ t: 'inicio', cfg: { pista: salvo.pista, pilotos: [ele, { ...eu, remoto: true }] } });
-    novaCorrida({ pista: salvo.pista, pilotos: [eu, { ...ele, remoto: true }] });
+    const pista = pistaAgora();
+    this.enviar({ t: 'inicio', cfg: { pista, dif: salvo.dif, copa, pilotos: [ele, { ...eu, remoto: true }] } });
+    novaCorrida({ pista, dif: salvo.dif, pilotos: [eu, { ...ele, remoto: true }] });
   },
   estado() {
     if (!this.papel || tempo - this.te < .066) return; this.te = tempo;
     const j = jogadores.find(j => !j.remoto);
-    this.enviar({ t: 'c', d: Math.round(j.dist), x: +j.x.toFixed(3), v: Math.round(j.vel), s: j.sireneLigada ? 1 : 0, m: j.moedas });
+    this.enviar({ t: 'c', d: Math.round(j.dist), x: +j.x.toFixed(3), v: Math.round(j.vel), s: j.sireneLigada ? 1 : 0, m: j.moedas, g: j.rodar > 0 ? 1 : 0 });
   },
   rivais() {
     if (this.papel !== 'host' || tempo - this.tr < .1) return; this.tr = tempo;
-    this.enviar({ t: 'r', r: rivais.map(c => [Math.round(c.dist), +c.x.toFixed(3), Math.round(c.vel)]) });
+    this.enviar({ t: 'r', r: rivais.map(c => [Math.round(c.dist), +c.x.toFixed(3), Math.round(c.vel), c.rodar > 0 ? 1 : 0]) });
   },
 };
 function aoReceber(d) {
   if (!d || typeof d !== 'object') return;
   if (d.t === 'oi' && rede.papel === 'host') { rede.outro = { quem: pessoa(String(d.quem)).id, carro: String(d.carro) }; painelSala('pronto'); return; }
   if (d.t === 'inicio' && rede.papel === 'conv' && d.cfg && Array.isArray(d.cfg.pilotos)) { novaCorrida(d.cfg); return; }
-  if (d.t === 'c') { const j = jogadores.find(j => j.remoto); if (!j || modo === 'menu') return; j.alvoD = +d.d || 0; j.alvoX = +d.x || 0; j.vel = +d.v || 0; j.sireneLigada = !!d.s; j.moedas = +d.m || 0; return; }
-  if (d.t === 'r' && rede.papel === 'conv' && Array.isArray(d.r)) { d.r.forEach((a, i) => { const c = rivais[i]; if (!c) return; c.alvoD = +a[0]; c.alvoX = +a[1]; c.vel = +a[2]; }); return; }
+  if (d.t === 'c') { const j = jogadores.find(j => j.remoto); if (!j || modo === 'menu') return; j.alvoD = +d.d || 0; j.alvoX = +d.x || 0; j.vel = +d.v || 0; j.sireneLigada = !!d.s; j.moedas = +d.m || 0; if (d.g && !(j.rodar > 0)) j.rodar = 1.2; return; }
+  if (d.t === 'r' && rede.papel === 'conv' && Array.isArray(d.r)) { d.r.forEach((a, i) => { const c = rivais[i]; if (!c) return; c.alvoD = +a[0]; c.alvoX = +a[1]; c.vel = +a[2]; if (a[3] && !(c.rodar > 0)) c.rodar = 1.2; }); return; }
+  if (d.t === 'tiro') { const j = jogadores.find(j => j.remoto); if (j && modo === 'corrida') { novaBolha(d.r !== undefined ? -1 - (+d.r || 0) : j.id, +d.d || 0, +d.x || 0, +d.v || 0); som.bolha(); } return; }
   if (d.t === 'fim') { const j = jogadores.find(j => j.remoto); if (j && modo !== 'menu') chegouRemoto(j); return; }
   if (d.t === 'cheia') { rede.fechar(); painelSala('erro', T().cheia); return; }
   if (d.t === 'tchau') caiu();
@@ -1055,7 +1343,7 @@ function painelSala(estado, msg, titulo) {
   const on = (id, f) => { const b = document.getElementById(id); if (b) b.onclick = f; };
   on('salaSair', () => { rede.fechar(); irMenu(); });
   on('salaVoltar', () => irMenu());
-  on('salaCorrer', () => rede.iniciar());
+  on('salaCorrer', () => { novaCopa(); rede.iniciar(); });
   on('salaIr', () => { const v = (document.getElementById('cod').value || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); if (v.length === 4) rede.entrar(v); });
   const cod = document.getElementById('cod');
   if (cod) { cod.focus(); cod.onkeydown = e => { if (e.key === 'Enter') document.getElementById('salaIr').click(); }; }
@@ -1100,6 +1388,8 @@ const som = (() => {
     moeda: () => { nota(1318, .08, 'triangle', .18); setTimeout(() => nota(1760, .14, 'triangle', .18), 70); },
     turbo: () => nota(200, .6, 'sawtooth', .12, 900),
     batida: () => nota(110, .25, 'square', .2, 40),
+    bolha: () => { nota(300, .18, 'sine', .22, 900); setTimeout(() => nota(1200, .08, 'sine', .1, 1600), 90); },
+    pop: () => { nota(1600, .06, 'square', .12, 400); nota(220, .2, 'triangle', .18, 80); },
     buzina: () => { nota(392, .32, 'square', .1); nota(494, .32, 'square', .1); },
     sirene(on) {
       if (!iniciar()) return;
@@ -1135,6 +1425,8 @@ const som = (() => {
       g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.25, t + .3); g.gain.exponentialRampToValueAtTime(.0001, t + d);
       src.connect(f).connect(g).connect(mestre); src.start(t);
     },
+    fanfarra() { [[523, 0], [659, 120], [784, 240], [1046, 400], [784, 560], [1046, 680], [1318, 820]].forEach(([f, d]) => setTimeout(() => { nota(f, .3, 'square', .07); nota(f / 2, .3, 'triangle', .1); }, d)); },
+    estouro() { if (!iniciar()) return; nota(90, .4, 'triangle', .12, 40); nota(2400, .05, 'square', .03, 600); },
     vitoria(l) { [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => nota(f, .25, 'triangle', .2), i * 140 + (l > 1 ? 200 : 0))); },
   };
 })();
@@ -1147,7 +1439,7 @@ function mostrar(qual) {
   document.getElementById('sala').hidden = qual !== 'sala';
   const jogo = qual === 'jogo' || qual === 'pausa' || qual === 'fim';
   const dupla = jogo && jogadores.filter(j => !j.remoto).length > 1;
-  document.getElementById('hud').hidden = !jogo || dupla;
+  document.getElementById('hud').hidden = !jogo || dupla || qual === 'fim';
   document.getElementById('controles').hidden = qual !== 'jogo' || dupla;
   document.getElementById('dupla').hidden = qual !== 'jogo' || !dupla;
   document.getElementById('pausa').hidden = qual !== 'jogo';
@@ -1160,13 +1452,38 @@ function configurarControles() {
 
 function mostrarFim() {
   if (fimMostrado) return; fimMostrado = true;
-  modo = 'fim'; som.motor(false); som.sirene(false); som.musica(false); som.torcida();
+  modo = 'fim'; som.motor(false); som.sirene(false); som.musica(false); som.torcida(); setTimeout(() => modo === 'fim' && som.torcida(), 2400);
   // ordem final: quem já chegou, depois os outros pela distância
   const faltam = [...rivais.filter(c => !chegada.includes(c)),
     ...jogadores.filter(j => !j.fim).map(j => ({ nome: j.nome, nomeFi: j.nomeFi, eu: true, humano: j.id, cor: j.cor, dist: j.dist }))].sort((a, b) => b.dist - a.dist);
   const ordem = [...chegada, ...faltam];
   const lugarDe = j => ordem.findIndex(o => o.humano === j.id) + 1;
   const t = T(), frase = document.getElementById('frase');
+  const chave = o => o.humano !== undefined ? jogadores[o.humano].quem : o.id;
+  const elC = document.getElementById('classif'); elC.innerHTML = '';
+  let tabela = null, ultimaDaCopa = false;
+  if (copa) {
+    copa.ganhou = {};
+    ordem.forEach((o, i) => { const k = chave(o); copa.ganhou[k] = PONTOS[i] || 1; copa.pontos[k] = (copa.pontos[k] || 0) + (PONTOS[i] || 1); });
+    ultimaDaCopa = copa.i >= copa.pistas.length - 1;
+    tabela = Object.entries(copa.pontos).sort((a, b) => b[1] - a[1]);
+    const humanosIds = jogadores.map(j => j.quem);
+    elC.innerHTML = `<h3 class="copa">${t.copas[copa.id]} · ${t.classificacao} (${t.corridaN(copa.i + 1, copa.pistas.length)})</h3><div class="tabela">` +
+      tabela.map(([k, pts], i) => { const f = pessoa(k); return `<div class="linha${humanosIds.includes(k) ? ' eu' : ''}"><b>${t.ord(i + 1)}</b><span class="bola" style="background:${f.cor}"></span><span>${f.ic} ${nomeL(f)}</span><span class="pts">${pts} ${t.ptsAbrev}<span class="mais">+${copa.ganhou[k] || 0}</span></span></div>`; }).join('') + '</div>';
+  }
+  // a festa: os três primeiros no pódio
+  festa = { t0: tempo, estouros: {}, viva: -1, podio: ordem.slice(0, 3).map(o => {
+    const h = o.humano !== undefined ? jogadores[o.humano] : null;
+    return { nome: nomeL(o), cor: o.cor, ic: h ? h.ic : o.ic, spr: h ? h.spr[0] : o.spr };
+  }) };
+  // última corrida da copa: o pódio é o da copa inteira
+  if (ultimaDaCopa) {
+    festa.titulo = t.copaTit;
+    festa.podio = tabela.slice(0, 3).map(([k]) => {
+      const h = jogadores.find(j => j.quem === k), r = rivais.find(c => c.id === k), f = pessoa(k);
+      return { nome: nomeL(f), cor: f.cor, ic: f.ic, spr: h ? h.spr[0] : r ? r.spr : desenharCarro(f.cor, f.tipo, 0, placaDe(f)) };
+    });
+  }
   document.getElementById('podio').innerHTML = ordem.map((c, i) =>
     `<div class="linha${c.eu ? ' eu' : ''}"><b>${t.ord(i + 1)}</b><span class="bola" style="background:${c.cor}"></span><span>${nomeL(c)}</span><span>${i < 3 ? ['🥇', '🥈', '🥉'][i] : ''}</span></div>`).join('');
   let melhor = 99;
@@ -1189,10 +1506,26 @@ function mostrarFim() {
     frase.insertAdjacentHTML('beforeend', `<br><small>🗣️ “${fi}”</small>`);
   }
   const tr = salvo.trofeus[P.id];
-  if (melhor < 99 && (!tr || melhor < tr)) { salvo.trofeus[P.id] = melhor; guardar(); }
+  if (melhor < 99 && (!tr || melhor < tr)) salvo.trofeus[P.id] = melhor;
+  // taça para quem subiu no pódio
+  salvo.tacas = salvo.tacas || { ouro: 0, prata: 0, bronze: 0 };
+  if (melhor <= 3) salvo.tacas[['ouro', 'prata', 'bronze'][melhor - 1]]++;
+  document.getElementById('taca').textContent = melhor <= 3 ? t.taca[melhor - 1] : '';
+  if (ultimaDaCopa) {
+    const humanosIds = jogadores.filter(j => !j.remoto).map(j => j.quem);
+    const lugarCopa = Math.min(...humanosIds.map(k => tabela.findIndex(([q]) => q === k) + 1));
+    document.getElementById('lugar').textContent = `🏆 ${t.campeaoCopa(nomeL(pessoa(tabela[0][0])))}`;
+    document.getElementById('taca').textContent = lugarCopa <= 3 ? t.copaGanha[lugarCopa - 1] : '';
+    const ant = salvo.copas[copa.id];
+    if (lugarCopa <= 3 && (!ant || lugarCopa < ant.lugar || (lugarCopa === ant.lugar && ['facil', 'medio', 'dificil'].indexOf(salvo.dif) > ['facil', 'medio', 'dificil'].indexOf(ant.dif)))) salvo.copas[copa.id] = { lugar: lugarCopa, dif: salvo.dif };
+    voz(`Onneksi olkoon, ${pessoa(tabela[0][0]).nomeFi}! Olet mestari!`, '', { importante: true, mostrar: false });
+  }
+  guardar();
+  som.fanfarra();
   // online: só quem criou a sala escolhe a próxima corrida
   const conv = rede.papel === 'conv';
   document.getElementById('denovo').hidden = conv;
+  document.getElementById('denovo').textContent = copa ? (ultimaDaCopa ? t.novaCopa : t.proxima(copa.i + 2, copa.pistas.length)) : t.denovo;
   document.getElementById('outra').textContent = conv ? t.sairSala : t.outra;
   if (conv) frase.insertAdjacentHTML('beforeend', `<br><small>${t.aguardando(nomeOutro())}</small>`);
   mostrar('fim');
@@ -1241,6 +1574,29 @@ function montarMenu() {
     b.onclick = () => { salvo.carro = c.id; guardar(); som.iniciar(); som.buzina(); montarMenu(); };
     elC.append(b);
   }
+  const elD = document.getElementById('difs'); elD.innerHTML = '';
+  for (const d of ['facil', 'medio', 'dificil']) {
+    const [ic, nome, sub] = T().difs[d], b = document.createElement('button');
+    b.className = 'escolha'; b.setAttribute('aria-pressed', String(salvo.dif === d));
+    b.innerHTML = `<span class="ic">${ic}</span><b>${nome}</b><small>${sub}</small>`;
+    b.onclick = () => { salvo.dif = d; guardar(); montarMenu(); };
+    elD.append(b);
+  }
+  const elT = document.getElementById('tipos'); elT.innerHTML = '';
+  for (const c of [null, ...COPAS]) {
+    const id = c ? c.id : 'rapida', b = document.createElement('button');
+    b.className = 'escolha'; b.setAttribute('aria-pressed', String(salvo.tipo === id));
+    if (!c) b.innerHTML = `<span class="ic">${T().rapida[0]}</span><b>${T().rapida[1]}</b><small>${T().rapida[2]}</small>`;
+    else {
+      const g = salvo.copas[c.id], difNome = g ? T().difs[g.dif][1] : '';
+      b.innerHTML = `<span class="ic">${c.ic}</span><b>${T().copas[c.id]}</b><small>${c.pistas.map(pp => PISTAS.find(x => x.id === pp).ic).join(' ')} · ${T().corridas(c.pistas.length)}</small><small>${g ? `${['🏆', '🥈', '🥉'][g.lugar - 1]} ${difNome}` : T().semTrofeu}</small>`;
+    }
+    b.onclick = () => { salvo.tipo = id; guardar(); montarMenu(); };
+    elT.append(b);
+  }
+  const ehCopa = salvo.tipo !== 'rapida';
+  document.getElementById('tituloPista').hidden = ehCopa; document.getElementById('pistas').hidden = ehCopa;
+  document.getElementById('dicaCopa').textContent = ehCopa ? T().dicaCopa : '';
   for (const p of PISTAS) {
     const b = document.createElement('button');
     b.className = 'escolha pista'; b.setAttribute('aria-pressed', String(salvo.pista === p.id));
@@ -1251,6 +1607,8 @@ function montarMenu() {
     elP.append(b);
   }
   document.getElementById('som').textContent = salvo.som ? T().som : T().semSom;
+  const tc = salvo.tacas || {};
+  document.getElementById('tacas').textContent = (tc.ouro || tc.prata || tc.bronze) ? T().tacas(tc.ouro || 0, tc.prata || 0, tc.bronze || 0) : '';
   document.documentElement.lang = salvo.lingua === 'fi' ? 'fi' : 'pt-BR';
   document.title = T().titulo;
   for (const el of document.querySelectorAll('[data-t]')) el.textContent = T()[el.dataset.t];
@@ -1261,6 +1619,7 @@ function montarMenu() {
 }
 
 function irMenu() {
+  copa = null;
   modo = 'menu'; pausado = false; som.motor(false); som.sirene(false); som.musica(false);
   if (rede.papel === 'conv') rede.fechar();   // quem entrou na sala sai dela ao voltar para o menu
   for (const s of segs) s.carros = [];
@@ -1270,19 +1629,32 @@ let ultimaCfg = null;
 function correr() {
   som.iniciar();
   if (salvo.modo === 'online') {
-    if (rede.papel === 'host' && rede.outro) rede.iniciar();
+    if (rede.papel === 'host' && rede.outro) { novaCopa(); rede.iniciar(); }
     else if (rede.papel === 'host') painelSala('codigo');
     else rede.criar();
     return;
   }
+  novaCopa();
   ultimaCfg = salvo.modo === 'dupla'
-    ? { pista: salvo.pista, pilotos: [{ quem: salvo.eu, carro: salvo.carro }, { quem: salvo.eu2, carro: 'p_' + salvo.eu2 }] }
-    : { pista: salvo.pista, pilotos: [{ quem: salvo.eu, carro: salvo.carro }] };
+    ? { pista: pistaAgora(), dif: salvo.dif, pilotos: [{ quem: salvo.eu, carro: salvo.carro }, { quem: salvo.eu2, carro: 'p_' + salvo.eu2 }] }
+    : { pista: pistaAgora(), dif: salvo.dif, pilotos: [{ quem: salvo.eu, carro: salvo.carro }] };
   novaCorrida(ultimaCfg);
+}
+function novaCopa() {
+  const c = COPAS.find(c => c.id === salvo.tipo);
+  copa = c ? { id: c.id, pistas: c.pistas, i: 0, pontos: {}, ganhou: {} } : null;
+}
+const pistaAgora = () => copa ? copa.pistas[copa.i] : salvo.pista;
+// botão do fim: próxima corrida da copa, nova copa ou correr de novo
+function seguir() {
+  if (copa) { if (copa.i >= copa.pistas.length - 1) novaCopa(); else copa.i++; }
+  if (rede.papel === 'host' && rede.outro) return rede.iniciar();
+  if (!ultimaCfg) return correr();
+  novaCorrida({ ...ultimaCfg, pista: pistaAgora(), dif: salvo.dif });
 }
 document.getElementById('correr').onclick = correr;
 document.getElementById('entrar').onclick = () => { som.iniciar(); painelSala('digitar'); };
-document.getElementById('denovo').onclick = () => { if (rede.papel === 'host' && rede.outro) rede.iniciar(); else if (ultimaCfg) novaCorrida(ultimaCfg); else correr(); };
+document.getElementById('denovo').onclick = seguir;
 document.getElementById('outra').onclick = () => { if (rede.papel === 'conv') rede.fechar(); irMenu(); };
 document.getElementById('som').onclick = () => { som.ligar(!salvo.som); montarMenu(); };
 document.getElementById('pausa').onclick = () => { pausado = true; mostrar('pausa'); som.musica(false); };
@@ -1305,6 +1677,9 @@ botao('p1dir', () => tecla(0, 'dir', true), () => tecla(0, 'dir', false));
 botao('p2esq', () => tecla(1, 'esq', true), () => tecla(1, 'esq', false));
 botao('p2dir', () => tecla(1, 'dir', true), () => tecla(1, 'dir', false));
 botao('buzina', () => som.buzina());
+botao('tiro', () => atirar(local(0)));
+botao('p1tiro', () => atirar(local(0)));
+botao('p2tiro', () => atirar(local(1)));
 botao('sirene', () => { const j = local(0); if (!j) return; j.sireneLigada = !j.sireneLigada; som.sirene(j.sireneLigada); });
 // teclado: José usa A/D/S, a Gabi usa as setas (sozinho, as duas servem)
 function teclaPara(e) {
@@ -1315,7 +1690,12 @@ function teclaPara(e) {
 }
 addEventListener('keydown', e => {
   const tk = teclaPara(e); if (tk) tecla(tk[0], tk[1], true);
-  if (e.key === ' ' && modo !== 'menu') { e.preventDefault(); som.buzina(); }
+  if (!e.repeat && modo !== 'menu') {
+    const dupla = jogadores.filter(j => !j.remoto).length > 1;
+    if (e.key === ' ' || e.key === 'w' || e.key === 'W') { e.preventDefault(); atirar(local(0)); }
+    if (e.key === 'ArrowUp') { e.preventDefault(); atirar(local(dupla ? 1 : 0)); }
+    if (e.key === 'b' || e.key === 'B') som.buzina();
+  }
   if ((e.key === 'Escape' || e.key === 'p') && (modo === 'corrida' || modo === 'largada')) { pausado = !pausado; mostrar(pausado ? 'pausa' : 'jogo'); }
 });
 addEventListener('keyup', e => { const tk = teclaPara(e); if (tk) tecla(tk[0], tk[1], false); });
@@ -1332,8 +1712,13 @@ function quadro(agora) {
   const dt = Math.min(.1, (agora - ultimo) / 1000); ultimo = agora;
   if (modo === 'menu') { tempo += dt; menuJ.pos = mod(menuJ.pos + VMAX * .25 * dt, comprimento); menuJ.ceuOff += .00005; }
   else if (!pausado && modo !== 'fim') { acum += dt; while (acum >= 1 / 60) { passo(1 / 60); acum -= 1 / 60; } }
-  else if (modo === 'fim' && rede.papel) { tempo += dt; }
-  if (modo !== 'menu' && modo !== 'fim') { for (const j of jogadores) if (!j.remoto) j.obj.spr = j.sireneLigada && Math.floor(tempo * 6) % 2 ? j.spr[1] : j.spr[0]; rede.estado(); }
+  else if (modo === 'fim') { tempo += dt; }
+  if (modo !== 'menu' && modo !== 'fim') {
+    for (const j of jogadores) if (!j.remoto) j.obj.spr = j.sireneLigada && Math.floor(tempo * 6) % 2 ? j.spr[1] : j.spr[0];
+    rede.estado();
+    const l0 = local(0), l1 = local(1);
+    for (const [id, j] of [['tiro', l0], ['p1tiro', l0], ['p2tiro', l1]]) document.getElementById(id).classList.toggle('recarga', !!j && (tempo < j.tiroT || j.rodar > 0));
+  }
   som.atualizar();
   desenharTudo();
   requestAnimationFrame(quadro);
