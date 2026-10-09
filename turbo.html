@@ -419,6 +419,132 @@ function criarSprites() {
     for (let i = 0; i < 7; i++) { const a = -Math.PI + i * Math.PI / 6; g.save(); g.translate(150, 70); g.rotate(a); g.beginPath(); g.ellipse(60, 0, 64, 14, .25, 0, 7); g.fill(); g.restore(); }
     g.fillStyle = '#6b3d14'; for (const [x, y] of [[140, 80], [160, 84], [150, 92]]) { g.beginPath(); g.arc(x, y, 10, 0, 7); g.fill(); }
   }));
+  // Outono em Nuuksio
+  const arvore = (copa1, copa2) => tela(240, 340, (g, w, h) => {
+    sombra(g, w, h); g.fillStyle = '#6b4325'; g.fillRect(108, 200, 24, 136);
+    for (const [x, y, r, c] of [[120, 120, 92, copa1], [70, 170, 60, copa2], [170, 165, 64, copa2], [120, 70, 64, copa1], [90, 120, 46, copa2], [155, 110, 46, copa1]]) {
+      g.fillStyle = c; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill();
+    }
+    g.fillStyle = 'rgba(255,255,255,.18)'; g.beginPath(); g.arc(95, 80, 26, 0, 7); g.fill();
+  });
+  sprite('arvoreOutono', 1400, arvore('#e8641e', '#c8401a'));
+  sprite('arvoreAmarela', 1300, arvore('#ffc23a', '#e89a12'));
+  sprite('betula', 1100, tela(160, 360, (g, w, h) => {
+    sombra(g, w, h); g.fillStyle = '#f4f1ea'; g.fillRect(70, 120, 20, 230);
+    g.fillStyle = '#2a2a2a'; for (let y = 140; y < 340; y += 26) g.fillRect(y % 52 ? 70 : 78, y, 12, 4);
+    g.fillStyle = '#ffd23f'; for (const [x, y, r] of [[80, 90, 60], [50, 130, 40], [112, 125, 42], [80, 50, 40]]) { g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); }
+    g.fillStyle = '#f2b51e'; g.beginPath(); g.arc(98, 100, 30, 0, 7); g.fill();
+  }));
+  sprite('cogumelo', 420, tela(140, 130, (g, w, h) => {
+    sombra(g, w, h); g.fillStyle = '#fff3e0'; rr(g, 52, 56, 36, 64, 12);
+    g.fillStyle = '#e8313f'; g.beginPath(); g.ellipse(70, 60, 64, 44, 0, Math.PI, 0); g.fill();
+    g.fillStyle = '#fff'; for (const [x, y, r] of [[45, 40, 9], [78, 28, 8], [100, 46, 7], [62, 52, 6]]) { g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); }
+  }));
+  sprite('lago', 2200, tela(360, 110, (g, w, h) => {
+    g.fillStyle = '#4e8a3a'; g.beginPath(); g.ellipse(180, 70, 176, 38, 0, 0, 7); g.fill();
+    const gr = g.createLinearGradient(0, 40, 0, 100); gr.addColorStop(0, '#5fb8e8'); gr.addColorStop(1, '#2a6fa8');
+    g.fillStyle = gr; g.beginPath(); g.ellipse(180, 70, 160, 30, 0, 0, 7); g.fill();
+    g.fillStyle = 'rgba(255,255,255,.6)'; for (const x of [110, 190, 250]) g.fillRect(x, 64, 34, 3);
+  }));
+  // Dunas de Jericoacoara
+  sprite('duna', 2400, tela(400, 150, (g, w, h) => {
+    const gr = g.createLinearGradient(0, 0, 0, 150); gr.addColorStop(0, '#fff1c6'); gr.addColorStop(1, '#e9c47a');
+    g.fillStyle = gr; g.beginPath(); g.moveTo(0, 150); g.quadraticCurveTo(120, 10, 230, 40); g.quadraticCurveTo(330, 60, 400, 150); g.closePath(); g.fill();
+    g.strokeStyle = 'rgba(200,150,80,.35)'; g.lineWidth = 3; for (const y of [80, 100, 120]) { g.beginPath(); g.moveTo(60, y + 10); g.quadraticCurveTo(200, y - 20, 340, y + 10); g.stroke(); }
+  }));
+  sprite('lagoa', 2000, tela(360, 110, (g, w, h) => {
+    g.fillStyle = '#f3dca0'; g.beginPath(); g.ellipse(180, 70, 176, 38, 0, 0, 7); g.fill();
+    const gr = g.createLinearGradient(0, 40, 0, 100); gr.addColorStop(0, '#5fe0e8'); gr.addColorStop(1, '#1aa0c8');
+    g.fillStyle = gr; g.beginPath(); g.ellipse(180, 70, 158, 28, 0, 0, 7); g.fill();
+    g.fillStyle = '#ff5fa2'; rr(g, 150, 54, 60, 10, 5); // boia na lagoa
+  }));
+  sprite('buggy', 900, tela(240, 150, (g, w, h) => {
+    sombra(g, w, h); g.fillStyle = '#111'; for (const x of [40, 200]) { g.beginPath(); g.arc(x, 118, 26, 0, 7); g.fill(); }
+    g.fillStyle = '#ffcc1a'; poli(g, [20, 104, 220, 104, 200, 70, 40, 70], '#ffcc1a');
+    g.strokeStyle = '#333'; g.lineWidth = 6; g.beginPath(); g.moveTo(60, 70); g.lineTo(80, 20); g.lineTo(170, 20); g.lineTo(185, 70); g.stroke();
+    g.fillStyle = '#e8313f'; g.beginPath(); g.arc(110, 58, 12, 0, 7); g.fill(); g.fillStyle = '#ffdbac'; g.beginPath(); g.arc(150, 58, 12, 0, 7); g.fill();
+  }));
+  sprite('pipa', 900, tela(200, 340, (g, w, h) => { // kitesurf: a pipa no céu presa na areia
+    g.strokeStyle = 'rgba(80,80,80,.8)'; g.lineWidth = 2; g.beginPath(); g.moveTo(100, 336); g.quadraticCurveTo(130, 200, 100, 70); g.stroke();
+    g.fillStyle = '#ff3b3b'; g.beginPath(); g.moveTo(20, 60); g.quadraticCurveTo(100, -10, 180, 60); g.quadraticCurveTo(100, 30, 20, 60); g.fill();
+    g.fillStyle = '#ffd23f'; g.beginPath(); g.moveTo(60, 40); g.quadraticCurveTo(100, 20, 140, 40); g.quadraticCurveTo(100, 34, 60, 40); g.fill();
+  }));
+  // Mergulho em Flecheiras (fundo do mar)
+  sprite('coral', 1000, tela(220, 200, (g, w, h) => {
+    const galho = (x, y, a, l, larg, cor) => { g.strokeStyle = cor; g.lineWidth = larg; g.lineCap = 'round'; g.beginPath(); g.moveTo(x, y); const x2 = x + Math.cos(a) * l, y2 = y + Math.sin(a) * l; g.lineTo(x2, y2); g.stroke(); if (l > 22) { galho(x2, y2, a - .45, l * .7, larg * .7, cor); galho(x2, y2, a + .4, l * .68, larg * .7, cor); } };
+    galho(80, 196, -Math.PI / 2 - .2, 60, 16, '#ff6f91'); galho(150, 196, -Math.PI / 2 + .25, 54, 14, '#ff9a3c');
+    g.fillStyle = '#ffd23f'; for (const [x, y] of [[40, 70], [120, 40], [170, 80], [96, 100]]) { g.beginPath(); g.arc(x, y, 7, 0, 7); g.fill(); }
+  }));
+  sprite('alga', 700, tela(120, 280, (g, w, h) => {
+    g.strokeStyle = '#2fae6a'; g.lineCap = 'round';
+    for (let k = 0; k < 3; k++) { g.lineWidth = 12 - k * 2; g.beginPath(); g.moveTo(40 + k * 22, 278); for (let y = 278; y > 30 + k * 30; y -= 20) g.quadraticCurveTo(40 + k * 22 + (y % 40 ? 18 : -18), y - 10, 40 + k * 22, y - 20); g.stroke(); }
+  }));
+  sprite('tartaruga', 800, tela(220, 150, (g, w, h) => {
+    g.fillStyle = '#8bc34a'; for (const [x, y, a] of [[50, 50, -.6], [170, 50, .6], [60, 120, .5], [160, 120, -.5]]) { g.save(); g.translate(x, y); g.rotate(a); g.beginPath(); g.ellipse(0, 0, 30, 12, 0, 0, 7); g.fill(); g.restore(); }
+    g.beginPath(); g.ellipse(110, 22, 22, 18, 0, 0, 7); g.fill();
+    g.fillStyle = '#5d4037'; g.beginPath(); g.ellipse(110, 84, 64, 50, 0, 0, 7); g.fill();
+    g.strokeStyle = '#8d6e63'; g.lineWidth = 4; for (const [x, y] of [[110, 70], [85, 95], [135, 95]]) { g.beginPath(); g.arc(x, y, 16, 0, 7); g.stroke(); }
+    g.fillStyle = '#111'; g.beginPath(); g.arc(102, 18, 4, 0, 7); g.arc(118, 18, 4, 0, 7); g.fill();
+  }));
+  sprite('peixes', 900, tela(260, 160, (g, w, h) => {
+    const peixe = (x, y, s, c) => { g.fillStyle = c; g.beginPath(); g.ellipse(x, y, 22 * s, 12 * s, 0, 0, 7); g.fill(); g.beginPath(); g.moveTo(x + 18 * s, y); g.lineTo(x + 34 * s, y - 12 * s); g.lineTo(x + 34 * s, y + 12 * s); g.closePath(); g.fill(); g.fillStyle = '#fff'; g.beginPath(); g.arc(x - 12 * s, y - 3 * s, 4 * s, 0, 7); g.fill(); g.fillStyle = '#111'; g.beginPath(); g.arc(x - 12 * s, y - 3 * s, 2 * s, 0, 7); g.fill(); };
+    peixe(60, 40, 1.2, '#ff9a1f'); g.fillStyle = '#fff'; g.fillRect(56, 28, 6, 24);
+    peixe(150, 70, 1, '#2d9cff'); peixe(90, 110, .9, '#ffd23f'); peixe(200, 120, .8, '#ff5fa2'); peixe(190, 30, .7, '#38d67a');
+  }));
+  sprite('estrelaMar', 380, tela(120, 120, (g, w, h) => {
+    g.fillStyle = '#ff7043'; g.beginPath();
+    for (let i = 0; i < 10; i++) { const r = i % 2 ? 22 : 54, a = -Math.PI / 2 + i * Math.PI / 5; g.lineTo(60 + Math.cos(a) * r, 64 + Math.sin(a) * r); }
+    g.closePath(); g.fill(); g.fillStyle = '#ffccbc'; for (let i = 0; i < 5; i++) { const a = -Math.PI / 2 + i * Math.PI * .4; g.beginPath(); g.arc(60 + Math.cos(a) * 26, 64 + Math.sin(a) * 26, 4, 0, 7); g.fill(); }
+  }));
+  // Açude do Boqueirão (Solonópole)
+  sprite('carnauba', 1300, tela(220, 380, (g, w, h) => {
+    sombra(g, w, h); g.fillStyle = '#7a6a55'; g.fillRect(102, 110, 16, 266);
+    g.strokeStyle = '#5e5242'; g.lineWidth = 3; for (let y = 130; y < 370; y += 14) { g.beginPath(); g.moveTo(102, y); g.lineTo(118, y + 6); g.stroke(); }
+    g.fillStyle = '#4f8a3a';
+    for (let i = 0; i < 14; i++) { const a = -Math.PI + i * Math.PI / 13; g.save(); g.translate(110, 110); g.rotate(a); g.beginPath(); g.moveTo(0, 0); g.lineTo(80, -10); g.lineTo(84, 0); g.lineTo(80, 10); g.closePath(); g.fill(); g.restore(); }
+  }));
+  sprite('canoa', 900, tela(240, 150, (g, w, h) => {
+    g.fillStyle = '#4fa8d8'; g.beginPath(); g.ellipse(120, 132, 116, 16, 0, 0, 7); g.fill();
+    g.fillStyle = '#8a5a2b'; g.beginPath(); g.moveTo(20, 110); g.quadraticCurveTo(120, 150, 220, 110); g.lineTo(200, 128); g.quadraticCurveTo(120, 146, 40, 128); g.closePath(); g.fill();
+    g.fillStyle = '#ffdbac'; g.beginPath(); g.arc(130, 70, 13, 0, 7); g.fill(); g.fillStyle = '#e8c070'; g.beginPath(); g.ellipse(130, 60, 24, 7, 0, 0, 7); g.fill(); g.fillRect(122, 46, 16, 14);
+    g.fillStyle = '#2d9cff'; rr(g, 118, 82, 24, 32, 6);
+    g.strokeStyle = '#5e3a1a'; g.lineWidth = 3; g.beginPath(); g.moveTo(140, 90); g.lineTo(220, 20); g.stroke();
+    g.strokeStyle = 'rgba(255,255,255,.8)'; g.lineWidth = 1; g.beginPath(); g.moveTo(220, 20); g.lineTo(226, 120); g.stroke();
+  }));
+  sprite('garca', 520, tela(140, 200, (g, w, h) => {
+    sombra(g, w, h); g.strokeStyle = '#e8c070'; g.lineWidth = 4; g.beginPath(); g.moveTo(64, 140); g.lineTo(60, 196); g.moveTo(76, 140); g.lineTo(80, 196); g.stroke();
+    g.fillStyle = '#fff'; g.beginPath(); g.ellipse(70, 120, 34, 24, -.3, 0, 7); g.fill();
+    g.strokeStyle = '#fff'; g.lineWidth = 9; g.lineCap = 'round'; g.beginPath(); g.moveTo(84, 104); g.quadraticCurveTo(110, 80, 92, 50); g.stroke();
+    g.fillStyle = '#fff'; g.beginPath(); g.arc(92, 44, 10, 0, 7); g.fill();
+    g.fillStyle = '#ffb300'; poli(g, [100, 42, 132, 46, 100, 50], '#ffb300'); g.fillStyle = '#111'; g.beginPath(); g.arc(94, 41, 2.5, 0, 7); g.fill();
+  }));
+  // Vila do Papai Noel (Rovaniemi)
+  sprite('casaNoel', 1700, tela(320, 240, (g, w, h) => {
+    sombra(g, w, h); g.fillStyle = '#a3262d'; g.fillRect(30, 100, 260, 130);
+    poli(g, [14, 104, 160, 20, 306, 104], '#f4f8fc'); poli(g, [34, 98, 160, 30, 286, 98], '#5b3a2a');
+    g.fillStyle = '#f4f8fc'; g.fillRect(14, 96, 292, 10);
+    g.fillStyle = '#ffe28a'; g.fillRect(62, 132, 50, 44); g.fillRect(208, 132, 50, 44); g.fillStyle = '#5b3a2a'; g.fillRect(136, 140, 48, 90);
+    for (let i = 0; i < 14; i++) { g.fillStyle = ['#ff3b3b', '#ffd23f', '#38d67a', '#2d9cff'][i % 4]; g.beginPath(); g.arc(24 + i * 20, 112 - (i < 7 ? i * 10 : (13 - i) * 10) * .9, 5, 0, 7); g.fill(); }
+    g.fillStyle = '#fff'; g.font = 'bold 20px Fredoka, sans-serif'; g.textAlign = 'center'; g.fillText('JOULUPUKKI', 160, 92);
+  }));
+  sprite('arvoreNatal', 1200, tela(220, 360, (g, w, h) => {
+    sombra(g, w, h); g.fillStyle = '#5b3a1e'; g.fillRect(98, 300, 24, 50);
+    for (const [y, l, b] of [[30, 60, 130], [90, 84, 210], [160, 104, 304]]) { poli(g, [110, y, 110 - l, b, 110 + l, b], '#1f6b3e'); g.fillStyle = '#f7fbff'; g.fillRect(110 - l, b - 6, l * 2, 6); }
+    for (let i = 0; i < 16; i++) { g.fillStyle = ['#ff3b3b', '#ffd23f', '#2d9cff', '#ff5fa2'][i % 4]; g.beginPath(); g.arc(70 + rnd(i * 3) * 80, 80 + rnd(i * 7) * 210, 7, 0, 7); g.fill(); }
+    g.fillStyle = '#ffd23f'; g.beginPath(); for (let i = 0; i < 10; i++) { const r = i % 2 ? 10 : 24, a = -Math.PI / 2 + i * Math.PI / 5; g.lineTo(110 + Math.cos(a) * r, 28 + Math.sin(a) * r); } g.closePath(); g.fill();
+  }));
+  sprite('presentes', 700, tela(220, 160, (g, w, h) => {
+    sombra(g, w, h);
+    for (const [x, y, s, c, f] of [[30, 70, 80, '#e8313f', '#ffd23f'], [110, 90, 66, '#2d9cff', '#fff'], [70, 30, 56, '#38d67a', '#ff3b3b']]) {
+      g.fillStyle = c; g.fillRect(x, y, s, s * .9); g.fillStyle = f; g.fillRect(x + s * .42, y, s * .16, s * .9); g.fillRect(x, y + s * .35, s, s * .14);
+      g.beginPath(); g.ellipse(x + s * .38, y - 6, 12, 7, -.4, 0, 7); g.ellipse(x + s * .62, y - 6, 12, 7, .4, 0, 7); g.fill();
+    }
+  }));
+  sprite('napapiiri', 1500, tela(320, 240, (g, w, h) => { // a linha do Círculo Polar Ártico
+    sombra(g, w, h); g.fillStyle = '#8b939c'; g.fillRect(60, 110, 12, 124); g.fillRect(248, 110, 12, 124);
+    g.fillStyle = '#1f5fbf'; rr(g, 10, 16, 300, 110, 14); g.strokeStyle = '#fff'; g.lineWidth = 5; g.strokeRect(20, 26, 280, 90);
+    g.fillStyle = '#fff'; g.textAlign = 'center'; g.font = 'bold 34px Fredoka, sans-serif'; g.fillText('NAPAPIIRI', 160, 66); g.font = 'bold 20px Fredoka, sans-serif'; g.fillText('66°33′ ARCTIC CIRCLE', 160, 100);
+  }));
   sprite('guardaSol', 800, tela(220, 230, (g, w, h) => {
     sombra(g, w, h); g.fillStyle = '#ddd'; g.fillRect(106, 70, 8, 150);
     const cores = ['#ff3b3b', '#fff', '#ffd23f', '#fff', '#2d9cff', '#fff'];
@@ -476,6 +602,26 @@ const PISTAS = [
     cores: { grama: ['#f4dea2', '#ecd496'], rumble: ['#fff', '#00a6d6'], estrada: ['#707079', '#6b6b74'], faixa: '#fff', neblina: '#c3e9f7' },
     cenario: ['coqueiro', 'coqueiro', 'guardaSol', 'coqueiro'],
     pecas: [[10, 40, 10, 0, 0], [30, 80, 30, 2, 0], [25, 50, 25, -3, 15], [30, 70, 30, 0, -15], [25, 60, 25, 4, 0], [30, 90, 30, -2, 10], [25, 50, 25, 3, -10], [30, 70, 30, 0, 0], [25, 60, 25, -4, 0], [20, 70, 20, 2, 0]] },
+  { id: 'jeri', fundoMenu: 'linear-gradient(160deg,#ff8a5a,#f3d08a)', nome: 'Dunas de Jericoacoara', nomeFi: 'Jericoacoaran dyynit', ic: '🏜️', placa: 'JERICOACOARA', corPlaca: '#c8401a',
+    cores: { grama: ['#f6dfa6', '#efd597'], rumble: ['#fff', '#ff6a3a'], estrada: ['#b59a74', '#ad926c'], faixa: '#fff6d8', neblina: '#ffd2a8' },
+    cenario: ['duna', 'coqueiro', 'buggy', 'lagoa', 'pipa', 'duna'],
+    pecas: [[10, 40, 10, 0, 0], [30, 60, 30, 3, 25], [25, 50, 25, 0, -25], [30, 70, 30, -4, 30], [25, 60, 25, 2, -30], [30, 90, 30, 0, 20], [25, 50, 25, 5, -20], [30, 60, 30, -3, 0], [20, 80, 20, 0, 15], [25, 60, 25, 3, -15]] },
+  { id: 'mergulho', fundoMenu: 'linear-gradient(160deg,#1aa0c8,#0a3a6a)', nome: 'Mergulho em Flecheiras', nomeFi: 'Sukellus Flecheirasissa', ic: '🐠', placa: 'FLECHEIRAS', corPlaca: '#0a7cb8',
+    cores: { grama: ['#d8c99c', '#cfbf92'], rumble: ['#fff', '#ff6f91'], estrada: ['#6f8ca0', '#6a879b'], faixa: '#bff4ff', neblina: '#0b5a80' },
+    cenario: ['coral', 'alga', 'peixes', 'coral', 'tartaruga', 'estrelaMar', 'alga'],
+    pecas: [[10, 40, 10, 0, 0], [30, 70, 30, 3, -20], [25, 60, 25, -3, 20], [30, 50, 30, 0, -25], [25, 70, 25, 4, 25], [30, 60, 30, -4, 0], [25, 80, 25, 2, -15], [30, 50, 30, -2, 15], [20, 70, 20, 0, 0], [25, 60, 25, 3, 0]] },
+  { id: 'boqueirao', fundoMenu: 'linear-gradient(160deg,#ff9d4a,#2a8fc8)', nome: 'Açude do Boqueirão', nomeFi: 'Boqueirãon tekojärvi', ic: '💧', placa: 'SOLONÓPOLE', corPlaca: '#1f7a3a',
+    cores: { grama: ['#c9a466', '#be9a5d'], rumble: ['#fff', '#2a8fc8'], estrada: ['#8c7a64', '#85735d'], faixa: '#fff2c0', neblina: '#f2d8a8' },
+    cenario: ['carnauba', 'cacto', 'garca', 'carnauba', 'canoa', 'bode', 'casinha'],
+    pecas: [[10, 40, 10, 0, 0], [30, 80, 30, -2, 0], [25, 60, 25, 3, 15], [30, 70, 30, 0, -15], [25, 50, 25, -4, 10], [30, 90, 30, 2, 0], [25, 60, 25, -3, -10], [30, 70, 30, 0, 10], [20, 60, 20, 4, -10], [25, 60, 25, -2, 0]] },
+  { id: 'papainoel', fundoMenu: 'linear-gradient(160deg,#2a3a8a,#c8344a)', nome: 'Vila do Papai Noel', nomeFi: 'Joulupukin pajakylä', ic: '🎅', placa: 'ROVANIEMI', corPlaca: '#a3262d',
+    cores: { grama: ['#f4f8fc', '#e7eef6'], rumble: ['#fff', '#e8313f'], estrada: ['#5d6670', '#58616b'], faixa: '#ffd23f', neblina: '#c8d4f0' },
+    cenario: ['arvoreNatal', 'casaNoel', 'presentes', 'rena', 'pinheiroNeve', 'boneco', 'arvoreNatal'],
+    pecas: [[10, 40, 10, 0, 0], [25, 60, 25, 3, 10], [30, 60, 30, -3, 20], [25, 70, 25, 0, -20], [30, 50, 30, 4, 0], [25, 60, 25, -4, 15], [30, 80, 30, 0, -15], [25, 50, 25, 5, 0], [20, 70, 20, -2, 0], [25, 60, 25, 2, 0]] },
+  { id: 'nuuksio', fundoMenu: 'linear-gradient(160deg,#e8641e,#4e8a3a)', nome: 'Outono em Nuuksio', nomeFi: 'Syksy Nuuksiossa', ic: '🍂', placa: 'NUUKSIO', corPlaca: '#2f7a3a',
+    cores: { grama: ['#7aa14a', '#6f9643'], rumble: ['#fff', '#e8641e'], estrada: ['#5f5a54', '#59544f'], faixa: '#ffe2a0', neblina: '#cfe0e8' },
+    cenario: ['arvoreOutono', 'betula', 'arvoreAmarela', 'pinheiro', 'cogumelo', 'arvoreOutono', 'lago'],
+    pecas: [[10, 40, 10, 0, 0], [25, 60, 25, -3, 10], [30, 50, 30, 4, 20], [25, 70, 25, -2, -20], [30, 60, 30, 5, 0], [25, 50, 25, -5, 15], [30, 80, 30, 0, -15], [25, 60, 25, 3, 10], [20, 60, 20, -4, 0], [25, 70, 25, 2, 0]] },
 ];
 
 const CARROS = [
@@ -510,9 +656,9 @@ const DIFS = {
 let DIF = DIFS.medio;
 // campeonatos: várias pistas seguidas, com pontos
 const COPAS = [
-  { id: 'br', ic: '🇧🇷', pistas: ['sertao', 'praia'] },
-  { id: 'fi', ic: '🇫🇮', pistas: ['neve', 'aurora'] },
-  { id: 'familia', ic: '🏆', pistas: ['sertao', 'neve', 'aurora', 'praia'] },
+  { id: 'br', ic: '🇧🇷', pistas: ['sertao', 'boqueirao', 'jeri', 'mergulho', 'praia'] },
+  { id: 'fi', ic: '🇫🇮', pistas: ['neve', 'nuuksio', 'papainoel', 'aurora'] },
+  { id: 'familia', ic: '🏆', pistas: ['sertao', 'neve', 'boqueirao', 'nuuksio', 'jeri', 'papainoel', 'mergulho', 'aurora', 'praia'] },
 ];
 const PONTOS = [10, 8, 6, 5, 4, 3, 2];
 let copa = null; // { id, pistas, i, pontos: { pessoa: pts }, ganhou: { pessoa: pts desta corrida } }
@@ -545,6 +691,7 @@ function montarPista(p) {
     segs[i].sprites.push({ tipo, x: lado * (1.35 + rnd(i * 7.7) * 2.2) });
   }
   for (let i = 30; i < N; i += 260) segs[i].sprites.push({ tipo: 'placa_' + p.id, x: -1.7 }, { tipo: 'placa_' + p.id, x: 1.7 });
+  if (p.id === 'papainoel') for (let i = 160; i < N; i += 400) segs[i].sprites.push({ tipo: 'napapiiri', x: -1.6 });
   segs[LARGADA].sprites.push({ tipo: 'bandeira', x: -1.25 }, { tipo: 'bandeira', x: 1.15 });
   // moedas em fileiras e raios de turbo
   for (let i = 40; i < N - 20; i += 70) {
@@ -916,6 +1063,64 @@ function desenharFundo() {
     }
     ctx.globalCompositeOperation = 'source-over';
     serra('#26304f', hz + 4, H * .14, 1.5, ceuOff, 3); serra('#3b4868', hz + 4, H * .07, 3, morroOff, 7);
+  } else if (P.id === 'jeri') {
+    // pôr do sol de Jericoacoara: sol grande perto do mar, dunas e kitesurf
+    ceu('#ff6a5a', '#ffd08a'); sol(sx, hz * .78, H * .09, '#fff0b0');
+    ctx.fillStyle = '#2a9fd0'; ctx.fillRect(0, hz - H * .05, W, H * .055);
+    ctx.fillStyle = 'rgba(255,220,150,.6)'; ctx.fillRect(sx - H * .05, hz - H * .05, H * .1, H * .05);
+    for (let i = 0; i < 4; i++) { // pipas de kitesurf no céu
+      const kx = mod(rnd(i + 3) * W + tempo * 10 * DPR - ceuOff * W * .4, W), ky = hz * (.35 + rnd(i) * .3) + Math.sin(tempo + i) * 6 * DPR;
+      ctx.fillStyle = ['#ff3b3b', '#2d9cff', '#ffd23f', '#38d67a'][i];
+      ctx.beginPath(); ctx.moveTo(kx - 14 * DPR, ky); ctx.quadraticCurveTo(kx, ky - 10 * DPR, kx + 14 * DPR, ky); ctx.quadraticCurveTo(kx, ky - 4 * DPR, kx - 14 * DPR, ky); ctx.fill();
+    }
+    serra('#f3d08a', hz + 4, H * .16, 1.2, ceuOff, 6); serra('#ecc070', hz + 4, H * .08, 2.4, morroOff, 9);
+  } else if (P.id === 'mergulho') {
+    // fundo do mar: água azul, raios de sol da superfície, peixinhos e bolhas
+    const g = ctx.createLinearGradient(0, 0, 0, hz); g.addColorStop(0, '#5fd0f0'); g.addColorStop(.25, '#1a8fc0'); g.addColorStop(1, '#0b4f78');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, hz + 2);
+    ctx.fillStyle = 'rgba(255,255,255,.35)'; for (let i = 0; i < 18; i++) ctx.fillRect(mod(rnd(i) * W + Math.sin(tempo + i) * 20 - ceuOff * W * .3, W), H * .02 + rnd(i * 2) * H * .03, 40 * DPR, 2 * DPR);
+    ctx.save(); ctx.globalCompositeOperation = 'lighter';
+    for (let i = 0; i < 7; i++) {
+      const x = mod(rnd(i + 2) * W - ceuOff * W * .3, W), a = .25 + Math.sin(tempo * .4 + i) * .06;
+      const gr = ctx.createLinearGradient(x, 0, x + Math.sin(a) * hz, hz); gr.addColorStop(0, 'rgba(200,250,255,.22)'); gr.addColorStop(1, 'rgba(200,250,255,0)');
+      ctx.fillStyle = gr; ctx.beginPath(); ctx.moveTo(x - 20 * DPR, 0); ctx.lineTo(x + 20 * DPR, 0); ctx.lineTo(x + Math.sin(a) * hz + 60 * DPR, hz); ctx.lineTo(x + Math.sin(a) * hz - 20 * DPR, hz); ctx.closePath(); ctx.fill();
+    }
+    ctx.restore();
+    for (let i = 0; i < 10; i++) { // cardume passando
+      const fx = mod(rnd(i) * W - tempo * (20 + rnd(i * 2) * 30) * DPR - ceuOff * W * .4, W), fy = hz * (.3 + rnd(i * 5) * .55);
+      ctx.fillStyle = 'rgba(10,40,70,.5)'; ctx.beginPath(); ctx.ellipse(fx, fy, 9 * DPR, 4 * DPR, 0, 0, 7); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(fx + 8 * DPR, fy); ctx.lineTo(fx + 15 * DPR, fy - 4 * DPR); ctx.lineTo(fx + 15 * DPR, fy + 4 * DPR); ctx.fill();
+    }
+    serra('#1a5a6a', hz + 4, H * .12, 1.6, ceuOff, 3); serra('#2a7a6a', hz + 4, H * .06, 3, morroOff, 6);
+  } else if (P.id === 'boqueirao') {
+    // o açude do Boqueirão: céu do sertão, serra, a água grande e o paredão da barragem
+    ceu('#ffa24f', '#ffe6b0'); sol(sx, hz * .4, H * .07, '#fff3b0');
+    serra('#b8743e', hz - H * .03, H * .16, 1.4, ceuOff, 5);
+    const ag = ctx.createLinearGradient(0, hz - H * .06, 0, hz); ag.addColorStop(0, '#2a8fc8'); ag.addColorStop(1, '#5fc0e8');
+    ctx.fillStyle = ag; ctx.fillRect(0, hz - H * .06, W, H * .065);
+    for (let i = 0; i < 20; i++) { ctx.fillStyle = 'rgba(255,255,255,.55)'; ctx.fillRect(mod(rnd(i) * W - ceuOff * W * .4 + Math.sin(tempo + i) * 8, W), hz - H * .055 + rnd(i * 3) * H * .05, 16 * DPR, 2 * DPR); }
+    const bx = mod(.25 - ceuOff * .5, 1.4) * W - W * .2; // o paredão
+    ctx.fillStyle = '#d8d0c0'; ctx.fillRect(bx, hz - H * .085, W * .28, H * .03);
+    ctx.fillStyle = '#b8b0a0'; for (let k = 0; k < 8; k++) ctx.fillRect(bx + k * W * .035, hz - H * .085, 3 * DPR, H * .03);
+    ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.fillRect(bx + W * .28, hz - H * .085, W * .02, H * .08); // sangradouro
+    serra('#9a7a4a', hz + 4, H * .04, 3, morroOff, 1);
+  } else if (P.id === 'papainoel') {
+    // fim de tarde no Círculo Polar: neve caindo e o trenó do Papai Noel voando
+    ceu('#2a3a8a', '#f0a0b8'); sol(sx, hz * .82, H * .05, '#ffe9c0');
+    serra('#dfe6f6', hz + 4, H * .17, 1.4, ceuOff, 3); serra('#b8c6e2', hz + 4, H * .08, 2.6, morroOff, 6);
+    const tx = mod(tempo * 40 * DPR - ceuOff * W * .3, W + 300 * DPR) - 200 * DPR, ty = hz * .3 + Math.sin(tempo * 1.5) * 10 * DPR, e = DPR;
+    ctx.fillStyle = '#2a1a10'; for (let k = 0; k < 4; k++) { ctx.beginPath(); ctx.ellipse(tx + 40 * e + k * 22 * e, ty, 8 * e, 4 * e, 0, 0, 7); ctx.fill(); ctx.fillRect(tx + 44 * e + k * 22 * e, ty - 9 * e, 2 * e, 6 * e); }
+    ctx.fillStyle = '#ff3b3b'; ctx.beginPath(); ctx.arc(tx + 128 * e, ty - 1 * e, 2.5 * e, 0, 7); ctx.fill();
+    ctx.strokeStyle = '#d8b060'; ctx.lineWidth = 1 * e; ctx.beginPath(); ctx.moveTo(tx + 20 * e, ty); ctx.lineTo(tx + 40 * e, ty); ctx.stroke();
+    ctx.fillStyle = '#c8344a'; ctx.beginPath(); ctx.moveTo(tx, ty - 6 * e); ctx.lineTo(tx + 22 * e, ty - 6 * e); ctx.lineTo(tx + 18 * e, ty + 4 * e); ctx.lineTo(tx + 2 * e, ty + 4 * e); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#c8344a'; ctx.beginPath(); ctx.arc(tx + 10 * e, ty - 10 * e, 5 * e, 0, 7); ctx.fill(); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(tx + 10 * e, ty - 8 * e, 3 * e, 0, Math.PI); ctx.fill();
+    for (let i = 0; i < 60; i++) { ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.beginPath(); ctx.arc(mod(rnd(i) * W + Math.sin(tempo + i) * 15 * DPR, W), mod(rnd(i * 3) * H + tempo * (20 + rnd(i) * 30) * DPR, hz), (1 + rnd(i * 7) * 2) * DPR, 0, 7); ctx.fill(); }
+  } else if (P.id === 'nuuksio') {
+    // floresta finlandesa no outono, com lago
+    ceu('#8fc8f0', '#eaf6ff'); sol(sx, hz * .35, H * .05, '#fffbe0');
+    serra('#3f6a3a', hz + 4, H * .18, 1.5, ceuOff, 4);
+    ctx.fillStyle = '#5aa8d8'; ctx.fillRect(0, hz - H * .03, W, H * .035);
+    serra('#d8641e', hz + 4, H * .1, 3.2, morroOff, 8); serra('#a8401a', hz + 4, H * .05, 5, morroOff * 1.3, 2);
   } else {
     ceu('#3fb6f5', '#c8efff'); sol(sx, hz * .4, H * .06, '#fffbe0');
     ctx.fillStyle = '#1b8fd1'; ctx.fillRect(0, hz - H * .045, W, H * .05);
@@ -1024,6 +1229,10 @@ function render() {
     ctx.globalAlpha = 1;
   });
   avisos = avisos.filter(a => a.t < (a.pt ? 2.2 : 1.6));
+  if (P.id === 'mergulho') {
+    ctx.strokeStyle = 'rgba(220,250,255,.7)'; ctx.lineWidth = 1.5 * DPR;
+    for (let i = 0; i < 26; i++) { const bx = mod(rnd(i) * W + Math.sin(tempo * 2 + i) * 12 * DPR, W), by = H - mod(tempo * (40 + rnd(i * 2) * 60) * DPR + rnd(i * 5) * H, H); ctx.beginPath(); ctx.arc(bx, by, (3 + rnd(i * 3) * 6) * DPR, 0, 7); ctx.stroke(); }
+  }
   if (modo === 'largada') semaforo();
   if (J.fim) confete();
   if (jogadores.filter(j => !j.remoto).length > 1) hudCanvas(); else hud();
