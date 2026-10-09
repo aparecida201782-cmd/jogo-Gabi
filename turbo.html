@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#1a0f2e">
+<title>Turbo do José</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Corrida de carrinho para o José (6 anos): o carro acelera sozinho, ele só vira. */
+  :root{--tinta:#fff;--fundo:#1a0f2e;--vermelho:#ff3b3b;--amarelo:#ffd23f;--azul:#2d9cff;--verde:#38d67a;--cartao:rgba(26,15,46,.9);
+    --letra:Fredoka,"Trebuchet MS",system-ui,sans-serif;color-scheme:dark}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:var(--fundo);overflow:hidden;font-family:var(--letra);color:var(--tinta);user-select:none;-webkit-user-select:none;touch-action:none}
+  #c{position:fixed;inset:0;width:100%;height:100%;display:block}
+  .ov{position:fixed;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));
+    background:radial-gradient(120% 80% at 50% 0%,rgba(255,210,63,.18),transparent 60%),rgba(16,8,30,.72);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+  .ov[hidden]{display:none}
+  #menu{background:radial-gradient(90% 70% at 50% 0%,rgba(255,210,63,.35),transparent 60%),linear-gradient(180deg,rgba(45,156,255,.55),rgba(255,95,162,.45))}
+  #menu .cartao{background:linear-gradient(180deg,rgba(40,20,80,.94),rgba(26,15,46,.95))}
+  .cartao{width:min(880px,100%);max-height:100%;overflow:auto;background:var(--cartao);border:3px solid rgba(255,255,255,.14);border-radius:26px;padding:clamp(12px,2.5vmin,22px);box-shadow:0 18px 50px rgba(0,0,0,.5);scrollbar-width:thin}
+  h1{margin:0;text-align:center;font-weight:700;font-size:clamp(2rem,7vmin,3.6rem);line-height:1;letter-spacing:.02em;
+    background:repeating-linear-gradient(90deg,#fff 0 14px,#111 14px 28px) 0 100%/100% 6px no-repeat,linear-gradient(180deg,#ffe066,#ff8a1f);-webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 3px 0 #7a1d00) drop-shadow(0 0 18px rgba(255,138,31,.45));animation:balanca 2.4s ease-in-out infinite}
+  @keyframes balanca{0%,100%{transform:rotate(-2deg) scale(1)}50%{transform:rotate(2deg) scale(1.04)}}
+  .sub{margin:4px 0 12px;text-align:center;color:#ffd9a6;font-size:clamp(.9rem,2.4vmin,1.05rem)}
+  h2{margin:12px 0 8px;font-size:1rem;font-weight:600;color:#ffd23f;letter-spacing:.06em;text-transform:uppercase}
+  .grade{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(min(100%,128px),1fr))}
+  .escolha{font:inherit;color:inherit;cursor:pointer;border:3px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);border-radius:18px;padding:8px 6px 10px;display:grid;justify-items:center;gap:4px;text-align:center;transition:transform .12s,border-color .12s,background .12s}
+  .escolha img{width:100%;max-width:120px;aspect-ratio:1.6;object-fit:contain}
+  .escolha .ic{font-size:2.2rem;line-height:1.2}
+  .escolha b{font-weight:600;font-size:.95rem;line-height:1.15}
+  .escolha small{color:#cbb8ee;font-size:.78rem}
+  .escolha:hover{transform:translateY(-2px)}
+  .escolha[aria-pressed="true"]{border-color:var(--amarelo);background:rgba(255,210,63,.18);box-shadow:0 0 0 4px rgba(255,210,63,.3),0 8px 20px rgba(0,0,0,.3)}
+  .escolha[aria-pressed="true"] img,.escolha[aria-pressed="true"] .ic{animation:pula .6s ease-in-out infinite alternate}
+  .escolha[aria-pressed="true"] b::before{content:"✔ ";color:var(--amarelo)}
+  @keyframes pula{to{transform:translateY(-6px) rotate(-2deg)}}
+  .escolha.pista{background:var(--fundo-pista);border-color:rgba(255,255,255,.25)}
+  .escolha.pista b{text-shadow:0 2px 0 rgba(0,0,0,.45)}
+  .escolha.pista small{color:#fff;opacity:.9;text-shadow:0 1px 0 rgba(0,0,0,.5)}
+  .escolha:focus-visible{outline:3px solid #fff;outline-offset:2px}
+  .acoes{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .btn{flex:1 1 160px;font:inherit;font-weight:700;font-size:1.25rem;border:0;border-radius:18px;padding:14px 18px;cursor:pointer;color:#3a1600;
+    background:linear-gradient(180deg,#ffe066,#ff9a1f);box-shadow:0 6px 0 #b34f00,0 10px 20px rgba(0,0,0,.35);transition:transform .08s}
+  .btn:active{transform:translateY(4px);box-shadow:0 2px 0 #b34f00}
+  .btn.cinza{background:linear-gradient(180deg,#e7e2f5,#b9b0d6);color:#2a1f45;box-shadow:0 6px 0 #6b6290,0 10px 20px rgba(0,0,0,.3);font-size:1rem}
+  .btn:focus-visible{outline:3px solid #fff;outline-offset:3px}
+  .linguas{display:flex;justify-content:center;gap:8px;margin-bottom:8px}
+  .lingua{font:inherit;font-weight:600;font-size:.95rem;color:#fff;cursor:pointer;border:3px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);border-radius:99px;padding:6px 14px}
+  .lingua[aria-pressed="true"]{border-color:var(--amarelo);background:rgba(255,210,63,.22)}
+  .dica{margin:6px 0 0;color:#cbb8ee;font-size:.9rem;text-align:center}
+  .dica:empty{display:none}
+  .grade.gente{grid-template-columns:repeat(auto-fill,minmax(min(100%,92px),1fr))}
+  .grade.gente:empty,h2:empty{display:none}
+  #quemBox[hidden]{display:none}
+  .codigo{font-size:clamp(2.6rem,12vmin,4rem);font-weight:700;letter-spacing:.3em;color:var(--amarelo);margin:6px 0;text-shadow:0 3px 0 #7a1d00}
+  input.cod{font:inherit;font-size:2.2rem;font-weight:700;letter-spacing:.3em;text-transform:uppercase;text-align:center;width:100%;padding:10px;border-radius:16px;border:3px solid var(--amarelo);background:rgba(0,0,0,.3);color:#fff;outline:none}
+  .gira{display:inline-block;width:22px;height:22px;border:4px solid rgba(255,255,255,.25);border-top-color:var(--amarelo);border-radius:50%;animation:gira .8s linear infinite;vertical-align:middle;margin-right:8px}
+  @keyframes gira{to{transform:rotate(1turn)}}
+  a.volta{color:#cbb8ee;font-size:.9rem;text-decoration:none;display:inline-block;margin-top:12px}
+
+  #hud{position:fixed;z-index:3;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;pointer-events:none;
+    padding:calc(env(safe-area-inset-top) + 8px) max(10px,env(safe-area-inset-right)) 0 max(10px,env(safe-area-inset-left))}
+  #hud[hidden]{display:none}
+  .caixa{background:rgba(16,8,30,.62);border:2px solid rgba(255,255,255,.18);border-radius:16px;padding:6px 12px;font-weight:700;line-height:1.1;text-shadow:0 2px 0 rgba(0,0,0,.4)}
+  #pos{font-size:clamp(1.8rem,7vmin,3rem);color:var(--amarelo)}
+  #pos small{font-size:.45em;color:#fff}
+  .meio{display:grid;gap:6px;justify-items:center}
+  #barra{width:min(40vw,320px);height:12px;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden;border:2px solid rgba(255,255,255,.25)}
+  #barra i{display:block;height:100%;width:0;background:linear-gradient(90deg,#38d67a,#ffd23f)}
+  #vel{text-align:right;font-size:clamp(1.2rem,4.4vmin,1.9rem)}
+  #vel small{display:block;font-size:.55em;color:#cbb8ee}
+  #controles,#dupla{position:fixed;z-index:3;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:flex-end;gap:10px;pointer-events:none;
+    padding:0 max(12px,env(safe-area-inset-right)) calc(env(safe-area-inset-bottom) + 12px) max(12px,env(safe-area-inset-left))}
+  #controles[hidden],#dupla[hidden]{display:none}
+  .lado{display:flex;gap:10px;align-items:flex-end}
+  .tecla{pointer-events:auto;width:clamp(74px,17vmin,120px);aspect-ratio:1;border-radius:50%;border:4px solid rgba(255,255,255,.55);background:rgba(16,8,30,.45);color:#fff;font-size:clamp(2rem,8vmin,3.4rem);font-weight:700;display:grid;place-items:center;touch-action:none;cursor:pointer}
+  .tecla[hidden]{display:none}
+  .tecla.ativa{background:rgba(255,210,63,.55);transform:scale(.94)}
+  .tecla.pequena{width:clamp(54px,12vmin,78px);font-size:clamp(1.4rem,5vmin,2rem)}
+  #pausa{position:fixed;z-index:4;top:calc(env(safe-area-inset-top) + 74px);right:max(10px,env(safe-area-inset-right));pointer-events:auto;border:2px solid rgba(255,255,255,.3);background:rgba(16,8,30,.55);color:#fff;border-radius:12px;width:44px;height:44px;font-size:1.1rem;cursor:pointer}
+  #pausa[hidden]{display:none}
+  .podio{display:grid;gap:6px;margin:10px 0}
+  .linha{display:grid;grid-template-columns:auto auto 1fr auto;align-items:center;gap:10px;padding:6px 10px;border-radius:12px;background:rgba(255,255,255,.06);font-weight:600}
+  .linha.eu{background:rgba(255,210,63,.2);border:2px solid var(--amarelo)}
+  .linha .bola{width:18px;height:18px;border-radius:50%}
+  .grande{text-align:center;font-size:clamp(2.4rem,10vmin,4.4rem);font-weight:700;line-height:1;margin:4px 0}
+  @media (max-height:500px){.grande{font-size:2.2rem}.podio{gap:4px;margin:6px 0}.linha{padding:3px 10px}.acoes{margin-top:8px}.btn{padding:10px 14px;font-size:1.05rem}#fim .sub{margin:2px 0 4px}}
+  @media (prefers-reduced-motion:reduce){.escolha,.btn{transition:none}h1,.escolha img,.escolha .ic{animation:none!important}}
+</style>
+</head>
+<body>
+<canvas id="c" aria-label="Pista de corrida"></canvas>
+
+<div id="hud" hidden>
+  <div class="caixa" id="pos">1º<small> / 6</small></div>
+  <div class="meio"><div class="caixa" id="volta">Volta 1/2 · 🪙 0</div><div id="barra"><i></i></div></div>
+  <div class="caixa" id="vel">0<small>km/h</small></div>
+</div>
+<button id="pausa" hidden aria-label="Pausar">⏸</button>
+<div id="controles" hidden>
+  <div class="lado"><button class="tecla" id="esq" aria-label="Virar para a esquerda">◀</button><button class="tecla pequena" id="buzina" aria-label="Buzinar">📯</button></div>
+  <div class="lado"><button class="tecla pequena" id="sirene" aria-label="Ligar a sirene" hidden>🚨</button><button class="tecla" id="dir" aria-label="Virar para a direita">▶</button></div>
+</div>
+<div id="dupla" hidden>
+  <div class="lado"><button class="tecla" id="p1esq" aria-label="José vira para a esquerda">◀</button><button class="tecla" id="p1dir" aria-label="José vira para a direita">▶</button></div>
+  <div class="lado"><button class="tecla" id="p2esq" aria-label="Gabi vira para a esquerda">◀</button><button class="tecla" id="p2dir" aria-label="Gabi vira para a direita">▶</button></div>
+</div>
+
+<div class="ov" id="menu">
+  <div class="cartao">
+    <div class="linguas"><button class="lingua" data-l="pt">🇧🇷 Português</button><button class="lingua" data-l="fi">🇫🇮 Suomi</button></div>
+    <h1 data-t="titulo">Turbo do José</h1>
+    <p class="sub" data-t="sub"></p>
+    <h2 data-t="comoJogar"></h2>
+    <div class="grade" id="modos"></div>
+    <p class="dica" id="dicaModo"></p>
+    <div id="quemBox"><h2 id="quemTit"></h2><div class="grade gente" id="quem"></div><h2 id="quem2Tit"></h2><div class="grade gente" id="quem2"></div></div>
+    <h2 data-t="escolhaCarro"></h2>
+    <div class="grade" id="carros"></div>
+    <h2 data-t="escolhaPista"></h2>
+    <div class="grade" id="pistas"></div>
+    <div class="acoes">
+      <button class="btn" id="correr"></button>
+      <button class="btn" id="entrar" hidden></button>
+      <button class="btn cinza" id="som" style="flex:0 1 140px">🔊 Som</button>
+    </div>
+    <a class="volta" href="index.html" data-t="galaxia"></a>
+  </div>
+</div>
+
+<div class="ov" id="fim" hidden>
+  <div class="cartao" style="max-width:520px">
+    <div class="grande" id="lugar">🏆 1º lugar!</div>
+    <p class="sub" id="frase"></p>
+    <div class="podio" id="podio"></div>
+    <div class="acoes">
+      <button class="btn" id="denovo" data-t="denovo"></button>
+      <button class="btn cinza" id="outra" data-t="outra"></button>
+    </div>
+  </div>
+</div>
+
+<div class="ov" id="sala" hidden>
+  <div class="cartao" style="max-width:460px;text-align:center" id="salaCartao"></div>
+</div>
+
+<div class="ov" id="pausado" hidden>
+  <div class="cartao" style="max-width:420px;text-align:center">
+    <div class="grande">⏸</div>
+    <div class="acoes"><button class="btn" id="continuar" data-t="continuar"></button><button class="btn cinza" id="sair" data-t="menu"></button></div>
+  </div>
+</div>
+
+<script src="lib/peerjs.min.js"></script>
+<script>
+'use strict';
+// =====================================================================
+//  Turbo do José — corrida em pseudo-3D (estrada com curvas e morros)
+// =====================================================================
+const cv = document.getElementById('c'), ctxTela = cv.getContext('2d');
+let ctx = ctxTela;
+let W = 0, H = 0, DPR = 1;
+function medir() {
+  DPR = Math.min(devicePixelRatio || 1, 1.5);
+  W = Math.round(innerWidth * DPR); H = Math.round(innerHeight * DPR);
+  cv.width = W; cv.height = H;
+}
+addEventListener('resize', medir); medir();
+
+const lim = (v, a, b) => Math.max(a, Math.min(b, v));
+const rnd = n => { const x = Math.sin(n * 12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); };
+const interp = (a, b, p) => a + (b - a) * p;
+const easeIn = (a, b, p) => a + (b - a) * p * p;
+const easeInOut = (a, b, p) => a + (b - a) * (-Math.cos(p * Math.PI) / 2 + .5);
+const mod = (v, m) => ((v % m) + m) % m;
+function sobrepoe(x1, w1, x2, w2, pct = 1) { const h = pct / 2; return !(x1 + w1 * h < x2 - w2 * h || x1 - w1 * h > x2 + w2 * h); }
+
+let salvo = { carro: 'corrida', pista: 'sertao', som: true, trofeus: {}, modo: 'solo', eu: 'jose', eu2: 'gabi', lingua: /^fi/i.test(navigator.language || '') ? 'fi' : 'pt' };
+try { salvo = { ...salvo, ...JSON.parse(localStorage.getItem('turboJose') || '{}') }; } catch {}
+const guardar = () => { try { localStorage.setItem('turboJose', JSON.stringify(salvo)); } catch {} };
+
+// ---------------- textos em português e finlandês ----------------
+const TXT = {
+  pt: {
+    titulo: 'Turbo do José', sub: '🏎️ Corrida da família: José, Gabi, Madrinha, Keka, Emiel, Vovó e até o Ilo! O carro acelera sozinho: é só virar ◀ ▶ e pegar as moedas 🪙.',
+    escolhaCarro: '3. Escolha o carro', escolhaPista: '4. Escolha a pista', correr: '🏁 CORRER!', som: '🔊 Som', semSom: '🔇 Sem som',
+    galaxia: '⬅ Galáxia da Gabi', denovo: '🔁 Correr de novo', outra: '🗺️ Outra pista', continuar: '▶ Continuar', menu: '🗺️ Menu',
+    sirene: 'tem sirene!', semTrofeu: 'ainda sem troféu', trofeu: ['🏆 campeão', '🥈 2º lugar', '🥉 3º lugar'], melhor: n => `melhor: ${n}º`,
+    ord: n => `${n}º`, volta: (a, b) => `Volta ${a}/${b}`, prepare: 'Prepare-se!', vai: 'VAI!', chegada: 'CHEGADA!',
+    ultima: 'Última volta! 🏁', passou: c => `Passou ${c.pt}! 🎉`, lugar: n => `${n}º lugar!`,
+    frases: { 1: 'Você ganhou a corrida, José! Campeão!', 2: 'Quase! Segundo lugar, muito bem!', 3: 'Terceiro lugar! Subiu no pódio!' },
+    fraseOutra: 'Você terminou a corrida! Bora tentar de novo?', moedas: n => `🪙 ${n} moedas.`,
+    falaVai: 'Vai, José!', falaCampeao: 'Parabéns, José! Você é o campeão!', falaLugar: n => `Parabéns, José! ${n}º lugar!`, voz: 'pt-BR',
+    policia: 'POLÍCIA', taxi: 'TÁXI',
+    comoJogar: '1. Como vamos jogar?', quemEh: '2. Quem é o piloto?',
+    modos: { solo: ['👦 Sozinho', 'contra a família'], dupla: ['👫 Dois juntos', 'no mesmo celular'], online: ['🌐 Online', 'cada um no seu celular'] },
+    dicaDupla: (a, b) => `${a} usa ◀ ▶ da esquerda e ${b} usa ◀ ▶ da direita. No teclado: A/D e as setas.`, piloto1: 'Piloto 1 (◀ ▶ da esquerda)', piloto2: 'Piloto 2 (◀ ▶ da direita)',
+    dicaOnline: 'Um cria a sala e manda o código de 4 letras para o outro. Os dois precisam de internet.',
+    criarSala: '🌐 Criar sala', entrar: '🔑 Entrar na sala', criando: 'Criando a sala...', codigo: 'Código da sala',
+    mande: 'Mande este código para quem vai correr com você!', esperando: 'Esperando o outro piloto entrar...',
+    entrou: n => `${n} entrou! 🎉`, digite: 'Digite o código da sala', ir: 'Entrar', conectando: 'Conectando...',
+    conectado: n => `Conectado! Esperando ${n} começar a corrida...`, caiu: '📡 A conexão caiu', caiuTxt: 'O outro piloto saiu ou a internet falhou.',
+    naoAchou: 'Sala não encontrada. Confira o código.', semNet: 'Não consegui conectar. Confira a internet dos dois.', cheia: 'Essa sala já tem dois pilotos.',
+    voltar: '⬅ Voltar', cancelar: 'Cancelar', sairSala: '🚪 Sair', venceu: n => `${n} ganhou!`, aguardando: n => `Esperando ${n} escolher a próxima corrida...`,
+  },
+  fi: {
+    titulo: 'Josén Turbo', sub: '🏎️ Perheen kisa: José, Gabi, Kummi, Keka, Emiel, Mummi ja jopa Ilo! Auto kiihdyttää itse: käännä vain ◀ ▶ ja kerää kolikoita 🪙.',
+    escolhaCarro: '3. Valitse auto', escolhaPista: '4. Valitse rata', correr: '🏁 AJA!', som: '🔊 Ääni', semSom: '🔇 Ei ääntä',
+    galaxia: '⬅ Gabin galaksi', denovo: '🔁 Aja uudestaan', outra: '🗺️ Toinen rata', continuar: '▶ Jatka', menu: '🗺️ Valikko',
+    sirene: 'siinä on sireeni!', semTrofeu: 'ei vielä pokaalia', trofeu: ['🏆 mestari', '🥈 2. sija', '🥉 3. sija'], melhor: n => `paras: ${n}.`,
+    ord: n => `${n}.`, volta: (a, b) => `Kierros ${a}/${b}`, prepare: 'Valmiina!', vai: 'AJA!', chegada: 'MAALI!',
+    ultima: 'Viimeinen kierros! 🏁', passou: c => `Ohitit ${c.fi}! 🎉`, lugar: n => `${n}. sija!`,
+    frases: { 1: 'Voitit kisan, José! Mestari!', 2: 'Melkein! Toinen sija, hienoa!', 3: 'Kolmas sija! Pääsit palkintokorokkeelle!' },
+    fraseOutra: 'Pääsit maaliin! Yritetäänkö uudestaan?', moedas: n => `🪙 ${n} kolikkoa.`,
+    falaVai: 'Aja, José!', falaCampeao: 'Onneksi olkoon, José! Olet mestari!', falaLugar: n => `Onneksi olkoon, José! ${n}. sija!`, voz: 'fi-FI',
+    policia: 'POLIISI', taxi: 'TAKSI',
+    comoJogar: '1. Miten pelataan?', quemEh: '2. Kuka ajaa?',
+    modos: { solo: ['👦 Yksin', 'perhettä vastaan'], dupla: ['👫 Kaksi yhdessä', 'samalla puhelimella'], online: ['🌐 Netissä', 'kumpikin omalla puhelimella'] },
+    dicaDupla: (a, b) => `${a} ohjaa vasemmilla ◀ ▶ ja ${b} oikeilla ◀ ▶. Näppäimistöllä: A/D ja nuolet.`, piloto1: 'Kuljettaja 1 (vasemmat ◀ ▶)', piloto2: 'Kuljettaja 2 (oikeat ◀ ▶)',
+    dicaOnline: 'Toinen luo huoneen ja lähettää 4 kirjaimen koodin toiselle. Molemmat tarvitsevat internetin.',
+    criarSala: '🌐 Luo huone', entrar: '🔑 Liity huoneeseen', criando: 'Luodaan huonetta...', codigo: 'Huoneen koodi',
+    mande: 'Lähetä tämä koodi kaverille, joka ajaa kanssasi!', esperando: 'Odotetaan toista kuljettajaa...',
+    entrou: n => `${n} tuli mukaan! 🎉`, digite: 'Kirjoita huoneen koodi', ir: 'Liity', conectando: 'Yhdistetään...',
+    conectado: n => `Yhdistetty! Odotetaan, että ${n} aloittaa kisan...`, caiu: '📡 Yhteys katkesi', caiuTxt: 'Toinen kuljettaja lähti tai internet katkesi.',
+    naoAchou: 'Huonetta ei löytynyt. Tarkista koodi.', semNet: 'Yhteys ei onnistunut. Tarkista molempien internet.', cheia: 'Huoneessa on jo kaksi kuljettajaa.',
+    voltar: '⬅ Takaisin', cancelar: 'Peruuta', sairSala: '🚪 Poistu', venceu: n => `${n} voitti!`, aguardando: n => `Odotetaan, että ${n} valitsee seuraavan kisan...`,
+  },
+};
+const T = () => TXT[salvo.lingua] || TXT.pt;
+const nomeL = o => (salvo.lingua === 'fi' && o.nomeFi) || o.nome;
+
+// ---------------- números da estrada ----------------
+const SEG = 200, RUMBLE = 3, ESTRADA = 2000, FAIXAS = 3, CAM_ALT = 1000, VISTA = 260;
+const CAM_PROF = 1 / Math.tan((100 / 2) * Math.PI / 180);
+const JOGADOR_Z = CAM_ALT * CAM_PROF;
+const VMAX = SEG * 60;                 // velocidade máxima normal
+const ACEL = VMAX / 4.5, FREIO = -VMAX, SOLTO = -VMAX / 5, FORA = -VMAX / 1.8, FORA_LIM = VMAX / 2.6, CENTRIFUGA = .2;
+const VOLTAS = 2;
+const LARG_CARRO = 520;               // largura do carro no mundo
+
+// ---------------- desenhos (sprites feitos no canvas) ----------------
+function tela(w, h, desenhar) { const c = document.createElement('canvas'); c.width = w; c.height = h; desenhar(c.getContext('2d'), w, h); return c; }
+function rr(g, x, y, w, h, r) { g.beginPath(); g.roundRect ? g.roundRect(x, y, w, h, r) : g.rect(x, y, w, h); g.fill(); }
+function poli(g, pts, cor) { g.fillStyle = cor; g.beginPath(); g.moveTo(pts[0], pts[1]); for (let i = 2; i < pts.length; i += 2) g.lineTo(pts[i], pts[i + 1]); g.closePath(); g.fill(); }
+function sombra(g, w, h) { g.fillStyle = 'rgba(0,0,0,.28)'; g.beginPath(); g.ellipse(w / 2, h - 8, w * .42, 9, 0, 0, Math.PI * 2); g.fill(); }
+
+// carro visto de trás
+function desenharCarro(cor, tipo, luz = 0, placa = 'JOSÉ') {
+  return tela(240, 160, (g, w, h) => {
+    sombra(g, w, h);
+    g.fillStyle = '#16161a'; rr(g, 16, 104, 46, 48, 9); rr(g, 178, 104, 46, 48, 9);
+    const corBaixo = tipo === 'policia' ? '#14161c' : cor;
+    const cab = tipo === 'policia' ? '#f4f6fa' : cor;
+    if (tipo === 'fusca' || tipo === 'ilo') {
+      g.fillStyle = cab; g.beginPath(); g.ellipse(120, 78, 96, 66, 0, Math.PI, 0); g.fill();
+      g.fillStyle = 'rgba(160,215,255,.9)'; g.beginPath(); g.ellipse(120, 62, 52, 34, 0, Math.PI, 0); g.fill();
+    } else {
+      poli(g, [52, 72, 188, 72, 168, 22, 72, 22], cab);
+      poli(g, [66, 66, 174, 66, 158, 30, 82, 30], 'rgba(150,210,255,.95)');
+      g.fillStyle = 'rgba(255,255,255,.35)'; poli(g, [90, 34, 110, 34, 96, 62, 76, 62], 'rgba(255,255,255,.35)');
+    }
+    g.fillStyle = corBaixo; rr(g, 8, 66, 224, 66, 20);
+    if (tipo === 'policia') { g.fillStyle = '#f4f6fa'; rr(g, 8, 66, 224, 26, 14); }
+    g.fillStyle = 'rgba(255,255,255,.18)'; rr(g, 14, 70, 212, 8, 4);
+    // lanternas
+    g.fillStyle = '#ff2a2a'; rr(g, 18, 80, 44, 18, 6); rr(g, 178, 80, 44, 18, 6);
+    g.fillStyle = '#ffd0d0'; rr(g, 24, 84, 14, 8, 3); rr(g, 202, 84, 14, 8, 3);
+    g.fillStyle = 'rgba(0,0,0,.35)'; rr(g, 16, 116, 208, 12, 6);
+    // placa
+    g.fillStyle = '#fff'; rr(g, 90, 96, 60, 20, 4);
+    g.fillStyle = '#1b2a6b'; g.font = 'bold 13px sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText(tipo === 'policia' ? (salvo.lingua === 'fi' ? '112' : '190') : tipo === 'bombeiro' ? (salvo.lingua === 'fi' ? '112' : '193') : placa, 120, 107);
+    if (tipo === 'ilo') { // orelhas de cachorro e patinhas
+      g.fillStyle = '#6b3f1d';
+      g.beginPath(); g.ellipse(58, 34, 16, 30, -.6, 0, 7); g.fill(); g.beginPath(); g.ellipse(182, 34, 16, 30, .6, 0, 7); g.fill();
+      g.fillStyle = '#fff'; for (const [px, py] of [[40, 104], [200, 104]]) { g.beginPath(); g.arc(px, py, 6, 0, 7); g.fill(); for (const [dx, dy] of [[-7, -8], [0, -11], [7, -8]]) { g.beginPath(); g.arc(px + dx, py + dy, 3, 0, 7); g.fill(); } }
+    }
+    if (tipo === 'corrida') {
+      g.fillStyle = '#fff'; g.fillRect(108, 22, 24, 48); g.fillRect(108, 66, 24, 30);
+      g.fillStyle = '#111'; g.fillRect(64, 8, 8, 18); g.fillRect(168, 8, 8, 18); rr(g, 40, 2, 160, 12, 5);
+    }
+    if (tipo === 'taxi') {
+      g.fillStyle = '#111'; for (let i = 0; i < 11; i++) g.fillRect(14 + i * 20, i % 2 ? 72 : 66, 10, 6);
+      g.fillStyle = '#fff'; rr(g, 94, 6, 52, 16, 4); g.fillStyle = '#111'; g.font = 'bold 12px sans-serif'; g.fillText(T().taxi, 120, 15);
+    }
+    if (tipo === 'bombeiro') {
+      g.fillStyle = '#c9ced6'; g.fillRect(60, 10, 6, 20); g.fillRect(174, 10, 6, 20); g.fillRect(60, 8, 120, 5);
+      for (let x = 70; x < 176; x += 14) g.fillRect(x, 8, 4, 16);
+      g.fillStyle = luz ? '#fff' : '#ffb000'; rr(g, 104, 0, 32, 10, 4);
+    }
+    if (tipo === 'policia') {
+      g.fillStyle = '#222'; rr(g, 78, 8, 84, 14, 5);
+      g.fillStyle = luz ? '#ff2a2a' : '#7a1010'; rr(g, 80, 9, 38, 12, 4);
+      g.fillStyle = luz ? '#1e4cff' : '#1a2a6a'; rr(g, 122, 9, 38, 12, 4);
+      g.fillStyle = '#14161c'; g.font = 'bold 15px sans-serif'; g.fillText(T().policia, 120, 80);
+    }
+  });
+}
+
+const S = {}; // sprites do cenário: { img, w (largura no mundo) }
+function sprite(nome, w, img) { S[nome] = { img, w }; }
+function criarSprites() {
+  sprite('cacto', 900, tela(160, 280, (g, w, h) => {
+    sombra(g, w, h); g.fillStyle = '#2f8f4e';
+    rr(g, 62, 30, 36, 240, 18); rr(g, 18, 100, 30, 90, 15); rr(g, 18, 170, 60, 24, 12); rr(g, 112, 70, 30, 100, 15); rr(g, 86, 150, 56, 24, 12);
+    g.fillStyle = '#3fb064'; rr(g, 70, 36, 10, 220, 5); rr(g, 24, 106, 8, 70, 4); rr(g, 118, 76, 8, 80, 4);
+    g.fillStyle = '#ff5fa2'; g.beginPath(); g.arc(80, 30, 9, 0, 7); g.fill();
+  }));
+  sprite('bode', 620, tela(220, 170, (g, w, h) => {
+    sombra(g, w, h); g.fillStyle = '#6b4a2b';
+    for (const x of [60, 82, 140, 160]) g.fillRect(x, 110, 10, 48);
+    g.fillStyle = '#f2ead8'; g.beginPath(); g.ellipse(110, 100, 66, 34, 0, 0, 7); g.fill();
+    g.fillStyle = '#8a5a30'; g.beginPath(); g.ellipse(130, 94, 26, 18, 0, 0, 7); g.fill();
+    g.fillStyle = '#f2ead8'; g.beginPath(); g.ellipse(176, 66, 24, 20, -.4, 0, 7); g.fill();
+    g.strokeStyle = '#6b4a2b'; g.lineWidth = 6; g.beginPath(); g.moveTo(170, 50); g.quadraticCurveTo(160, 20, 140, 26); g.stroke();
+    g.fillStyle = '#222'; g.beginPath(); g.arc(184, 62, 4, 0, 7); g.fill();
+    g.fillStyle = '#d8ccb0'; poli(g, [182, 84, 194, 84, 188, 104], '#d8ccb0');
+  }));
+  sprite('casinha', 1500, tela(300, 220, (g, w, h) => {
+    sombra(g, w, h); g.fillStyle = '#fbf3e4'; g.fillRect(30, 90, 240, 120);
+    poli(g, [16, 96, 150, 22, 284, 96], '#d9622b');
+    g.fillStyle = '#1e7bd6'; g.fillRect(126, 132, 48, 78); g.fillStyle = '#7cc4ff'; g.fillRect(56, 118, 46, 40); g.fillRect(198, 118, 46, 40);
+    g.fillStyle = '#ffcf3a'; g.fillRect(30, 196, 240, 14);
+  }));
+  const pinheiro = neve => tela(220, 360, (g, w, h) => {
+    sombra(g, w, h); g.fillStyle = '#5b3a1e'; g.fillRect(98, 290, 24, 60);
+    const camadas = [[110, 20, 60, 120], [110, 80, 84, 200], [110, 150, 104, 300]];
+    for (const [x, y, l, b] of camadas) {
+      poli(g, [x, y, x - l, b, x + l, b], '#1f6b3e');
+      poli(g, [x, y, x - l * .2, b, x + l, b], '#185733');
+      if (neve) { poli(g, [x, y, x - l * .45, y + (b - y) * .45, x + l * .45, y + (b - y) * .45], '#f7fbff'); g.fillStyle = '#eef6ff'; g.fillRect(x - l, b - 6, l * 2, 6); }
+    }
+  });
+  sprite('pinheiroNeve', 1300, pinheiro(true));
+  sprite('pinheiro', 1300, pinheiro(false));
+  sprite('boneco', 700, tela(180, 240, (g, w, h) => {
+    sombra(g, w, h); g.fillStyle = '#fff';
+    for (const [y, r] of [[180, 52], [110, 40], [56, 30]]) { g.beginPath(); g.arc(90, y, r, 0, 7); g.fill(); }
+    g.fillStyle = '#ff7a1a'; poli(g, [92, 58, 92, 66, 124, 62], '#ff7a1a');
+    g.fillStyle = '#111'; g.beginPath(); g.arc(80, 50, 4, 0, 7); g.arc(102, 50, 4, 0, 7); g.fill(); g.fillRect(58, 26, 64, 8); g.fillRect(70, 0, 40, 28);
+    g.fillStyle = '#e8313f'; g.fillRect(60, 80, 62, 12); g.fillRect(100, 80, 12, 34);
+    g.fillStyle = '#111'; for (const y of [104, 124, 146]) { g.beginPath(); g.arc(90, y, 4, 0, 7); g.fill(); }
+  }));
+  sprite('casaVermelha', 1500, tela(300, 220, (g, w, h) => {
+    sombra(g, w, h); g.fillStyle = '#b3262d'; g.fillRect(30, 96, 240, 114);
+    poli(g, [16, 100, 150, 24, 284, 100], '#3b2a2a'); poli(g, [40, 92, 150, 34, 260, 92], '#f4f8fc');
+    g.fillStyle = '#fff'; g.fillRect(30, 96, 240, 6); g.fillRect(126, 136, 50, 74);
+    g.fillStyle = '#ffe28a'; g.fillRect(56, 124, 44, 40); g.fillRect(200, 124, 44, 40);
+    g.fillStyle = '#fff'; g.fillRect(76, 124, 4, 40); g.fillRect(220, 124, 4, 40);
+  }));
+  sprite('rena', 900, tela(240, 230, (g, w, h) => {
+    sombra(g, w, h); g.fillStyle = '#6b4325';
+    for (const x of [70, 92, 150, 170]) g.fillRect(x, 150, 12, 64);
+    g.beginPath(); g.ellipse(124, 140, 74, 36, 0, 0, 7); g.fill();
+    g.beginPath(); g.ellipse(196, 92, 26, 20, -.5, 0, 7); g.fill(); g.fillRect(176, 96, 22, 46);
+    g.strokeStyle = '#d8c39a'; g.lineWidth = 6;
+    g.beginPath(); g.moveTo(190, 76); g.lineTo(174, 30); g.moveTo(180, 52); g.lineTo(160, 44); g.moveTo(202, 74); g.lineTo(214, 26); g.moveTo(208, 50); g.lineTo(228, 42); g.stroke();
+    g.fillStyle = '#ff3030'; g.beginPath(); g.arc(218, 100, 8, 0, 7); g.fill();
+    g.fillStyle = '#f2e6cf'; g.beginPath(); g.ellipse(52, 126, 14, 10, 0, 0, 7); g.fill();
+  }));
+  sprite('iglu', 1200, tela(260, 170, (g, w, h) => {
+    sombra(g, w, h); g.fillStyle = '#eef6ff'; g.beginPath(); g.ellipse(130, 160, 120, 130, 0, Math.PI, 0); g.fill();
+    g.strokeStyle = '#bcd3ea'; g.lineWidth = 3;
+    for (const y of [130, 100, 72]) { g.beginPath(); g.moveTo(10 + (160 - y) * .2, y); g.lineTo(250 - (160 - y) * .2, y); g.stroke(); }
+    g.fillStyle = '#ffd36b'; g.beginPath(); g.ellipse(130, 160, 34, 46, 0, Math.PI, 0); g.fill();
+    g.fillStyle = 'rgba(255,210,100,.35)'; g.beginPath(); g.ellipse(130, 160, 60, 70, 0, Math.PI, 0); g.fill();
+  }));
+  sprite('coqueiro', 1500, tela(260, 380, (g, w, h) => {
+    sombra(g, w, h); g.strokeStyle = '#8a5a2b'; g.lineWidth = 18; g.lineCap = 'round';
+    g.beginPath(); g.moveTo(120, 370); g.quadraticCurveTo(100, 200, 150, 70); g.stroke();
+    g.strokeStyle = '#6e4520'; g.lineWidth = 4; for (let y = 340; y > 90; y -= 22) { g.beginPath(); g.moveTo(104, y); g.lineTo(130, y - 4); g.stroke(); }
+    g.fillStyle = '#2f9e44';
+    for (let i = 0; i < 7; i++) { const a = -Math.PI + i * Math.PI / 6; g.save(); g.translate(150, 70); g.rotate(a); g.beginPath(); g.ellipse(60, 0, 64, 14, .25, 0, 7); g.fill(); g.restore(); }
+    g.fillStyle = '#6b3d14'; for (const [x, y] of [[140, 80], [160, 84], [150, 92]]) { g.beginPath(); g.arc(x, y, 10, 0, 7); g.fill(); }
+  }));
+  sprite('guardaSol', 800, tela(220, 230, (g, w, h) => {
+    sombra(g, w, h); g.fillStyle = '#ddd'; g.fillRect(106, 70, 8, 150);
+    const cores = ['#ff3b3b', '#fff', '#ffd23f', '#fff', '#2d9cff', '#fff'];
+    for (let i = 0; i < 6; i++) { g.fillStyle = cores[i]; g.beginPath(); g.moveTo(110, 20); g.arc(110, 90, 100, Math.PI + i * Math.PI / 6, Math.PI + (i + 1) * Math.PI / 6); g.closePath(); g.fill(); }
+  }));
+  sprite('bandeira', 520, tela(140, 380, (g, w, h) => {
+    g.fillStyle = '#ddd'; g.fillRect(20, 10, 10, 360);
+    for (let r = 0; r < 5; r++) for (let c = 0; c < 6; c++) { g.fillStyle = (r + c) % 2 ? '#111' : '#fff'; g.fillRect(30 + c * 18, 14 + r * 18, 18, 18); }
+  }));
+  sprite('moeda', 240, tela(120, 120, (g, w, h) => {
+    const gr = g.createRadialGradient(46, 42, 6, 60, 60, 56); gr.addColorStop(0, '#fff6b0'); gr.addColorStop(.6, '#ffc61a'); gr.addColorStop(1, '#d48a00');
+    g.fillStyle = gr; g.beginPath(); g.arc(60, 60, 54, 0, 7); g.fill();
+    g.strokeStyle = '#a86a00'; g.lineWidth = 6; g.beginPath(); g.arc(60, 60, 42, 0, 7); g.stroke();
+    g.fillStyle = '#fff3a0'; g.beginPath();
+    for (let i = 0; i < 10; i++) { const r = i % 2 ? 14 : 30, a = -Math.PI / 2 + i * Math.PI / 5; g.lineTo(60 + Math.cos(a) * r, 60 + Math.sin(a) * r); }
+    g.closePath(); g.fill();
+  }));
+  sprite('raio', 300, tela(130, 150, (g, w, h) => {
+    const gr = g.createRadialGradient(65, 75, 4, 65, 75, 66); gr.addColorStop(0, 'rgba(120,220,255,.9)'); gr.addColorStop(1, 'rgba(120,220,255,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, w, h);
+    poli(g, [76, 8, 30, 84, 62, 84, 50, 142, 102, 60, 70, 60, 88, 8], '#fff27a');
+    g.strokeStyle = '#ff9a1f'; g.lineWidth = 5; g.stroke();
+  }));
+  const placa = (txt, cor) => tela(320, 240, (g, w, h) => {
+    sombra(g, w, h); g.fillStyle = '#8b939c'; g.fillRect(60, 110, 12, 124); g.fillRect(248, 110, 12, 124);
+    g.fillStyle = cor; rr(g, 10, 16, 300, 110, 14); g.strokeStyle = '#fff'; g.lineWidth = 6; g.strokeRect(20, 26, 280, 90);
+    g.fillStyle = '#fff'; g.font = 'bold 40px Fredoka, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(txt, 160, 72);
+  });
+  for (const p of PISTAS) sprite('placa_' + p.id, 1500, placa(salvo.lingua === 'fi' && p.placaFi || p.placa, p.corPlaca));
+}
+
+// ---------------- pistas ----------------
+const PISTAS = [
+  { id: 'sertao', fundoMenu: 'linear-gradient(160deg,#ff9d4a,#c7703a)', nome: 'Sertão de Solonópole', nomeFi: 'Solonópolen aavikko', ic: '🌵', placa: 'SOLONÓPOLE', corPlaca: '#1f7a3a',
+    cores: { grama: ['#e2ac62', '#d69f55'], rumble: ['#fff', '#e8313f'], estrada: ['#8c7a64', '#85735d'], faixa: '#fff2c0', neblina: '#f6cf94' },
+    cenario: ['cacto', 'cacto', 'bode', 'cacto', 'casinha'],
+    pecas: [[10, 40, 10, 0, 0], [30, 70, 30, 2, 0], [25, 60, 25, 0, 30], [30, 60, 30, -3, -15], [20, 80, 20, 0, 0], [25, 50, 25, 4, 20], [25, 60, 25, -2, -30], [40, 90, 40, 0, 15], [30, 50, 30, -4, 0], [25, 70, 25, 3, -15], [20, 60, 20, 0, 0], [30, 50, 30, -2, 0]] },
+  { id: 'neve', fundoMenu: 'linear-gradient(160deg,#7fb8ec,#5d87b8)', nome: 'Neve de Helsinque', nomeFi: 'Helsingin lumi', ic: '❄️', placa: 'HELSINQUE', placaFi: 'HELSINKI', corPlaca: '#1f5fbf',
+    cores: { grama: ['#f4f8fc', '#e7eef6'], rumble: ['#fff', '#2a6fdb'], estrada: ['#5d6670', '#58616b'], faixa: '#fff', neblina: '#e2ecf5' },
+    cenario: ['pinheiroNeve', 'pinheiroNeve', 'boneco', 'pinheiroNeve', 'casaVermelha'],
+    pecas: [[10, 40, 10, 0, 0], [30, 60, 30, -3, 10], [25, 60, 25, 3, 20], [30, 80, 30, 0, -20], [25, 50, 25, -4, 0], [25, 50, 25, 4, 25], [30, 90, 30, 0, -10], [25, 60, 25, -2, -15], [30, 50, 30, 5, 0], [20, 70, 20, 0, 10], [30, 60, 30, -3, 0]] },
+  { id: 'aurora', fundoMenu: 'linear-gradient(160deg,#2a1a6e,#0e3a4a)', nome: 'Aurora na Lapônia', nomeFi: 'Lapin revontulet', ic: '🌌', placa: 'ROVANIEMI', corPlaca: '#5b2bbf',
+    cores: { grama: ['#9fb3cc', '#94a9c3'], rumble: ['#fff', '#7a3cff'], estrada: ['#3b4250', '#373e4b'], faixa: '#bfffe6', neblina: '#1b2348' },
+    cenario: ['pinheiroNeve', 'rena', 'pinheiroNeve', 'iglu', 'pinheiroNeve'],
+    pecas: [[10, 40, 10, 0, 0], [25, 60, 25, 2, 20], [30, 60, 30, -4, 0], [25, 70, 25, 0, 30], [30, 50, 30, 3, -20], [25, 60, 25, -3, -20], [30, 90, 30, 0, 0], [25, 50, 25, 5, 15], [30, 60, 30, -2, 0], [20, 70, 20, 0, -10], [25, 60, 25, 3, 0]] },
+  { id: 'praia', fundoMenu: 'linear-gradient(160deg,#3fb6f5,#e0b85a)', nome: 'Praia de Fortaleza', nomeFi: 'Fortalezan ranta', ic: '🏖️', placa: 'FORTALEZA', corPlaca: '#0a7cb8',
+    cores: { grama: ['#f4dea2', '#ecd496'], rumble: ['#fff', '#00a6d6'], estrada: ['#707079', '#6b6b74'], faixa: '#fff', neblina: '#c3e9f7' },
+    cenario: ['coqueiro', 'coqueiro', 'guardaSol', 'coqueiro'],
+    pecas: [[10, 40, 10, 0, 0], [30, 80, 30, 2, 0], [25, 50, 25, -3, 15], [30, 70, 30, 0, -15], [25, 60, 25, 4, 0], [30, 90, 30, -2, 10], [25, 50, 25, 3, -10], [30, 70, 30, 0, 0], [25, 60, 25, -4, 0], [20, 70, 20, 2, 0]] },
+];
+
+const CARROS = [
+  { id: 'corrida', nome: 'Relâmpago', nomeFi: 'Salama', cor: '#ff2d2d' },
+  { id: 'policia', nome: 'Polícia', nomeFi: 'Poliisi', cor: '#f4f6fa', sirene: true },
+  { id: 'bombeiro', nome: 'Bombeiro', nomeFi: 'Paloauto', cor: '#e3201b', sirene: true },
+  { id: 'taxi', nome: 'Táxi', nomeFi: 'Taksi', cor: '#ffcc1a' },
+  { id: 'fusca', nome: 'Fusquinha', nomeFi: 'Kupla', cor: '#2d9cff' },
+  { id: 'corrida2', tipo: 'corrida', nome: 'Foguete Verde', nomeFi: 'Vihreä raketti', cor: '#20c46a' },
+];
+// a família toda: qualquer um pode ser piloto; quem não está pilotando corre como rival
+const FAMILIA = [
+  { id: 'jose', nome: 'José', nomeFi: 'José', pt: 'o José', fi: 'Josén', placa: 'JOSÉ', ic: '👦', cor: '#ff2d2d', tipo: 'corrida', vel: .8 },
+  { id: 'gabi', nome: 'Gabi', nomeFi: 'Gabi', pt: 'a Gabi', fi: 'Gabin', placa: 'GABI', ic: '👧', cor: '#ff5fa2', tipo: 'corrida', vel: .9 },
+  { id: 'ana', nome: 'Madrinha Ana', nomeFi: 'Kummi Ana', pt: 'a Madrinha', fi: 'Kummi Anan', placa: 'ANA', ic: '👩', cor: '#ffb21a', tipo: 'corrida', vel: .86 },
+  { id: 'ilo', nome: 'Ilo', nomeFi: 'Ilo', pt: 'o Ilo', fi: 'Ilon', placa: 'ILO', ic: '🐶', cor: '#b5773d', tipo: 'ilo', vel: .84 },
+  { id: 'keka', nome: 'Keka', nomeFi: 'Keka', pt: 'a Keka', fi: 'Kekan', placa: 'KEKA', ic: '👩‍🦱', cor: '#9b5cff', tipo: 'corrida', vel: .82 },
+  { id: 'emiel', nome: 'Emiel', nomeFi: 'Emiel', pt: 'o Emiel', fi: 'Emielin', placa: 'EMIEL', ic: '👨', cor: '#21b8a6', tipo: 'corrida', vel: .79 },
+  { id: 'vovo', nome: 'Vovó Hermina', nomeFi: 'Mummi Hermina', pt: 'a Vovó', fi: 'Mummin', placa: 'VOVÓ', placaFi: 'MUMMI', ic: '👵', cor: '#8ad4ff', tipo: 'fusca', vel: .74 },
+];
+const pessoa = id => FAMILIA.find(f => f.id === id) || FAMILIA[0];
+const placaDe = f => salvo.lingua === 'fi' && f.placaFi || f.placa;
+// cada pessoa tem o seu carro (usado pelo segundo piloto no modo de dois)
+for (const f of FAMILIA) CARROS.push({ id: 'p_' + f.id, tipo: f.tipo, nome: f.nome, cor: f.cor, oculto: true });
+
+let segs = [], comprimento = 0, P = PISTAS[0], LARGADA = 8;
+function ultimoY() { return segs.length ? segs[segs.length - 1].p2.mundo.y : 0; }
+function novoSeg(curva, y) {
+  const n = segs.length;
+  segs.push({ i: n, p1: { mundo: { y: ultimoY(), z: n * SEG }, cam: {}, tela: {} }, p2: { mundo: { y, z: (n + 1) * SEG }, cam: {}, tela: {} },
+    curva, sprites: [], carros: [], claro: Math.floor(n / RUMBLE) % 2 === 0 });
+}
+function trecho(entra, fica, sai, curva, altura) {
+  const y0 = ultimoY(), y1 = y0 + altura * SEG, total = entra + fica + sai;
+  for (let n = 0; n < entra; n++) novoSeg(easeIn(0, curva, n / entra), easeInOut(y0, y1, n / total));
+  for (let n = 0; n < fica; n++) novoSeg(curva, easeInOut(y0, y1, (entra + n) / total));
+  for (let n = 0; n < sai; n++) novoSeg(easeInOut(curva, 0, n / sai), easeInOut(y0, y1, (entra + fica + n) / total));
+}
+function montarPista(p) {
+  P = p; segs = [];
+  for (const [a, b, c, cu, al] of p.pecas) trecho(a, b, c, cu, al);
+  trecho(40, 40, 40, 0, -ultimoY() / SEG); // volta para a altura do começo
+  const N = segs.length;
+  comprimento = N * SEG;
+  for (let i = LARGADA; i < LARGADA + 3; i++) segs[i].xadrez = true;
+  // cenário dos dois lados
+  for (let i = 12; i < N - 4; i += 3) {
+    if (rnd(i * 1.7) < .4) continue;
+    const lado = rnd(i * 3.1) < .5 ? -1 : 1;
+    const tipo = p.cenario[Math.floor(rnd(i * 5.3) * p.cenario.length)];
+    segs[i].sprites.push({ tipo, x: lado * (1.35 + rnd(i * 7.7) * 2.2) });
+  }
+  for (let i = 30; i < N; i += 260) segs[i].sprites.push({ tipo: 'placa_' + p.id, x: -1.7 }, { tipo: 'placa_' + p.id, x: 1.7 });
+  segs[LARGADA].sprites.push({ tipo: 'bandeira', x: -1.25 }, { tipo: 'bandeira', x: 1.15 });
+  // moedas em fileiras e raios de turbo
+  for (let i = 40; i < N - 20; i += 70) {
+    const x = [-.55, 0, .55][Math.floor(rnd(i * 2.2) * 3)];
+    for (let k = 0; k < 6; k++) segs[i + k * 3].sprites.push({ tipo: 'moeda', x, pego: [-1, -1] });
+  }
+  for (let i = 150; i < N - 20; i += 330) segs[i].sprites.push({ tipo: 'raio', x: [-.5, .5][Math.floor(rnd(i) * 2)], pego: [-1, -1] });
+}
+const segDe = z => segs[Math.floor(mod(z, comprimento) / SEG)];
+
+// ---------------- estado da corrida ----------------
+// Cada piloto humano é um objeto. Para reaproveitar o código de um jogador só, o piloto da vez é
+// "carregado" nas variáveis abaixo (usar) e guardado de volta depois (guardarJ).
+let modo = 'menu', pos = 0, dist = 0, x = 0, vel = 0, turbo = 0, moedas = 0, volta = 0;
+let rivais = [], tempo = 0, largadaT = 0, terminouT = 0, chegada = [], ceuOff = 0, morroOff = 0, tremor = 0, pausado = false;
+let SPR_JOGADOR = [], carroEscolhido = CARROS[0], sireneLigada = false, avisos = [], cuidadoT = -9;
+let teclas = { esq: false, dir: false, freio: false };
+let jogadores = [], J = null, jogo = 'solo', fimT = 0, fimMostrado = false;
+function usar(j) { J = j; ({ pos, dist, x, vel, turbo, moedas, volta, tremor, ceuOff, morroOff, avisos, teclas, sireneLigada, cuidadoT, terminouT } = j); SPR_JOGADOR = j.spr; carroEscolhido = j.carro; }
+function guardarJ(j) { Object.assign(j, { pos, dist, x, vel, turbo, moedas, volta, tremor, ceuOff, morroOff, avisos, teclas, sireneLigada, cuidadoT, terminouT }); }
+
+function aviso(txt, cor = '#ffd23f', grande = false, pt = '') { avisos.push({ txt, pt, cor, t: 0, grande }); if (avisos.length > 3) avisos.shift(); }
+// voz em finlandês com a tradução em português na tela
+const NUM_FI = ['nolla', 'yksi', 'kaksi', 'kolme', 'neljä', 'viisi', 'kuusi', 'seitsemän', 'kahdeksan', 'yhdeksän', 'kymmenen'];
+const NUM_PT = ['zero', 'um', 'dois', 'três', 'quatro', 'cinco', 'seis', 'sete', 'oito', 'nove', 'dez'];
+const numFi = n => n <= 10 ? NUM_FI[n] : n === 20 ? 'kaksikymmentä' : n === 30 ? 'kolmekymmentä' : n === 40 ? 'neljäkymmentä' : n === 50 ? 'viisikymmentä' : String(n);
+const numPt = n => n <= 10 ? NUM_PT[n] : n === 20 ? 'vinte' : n === 30 ? 'trinta' : n === 40 ? 'quarenta' : n === 50 ? 'cinquenta' : String(n);
+let vozFim = 0, vozUltima = '';
+function voz(fi, pt, { cor = '#ffd23f', grande = true, importante = false, mostrar = true } = {}) {
+  if (mostrar) aviso(fi, cor, grande, pt);
+  if (!salvo.som || !('speechSynthesis' in window)) return;
+  const locais = jogadores.filter(j => !j.remoto).length;
+  if (locais > 1 && !importante) return;                         // dois no mesmo celular: só as falas importantes
+  if (fi === vozUltima && tempo < vozFim + 1) return;             // não repete a mesma fala para os dois
+  if (!importante && (speechSynthesis.speaking || tempo < vozFim)) return; // não atropela outra fala
+  try {
+    if (importante) speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(fi.replace(/[^\p{L}\p{N} ,.!?]/gu, ''));
+    u.lang = 'fi-FI'; u.rate = 1; u.pitch = 1.25;
+    const v = speechSynthesis.getVoices().find(v => /^fi/i.test(v.lang)); if (v) u.voice = v;
+    speechSynthesis.speak(u); vozFim = tempo + 1.2; vozUltima = fi;
+  } catch {}
+}
+
+function novoPiloto(id, quem, carroId, remoto = false) {
+  const carro = CARROS.find(c => c.id === carroId) || CARROS[0];
+  const tipo = carro.tipo || carro.id, h = pessoa(quem);
+  const placa = placaDe(h);
+  const spr = [desenharCarro(carro.cor, tipo, 0, placa), desenharCarro(carro.cor, tipo, 1, placa)];
+  const j = { ...h, id, quem, cor: carro.cor, carro, spr, remoto,
+    pos: 0, dist: 0, x: 0, vel: 0, turbo: 0, moedas: 0, volta: 0, tremor: 0, ceuOff: 0, morroOff: 0, avisos: [],
+    teclas: { esq: false, dir: false, freio: false }, sireneLigada: false, cuidadoT: -9, terminouT: 0, fim: 0, lugar: 0, atras: new Map(), alvoX: 0, alvoD: 0 };
+  // o carro dele como os outros o veem na pista
+  j.obj = { humano: id, nome: h.nome, nomeFi: h.nomeFi, pt: h.pt, fi: h.fi, cor: carro.cor, spr: spr[0], sprLuz: spr[1], x: 0, z: 0, dist: 0, vel: 0 };
+  return j;
+}
+
+// config: { pista, pilotos: [{ quem, carro, remoto }] }
+function novaCorrida(cfg) {
+  criarSprites();
+  montarPista(PISTAS.find(p => p.id === cfg.pista) || PISTAS[0]);
+  const zLarg = LARGADA * SEG;
+  jogadores = cfg.pilotos.map((p, k) => novoPiloto(k, p.quem, p.carro, p.remoto));
+  const humanos = jogadores.map(j => j.quem);
+  // rivais da família (quem está jogando de verdade não corre como rival)
+  const grid = [[0, -.5], [-1, .5], [-2, -.5], [-4, -.5], [-5, .5]];
+  const ordemRivais = ['gabi', 'ana', 'ilo', 'keka', 'emiel', 'vovo', 'jose'];
+  rivais = ordemRivais.filter(id => !humanos.includes(id)).slice(0, 5).map(pessoa).map((r, k) => {
+    const d = (grid[k][0] + 1) * 3.2 * SEG;
+    const c = { ...r, fator: r.vel, x: grid[k][1], dist: d, vel: 0, spr: desenharCarro(r.cor, r.tipo, 0, placaDe(r)), fim: 0, alvoD: d, alvoX: grid[k][1] };
+    c.z = mod(zLarg + d, comprimento);
+    return c;
+  });
+  for (const s of segs) s.carros = [];
+  for (const c of rivais) segDe(c.z).carros.push(c);
+  jogadores.forEach((j, k) => {
+    j.dist = j.alvoD = -2.2 * SEG - k * 1.6 * SEG; j.x = j.alvoX = k ? -.5 : .5;
+    j.pos = mod(zLarg + j.dist - JOGADOR_Z, comprimento);
+    for (const c of rivais) j.atras.set(c, c.dist < j.dist);
+    j.obj.dist = j.dist; j.obj.x = j.x; j.obj.z = mod(zLarg + j.dist, comprimento);
+    segDe(j.obj.z).carros.push(j.obj);
+  });
+  for (const j of jogadores) for (const o of jogadores) if (o !== j) j.atras.set(o.obj, o.dist < j.dist);
+  chegada = []; modo = 'largada'; largadaT = 0; tempo = 0; fimT = 0; fimMostrado = false; pausado = false;
+  usar(jogadores.find(j => !j.remoto));
+  configurarControles();
+  mostrar('jogo');
+  som.motor(true);
+}
+
+function colocacaoDe(j) {
+  return 1 + rivais.filter(c => c.dist > j.dist).length + jogadores.filter(o => o !== j && o.dist > j.dist).length;
+}
+function colocacao() { return J.fim ? J.lugar : colocacaoDe(J); }
+function moverNoSeg(c, zNovo) {
+  const a = segDe(c.z), b = segDe(zNovo);
+  c.z = zNovo;
+  if (a !== b) { const k = a.carros.indexOf(c); if (k >= 0) a.carros.splice(k, 1); b.carros.push(c); }
+}
+
+function passo(dt) {
+  tempo += dt;
+  if (modo === 'largada') {
+    const antes = largadaT; largadaT += dt;
+    for (const s of [0, 1, 2]) if (antes < s + .5 && largadaT >= s + .5) { som.bip(440); voz(['Kolme', 'Kaksi', 'Yksi'][s], ['Três', 'Dois', 'Um'][s], { importante: true, mostrar: false }); }
+    if (antes < 3.5 && largadaT >= 3.5) {
+      som.bip(880, .5); modo = 'corrida'; som.musica(true);
+      const locais = jogadores.filter(j => !j.remoto);
+      const fi = locais.length > 1 ? '' : ', ' + locais[0].nomeFi, pt = locais.length > 1 ? '' : ', ' + locais[0].nome;
+      for (const j of locais) { usar(j); aviso(`Aja${fi}!`, '#7dff9a', true, `Vai${pt}!`); guardarJ(j); }
+      voz(`Aja${fi}!`, `Vai${pt}!`, { importante: true, mostrar: false });
+    }
+    return;
+  }
+  if (modo !== 'corrida') return;
+  for (const j of jogadores) {
+    if (j.remoto) { remotoAndar(j, dt); continue; }
+    usar(j); andarJogador(dt); guardarJ(j);
+    j.obj.dist = j.dist; j.obj.x = j.x; j.obj.vel = j.vel; moverNoSeg(j.obj, mod(LARGADA * SEG + j.dist, comprimento));
+  }
+  if (rede.papel === 'conv') rivaisRemotos(dt); else andarRivais(dt);
+  // fim da corrida: todos os pilotos chegaram (ou 25 s depois do primeiro)
+  const primeiro = jogadores.find(j => j.fim);
+  if (primeiro && (jogadores.every(j => j.fim) || tempo - primeiro.fim > 25)) { fimT += dt; if (fimT > 2.4) mostrarFim(); }
+  usar(jogadores.find(j => !j.remoto));
+}
+
+function andarJogador(dt) {
+  const segJ = segDe(pos + JOGADOR_Z), pct = vel / VMAX, dx = dt * 2.2 * Math.max(pct, .25);
+  const correndo = !J.fim;
+  if (correndo) {
+    if (teclas.esq) x -= dx; else if (teclas.dir) x += dx;
+    else { const alvo = lim(x, -.7, .7); x += (alvo - x) * Math.min(1, dt * 2.4); } // ajudinha: volta para a estrada
+  } else x = interp(x, J.id ? -.4 : .4, dt); // depois da chegada vai sozinho
+  x -= dx * pct * segJ.curva * CENTRIFUGA;
+  const vmax = VMAX * (turbo > 0 ? 1.35 : 1);
+  if (!correndo) vel = Math.max(VMAX * .3, vel + SOLTO * dt);
+  else if (teclas.freio) vel += FREIO * dt;
+  else vel += ACEL * (turbo > 0 ? 1.8 : 1) * dt;
+  if (Math.abs(x) > 1 && vel > FORA_LIM) { vel += FORA * dt; tremor = .5; }
+  vel = lim(vel, 0, vmax);
+  x = lim(x, -2.6, 2.6);
+  turbo = Math.max(0, turbo - dt);
+  // batida em árvore/placa fora da estrada: só freia e empurra de volta
+  if (Math.abs(x) > 1) for (const s of segJ.sprites) {
+    if (s.pego !== undefined || !S[s.tipo]) continue;
+    const w = S[s.tipo].w / ESTRADA * .6;
+    if (sobrepoe(x, LARG_CARRO / ESTRADA, s.x + (s.x < 0 ? -w / 2 : w / 2), w)) {
+      vel = VMAX / 5; x += x > 0 ? -.35 : .35; tremor = .4; som.batida(); cuidado(); break;
+    }
+  }
+  // moedas e raios (cada piloto pega as suas)
+  for (const k of [-1, 0, 1]) for (const s of segs[mod(segJ.i + k, segs.length)].sprites) {
+    if (s.pego === undefined || s.pego[J.id] === volta) continue;
+    if (sobrepoe(x, LARG_CARRO / ESTRADA, s.x, S[s.tipo].w / ESTRADA * 1.4)) {
+      s.pego[J.id] = volta;
+      if (s.tipo === 'moeda') { moedas++; som.moeda(); if (moedas % 10 === 0) voz(`Hienoa! ${numFi(moedas)} kolikkoa!`, `Muito bem! ${numPt(moedas)} moedas!`); else aviso('+1 🪙'); }
+      else { turbo = 3; som.turbo(); voz('Turbo!', 'Turbo!', { cor: '#7fe3ff', importante: true }); }
+    }
+  }
+  // batidas com os rivais e com o outro piloto: freia e é empurrado para o lado
+  if (correndo) for (const c of [...rivais, ...jogadores.filter(o => o !== J).map(o => o.obj)]) {
+    if (vel <= c.vel) continue;
+    const d = c.dist - (dist + JOGADOR_Z);
+    if (d > 0 && d < SEG * 1.2 && sobrepoe(x, LARG_CARRO / ESTRADA, c.x, LARG_CARRO / ESTRADA, .85)) {
+      vel = c.vel * .85; x += x < c.x ? -.18 : .18; tremor = .3; som.batida(); cuidado();
+    }
+  }
+  // anda
+  dist += vel * dt;
+  pos = mod(LARGADA * SEG + dist - JOGADOR_Z, comprimento);
+  const novaVolta = Math.max(0, Math.floor(dist / comprimento));
+  if (novaVolta > volta && correndo) { volta = novaVolta; if (volta < VOLTAS) { som.bip(660, .3); voz('Viimeinen kierros!', 'Última volta!', { cor: '#fff', importante: true }); } }
+  if (correndo) for (const c of [...rivais, ...jogadores.filter(o => o !== J).map(o => o.obj)]) {
+    // só conta a ultrapassagem quando abre um pouco de distância (lado a lado não fica repetindo)
+    const antes = J.atras.get(c);
+    if (antes === false && c.dist < dist - SEG * 1.5) { J.atras.set(c, true); voz(`Ohitit ${c.fi}!`, `Você passou ${c.pt}!`, { cor: '#7dff9a' }); }
+    else if (antes === true && c.dist > dist + SEG * 1.5) J.atras.set(c, false);
+  }
+  if (correndo && dist >= VOLTAS * comprimento) terminar();
+  ceuOff += segJ.curva * pct * dt * .02; morroOff += segJ.curva * pct * dt * .05;
+  tremor = Math.max(0, tremor - dt);
+  if (J.fim) terminouT += dt;
+}
+
+function andarRivais(dt) {
+  const lider = Math.max(...jogadores.map(j => j.dist));
+  for (const c of rivais) {
+    const gap = c.dist - lider;
+    let alvo = VMAX * c.fator;
+    if (gap > 2600) alvo *= .86;                 // muito na frente: espera um pouco
+    else if (gap < -5000) alvo = VMAX * .9;       // muito atrás: corre para alcançar
+    c.vel += (alvo - c.vel) * Math.min(1, dt * .9);
+    // desvia dos pilotos e dos outros carros
+    for (const j of jogadores) if (Math.abs(c.dist - (j.dist + JOGADOR_Z)) < 9 * SEG && c.dist < j.dist + JOGADOR_Z && sobrepoe(c.x, .6, j.x, .6)) c.x += (c.x > j.x ? 1 : -1) * dt * .9;
+    for (const o of rivais) if (o !== c && o.dist > c.dist && o.dist - c.dist < 6 * SEG && sobrepoe(c.x, .5, o.x, .5)) c.x += (c.x >= o.x ? 1 : -1) * dt * .7;
+    c.x = lim(c.x + Math.sin(tempo * .4 + c.fator * 9) * dt * .05, -.8, .8);
+    c.dist += c.vel * dt;
+    moverNoSeg(c, mod(LARGADA * SEG + c.dist, comprimento));
+    if (!c.fim && c.dist >= VOLTAS * comprimento) { c.fim = tempo; chegada.push(c); }
+  }
+  rede.rivais();
+}
+// quem entrou na sala recebe os rivais de quem criou: só anda entre uma mensagem e outra
+function rivaisRemotos(dt) {
+  for (const c of rivais) {
+    c.alvoD += c.vel * dt;
+    c.dist = interp(c.dist + c.vel * dt, c.alvoD, Math.min(1, dt * 4));
+    c.x = interp(c.x, c.alvoX, Math.min(1, dt * 6));
+    moverNoSeg(c, mod(LARGADA * SEG + c.dist, comprimento));
+    if (!c.fim && c.dist >= VOLTAS * comprimento) { c.fim = tempo; chegada.push(c); }
+  }
+}
+function remotoAndar(j, dt) {
+  j.alvoD += j.vel * dt;
+  j.dist = interp(j.dist + j.vel * dt, j.alvoD, Math.min(1, dt * 4));
+  j.x = interp(j.x, j.alvoX, Math.min(1, dt * 8));
+  j.obj.dist = j.dist; j.obj.x = j.x; j.obj.vel = j.vel; j.obj.spr = j.sireneLigada && Math.floor(tempo * 6) % 2 ? j.obj.sprLuz : j.spr[0];
+  moverNoSeg(j.obj, mod(LARGADA * SEG + j.dist, comprimento));
+}
+
+function cuidado() { if (tempo - cuidadoT > 6) { cuidadoT = tempo; voz('Varo!', 'Cuidado!', { cor: '#ff8a8a' }); } }
+
+function terminar() {
+  J.fim = tempo; terminouT = 0; avisos = [];
+  chegada.push({ nome: J.nome, nomeFi: J.nomeFi, eu: true, humano: J.id, cor: J.cor });
+  J.lugar = chegada.length;
+  som.vitoria(J.lugar);
+  rede.enviar({ t: 'fim' });
+}
+function chegouRemoto(j) {
+  if (j.fim) return;
+  j.fim = tempo; chegada.push({ nome: j.nome, nomeFi: j.nomeFi, eu: true, humano: j.id, cor: j.cor }); j.lugar = chegada.length;
+}
+
+// ---------------- desenho ----------------
+function projetar(p, cx, cy, cz) {
+  p.cam.x = -cx; p.cam.y = p.mundo.y - cy; p.cam.z = p.mundo.z - cz;
+  p.tela.esc = CAM_PROF / p.cam.z;
+  p.tela.x = Math.round(W / 2 + p.tela.esc * p.cam.x * W / 2);
+  p.tela.y = Math.round(H / 2 - p.tela.esc * p.cam.y * H / 2);
+  p.tela.w = Math.round(p.tela.esc * ESTRADA * W / 2);
+}
+function quad(x1, y1, w1, x2, y2, w2, cor) { poli(ctx, [x1 - w1, y1, x2 - w2, y2, x2 + w2, y2, x1 + w1, y1], cor); }
+
+function desenharSeg(s, neb) {
+  const a = s.p1.tela, b = s.p2.tela, c = P.cores, k = s.claro ? 0 : 1;
+  ctx.fillStyle = c.grama[k]; ctx.fillRect(0, b.y, W, a.y - b.y);
+  const r1 = a.w / Math.max(6, 2 * FAIXAS), r2 = b.w / Math.max(6, 2 * FAIXAS);
+  quad(a.x - a.w - r1, a.y, r1, b.x - b.w - r2, b.y, r2, c.rumble[k]);
+  quad(a.x + a.w + r1, a.y, r1, b.x + b.w + r2, b.y, r2, c.rumble[k]);
+  quad(a.x, a.y, a.w, b.x, b.y, b.w, c.estrada[k]);
+  if (s.xadrez) {
+    const n = 10;
+    for (let i = 0; i < n; i++) {
+      const u0 = -1 + 2 * i / n, u1 = -1 + 2 * (i + 1) / n;
+      poli(ctx, [a.x + a.w * u0, a.y, a.x + a.w * u1, a.y, b.x + b.w * u1, b.y, b.x + b.w * u0, b.y], (i + s.i) % 2 ? '#111' : '#fff');
+    }
+  } else if (s.claro) {
+    const l1 = a.w / Math.max(32, 8 * FAIXAS), l2 = b.w / Math.max(32, 8 * FAIXAS);
+    for (let f = 1; f < FAIXAS; f++) {
+      const u = -1 + 2 * f / FAIXAS;
+      quad(a.x + a.w * u, a.y, l1, b.x + b.w * u, b.y, l2, c.faixa);
+    }
+  }
+  if (neb > 0) { ctx.globalAlpha = neb; ctx.fillStyle = c.neblina; ctx.fillRect(0, b.y, W, a.y - b.y); ctx.globalAlpha = 1; }
+}
+
+function desenharSprite(img, wMundo, esc, sx, sy, ox, oy, clip) {
+  const dw = wMundo * esc * W / 2, dh = dw * img.height / img.width;
+  const dx = sx + dw * ox, dy = sy + dh * oy;
+  if (dw < 1 || dw > W * 3) return;
+  const corte = clip ? Math.max(0, dy + dh - clip) : 0;
+  if (corte < dh) ctx.drawImage(img, 0, 0, img.width, img.height - img.height * corte / dh, dx, dy, dw, dh - corte);
+}
+
+// fundo de cada pista com camadas que andam nas curvas
+function serra(cor, base, amp, freq, off, sem) {
+  ctx.fillStyle = cor; ctx.beginPath(); ctx.moveTo(0, H);
+  for (let i = 0; i <= 64; i++) {
+    const u = i / 64, t = u * freq + off * freq;
+    const y = base - amp * (.55 + .3 * Math.sin(t * 6.283 + sem) + .15 * Math.sin(t * 17.3 + sem * 2));
+    ctx.lineTo(u * W, y);
+  }
+  ctx.lineTo(W, H); ctx.closePath(); ctx.fill();
+}
+function desenharFundo() {
+  const hz = H * .5;
+  const ceu = (a, b) => { const g = ctx.createLinearGradient(0, 0, 0, hz); g.addColorStop(0, a); g.addColorStop(1, b); ctx.fillStyle = g; ctx.fillRect(0, 0, W, hz + 2); };
+  ctx.fillStyle = P.cores.grama[0]; ctx.fillRect(0, hz, W, H - hz);
+  const sol = (x, y, r, cor) => { const g = ctx.createRadialGradient(x, y, 0, x, y, r * 3); g.addColorStop(0, cor); g.addColorStop(.33, cor); g.addColorStop(.34, 'rgba(255,255,255,.25)'); g.addColorStop(1, 'rgba(255,255,255,0)'); ctx.fillStyle = g; ctx.fillRect(x - r * 3, y - r * 3, r * 6, r * 6); };
+  const sx = mod(.72 - ceuOff * .3, 1.4) * W - W * .2;
+  if (P.id === 'sertao') {
+    ceu('#ff9d4a', '#ffe2a0'); sol(sx, hz * .42, H * .07, '#fff3b0');
+    serra('#c7703a', hz + 4, H * .16, 1.6, ceuOff, 1); serra('#a85a2c', hz + 6, H * .09, 3, morroOff, 4);
+  } else if (P.id === 'neve') {
+    ceu('#7fb8ec', '#e6f3ff'); sol(sx, hz * .35, H * .05, '#fffbe0');
+    serra('#dfeaf6', hz + 4, H * .2, 1.4, ceuOff, 2); serra('#b9cde2', hz + 4, H * .11, 2.6, morroOff, 5);
+    // a catedral branca de Helsinque lá longe
+    const cx = mod(.3 - ceuOff * .6, 1.3) * W - W * .15, cy = hz - H * .02, e = H * .0016;
+    ctx.fillStyle = '#f7fbff'; ctx.fillRect(cx - 60 * e, cy - 60 * e, 120 * e, 60 * e);
+    ctx.fillStyle = '#5fb39a'; ctx.beginPath(); ctx.ellipse(cx, cy - 60 * e, 34 * e, 40 * e, 0, Math.PI, 0); ctx.fill();
+    for (const d of [-48, 48]) { ctx.beginPath(); ctx.ellipse(cx + d * e, cy - 58 * e, 10 * e, 14 * e, 0, Math.PI, 0); ctx.fill(); }
+  } else if (P.id === 'aurora') {
+    ceu('#040818', '#1b2a55');
+    for (let i = 0; i < 90; i++) { ctx.fillStyle = `rgba(255,255,255,${.4 + .6 * Math.abs(Math.sin(tempo * 1.4 + i))})`; ctx.fillRect(rnd(i) * W, rnd(i * 2) * hz * .9, 2 * DPR, 2 * DPR); }
+    ctx.globalCompositeOperation = 'lighter';
+    for (const [cor, base, f] of [['rgba(61,255,170,.22)', hz * .45, 0], ['rgba(170,90,255,.18)', hz * .6, 2]]) {
+      ctx.fillStyle = cor; ctx.beginPath(); ctx.moveTo(0, base);
+      for (let i = 0; i <= 40; i++) { const u = i / 40; ctx.lineTo(u * W, base + Math.sin(u * 7 + tempo * .6 + f - ceuOff * 3) * H * .05 - H * .12 * (.5 + .5 * Math.sin(u * 3 + tempo * .3 + f))); }
+      for (let i = 40; i >= 0; i--) { const u = i / 40; ctx.lineTo(u * W, base + H * .05 + Math.sin(u * 7 + tempo * .6 + f - ceuOff * 3) * H * .05); }
+      ctx.closePath(); ctx.fill();
+    }
+    ctx.globalCompositeOperation = 'source-over';
+    serra('#26304f', hz + 4, H * .14, 1.5, ceuOff, 3); serra('#3b4868', hz + 4, H * .07, 3, morroOff, 7);
+  } else {
+    ceu('#3fb6f5', '#c8efff'); sol(sx, hz * .4, H * .06, '#fffbe0');
+    ctx.fillStyle = '#1b8fd1'; ctx.fillRect(0, hz - H * .045, W, H * .05);
+    for (let i = 0; i < 26; i++) { ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.fillRect(mod(rnd(i) * W - ceuOff * W * .4, W), hz - H * .04 + rnd(i * 3) * H * .04, 18 * DPR, 2 * DPR); }
+    for (let i = 0; i < 3; i++) { // jangadas
+      const jx = mod(rnd(i + 9) * W + tempo * 6 * DPR - ceuOff * W * .5, W), jy = hz - H * .04;
+      poli(ctx, [jx, jy - 4 * DPR, jx + 26 * DPR, jy - 4 * DPR, jx + 22 * DPR, jy], '#7a4a20');
+      poli(ctx, [jx + 10 * DPR, jy - 6 * DPR, jx + 10 * DPR, jy - 40 * DPR, jx + 30 * DPR, jy - 8 * DPR], '#fff');
+    }
+    serra('#e9d08f', hz + 4, H * .04, 3, morroOff, 2);
+  }
+}
+
+function render() {
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  if (tremor > 0) ctx.translate((rnd(tempo * 60) - .5) * 8 * DPR * tremor, (rnd(tempo * 77) - .5) * 6 * DPR * tremor);
+  desenharFundo();
+  const base = segDe(pos), basePct = mod(pos, SEG) / SEG;
+  const segJ = segDe(pos + JOGADOR_Z), jPct = mod(pos + JOGADOR_Z, SEG) / SEG;
+  const jY = interp(segJ.p1.mundo.y, segJ.p2.mundo.y, jPct);
+  let maxy = H, xx = 0, dx = -(base.curva * basePct);
+  const N = segs.length, lista = [];
+  for (let n = 0; n < VISTA; n++) {
+    const s = segs[(base.i + n) % N];
+    const volta = s.i < base.i ? comprimento : 0;
+    projetar(s.p1, x * ESTRADA - xx, jY + CAM_ALT, pos - volta);
+    projetar(s.p2, x * ESTRADA - xx - dx, jY + CAM_ALT, pos - volta);
+    xx += dx; dx += s.curva;
+    s.clip = maxy; lista.push(s);
+    if (s.p1.cam.z <= CAM_PROF || s.p2.tela.y >= s.p1.tela.y || s.p2.tela.y >= maxy) continue;
+    const neb = 1 - Math.exp(-Math.pow(n / VISTA * 2.2, 2) * .9);
+    desenharSeg(s, neb * .85);
+    maxy = s.p1.tela.y < maxy ? s.p2.tela.y : maxy;
+  }
+  // de trás para frente: cenário, moedas, rivais e o José
+  for (let n = lista.length - 1; n >= 0; n--) {
+    const s = lista[n];
+    if (s.p1.cam.z <= CAM_PROF) continue;
+    for (const c of s.carros) {
+      if (c.humano === J.id && !jogadores[c.humano]?.remoto) continue; // o próprio carro é desenhado embaixo
+      const pct = mod(c.z, SEG) / SEG;
+      const esc = interp(s.p1.tela.esc, s.p2.tela.esc, pct);
+      const sx = interp(s.p1.tela.x, s.p2.tela.x, pct) + esc * c.x * ESTRADA * W / 2;
+      const sy = interp(s.p1.tela.y, s.p2.tela.y, pct);
+      desenharSprite(c.spr, LARG_CARRO, esc, sx, sy, -.5, -1, s.clip);
+      if (esc * W > .4 && n < 40) { // nome em cima do carro quando está perto
+        ctx.font = `600 ${Math.max(11, esc * 34000 * DPR / 10)}px Fredoka, sans-serif`; ctx.textAlign = 'center';
+        ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.fillText(nomeL(c), sx + 2, sy - LARG_CARRO * esc * W / 2 * .72 + 2);
+        ctx.fillStyle = '#fff'; ctx.fillText(nomeL(c), sx, sy - LARG_CARRO * esc * W / 2 * .72);
+      }
+    }
+    for (const sp of s.sprites) {
+      if (sp.pego !== undefined && sp.pego[J.id] === volta) continue;
+      const def = S[sp.tipo]; if (!def) continue;
+      const esc = s.p1.tela.esc, sx = s.p1.tela.x + esc * sp.x * ESTRADA * W / 2;
+      if (sp.pego !== undefined) desenharSprite(def.img, def.w, esc, sx, s.p1.tela.y, -.5, -1.3 - .15 * Math.sin(tempo * 5 + s.i), s.clip);
+      else desenharSprite(def.img, def.w, esc, sx, s.p1.tela.y, sp.x < 0 ? -1 : 0, -1, s.clip);
+    }
+    if (s === segJ) {
+      const esc = CAM_PROF / JOGADOR_Z;
+      const pulo = Math.abs(x) > 1 && vel > 0 ? (rnd(tempo * 30) - .5) * 6 * DPR : Math.sin(tempo * 30) * vel / VMAX * DPR;
+      const sy = H / 2 - esc * interp(segJ.p1.cam.y, segJ.p2.cam.y, jPct) * H / 2 + pulo;
+      const img = SPR_JOGADOR[sireneLigada && Math.floor(tempo * 6) % 2 ? 1 : 0];
+      ctx.save();
+      const inclina = (teclas.esq && modo === 'corrida' ? -1 : teclas.dir && modo === 'corrida' ? 1 : 0) * .06;
+      ctx.translate(W / 2, sy); ctx.rotate(inclina);
+      if (turbo > 0) { // fogo do turbo
+        const f = LARG_CARRO * esc * W / 2;
+        for (const lado of [-.28, .28]) {
+          const g = ctx.createRadialGradient(f * lado, -f * .08, 0, f * lado, -f * .08, f * .22 + rnd(tempo * 40) * f * .06);
+          g.addColorStop(0, '#fff7c0'); g.addColorStop(.4, '#ff9a1f'); g.addColorStop(1, 'rgba(255,60,0,0)');
+          ctx.fillStyle = g; ctx.fillRect(f * lado - f * .3, -f * .3, f * .6, f * .6);
+        }
+      }
+      desenharSprite(img, LARG_CARRO, esc, 0, 0, -.5, -1, 0);
+      ctx.restore();
+    }
+  }
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  if (turbo > 0) { // linhas de velocidade
+    ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2 * DPR;
+    for (let i = 0; i < 18; i++) { const a = rnd(i + Math.floor(tempo * 20)) * Math.PI * 2, r1 = W * .25, r2 = W * .7; ctx.beginPath(); ctx.moveTo(W / 2 + Math.cos(a) * r1, H * .55 + Math.sin(a) * r1 * .6); ctx.lineTo(W / 2 + Math.cos(a) * r2, H * .55 + Math.sin(a) * r2 * .6); ctx.stroke(); }
+  }
+  // recados que pulam na tela
+  avisos.forEach((a, i) => {
+    a.t += 1 / 60;
+    const k = Math.min(1, a.t * 5), r = Math.min(W, H) * (a.grande ? .075 : .055) * (k < 1 ? .6 + .4 * k + Math.sin(k * Math.PI) * .25 : 1);
+    const y = H * .3 + i * Math.min(W, H) * .11 - a.t * H * .04;
+    ctx.globalAlpha = Math.max(0, 1 - Math.max(0, a.t - (a.pt ? 1.6 : 1)) * 2);
+    ctx.font = `700 ${r}px Fredoka, sans-serif`; ctx.textAlign = 'center';
+    ctx.lineWidth = r * .16; ctx.strokeStyle = '#2a0f3d'; ctx.strokeText(a.txt, W / 2, y);
+    ctx.fillStyle = a.cor; ctx.fillText(a.txt, W / 2, y);
+    if (a.pt) {
+      const r2 = r * .48;
+      ctx.font = `600 ${r2}px Fredoka, sans-serif`; ctx.lineWidth = r2 * .22;
+      ctx.strokeText('🇧🇷 ' + a.pt, W / 2, y + r * .72); ctx.fillStyle = '#fff'; ctx.fillText('🇧🇷 ' + a.pt, W / 2, y + r * .72);
+    }
+    ctx.globalAlpha = 1;
+  });
+  avisos = avisos.filter(a => a.t < (a.pt ? 2.2 : 1.6));
+  if (modo === 'largada') semaforo();
+  if (J.fim) confete();
+  if (jogadores.filter(j => !j.remoto).length > 1) hudCanvas(); else hud();
+}
+
+function semaforo() {
+  const r = Math.min(W, H) * .06, cx = W / 2, cy = H * .26;
+  ctx.fillStyle = 'rgba(20,20,26,.9)'; rr(ctx, cx - r * 4, cy - r * 1.4, r * 8, r * 2.8, r);
+  const n = Math.floor(largadaT + .5);
+  for (let i = 0; i < 3; i++) {
+    ctx.fillStyle = i < n ? (largadaT >= 3.5 ? '#38d67a' : '#ff3b3b') : '#3a2a2a';
+    ctx.beginPath(); ctx.arc(cx + (i - 1) * r * 2.5, cy, r * .9, 0, 7); ctx.fill();
+  }
+  const txt = largadaT < .5 ? T().prepare : largadaT < 3.5 ? String(3 - Math.floor(largadaT - .5)) : T().vai;
+  ctx.font = `700 ${r * 1.4}px Fredoka, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  ctx.lineWidth = r * .25; ctx.strokeStyle = '#3a1600'; ctx.strokeText(txt, cx, cy + r * 1.7);
+  ctx.fillStyle = '#ffd23f'; ctx.fillText(txt, cx, cy + r * 1.7);
+  ctx.textBaseline = 'alphabetic';
+}
+function confete() {
+  for (let i = 0; i < 120; i++) {
+    const t = terminouT, xx = rnd(i) * W + Math.sin(t * 3 + i) * 30 * DPR, yy = mod(rnd(i * 2) * H + t * (150 + rnd(i * 3) * 200) * DPR, H);
+    ctx.fillStyle = ['#ff3b3b', '#ffd23f', '#38d67a', '#2d9cff', '#ff5fa2'][i % 5];
+    ctx.save(); ctx.translate(xx, yy); ctx.rotate(t * 5 + i); ctx.fillRect(-5 * DPR, -3 * DPR, 10 * DPR, 6 * DPR); ctx.restore();
+  }
+  const r = Math.min(W, H) * .1;
+  ctx.font = `700 ${r}px Fredoka, sans-serif`; ctx.textAlign = 'center';
+  ctx.lineWidth = r * .14; ctx.strokeStyle = '#3a1600'; ctx.strokeText(T().chegada, W / 2, H * .3);
+  ctx.fillStyle = '#ffd23f'; ctx.fillText(T().chegada, W / 2, H * .3);
+}
+
+const elPos = document.getElementById('pos'), elVolta = document.getElementById('volta'), elVel = document.getElementById('vel'), elBarra = document.querySelector('#barra i');
+let hudCache = '';
+function hud() {
+  const lugar = colocacao();
+  const v = Math.round(vel / VMAX * 180);
+  const k = `${lugar}|${volta}|${moedas}|${v}`;
+  if (k === hudCache) return; hudCache = k;
+  elPos.innerHTML = `${T().ord(lugar)}<small> / ${rivais.length + jogadores.length}</small>`;
+  elVolta.textContent = `${T().volta(Math.min(volta + 1, VOLTAS), VOLTAS)} · 🪙 ${moedas}`;
+  elVel.innerHTML = `${v}<small>km/h${turbo > 0 ? ' ⚡' : ''}</small>`;
+  elBarra.style.width = `${lim(dist / (VOLTAS * comprimento), 0, 1) * 100}%`;
+}
+
+// placar desenhado na tela de cada um (modo de dois no mesmo celular)
+function hudCanvas() {
+  const r = Math.min(W, H) * .075, p = r * .35;
+  ctx.textBaseline = 'top';
+  const caixa = (txt, x, y, tam, cor, alinha) => {
+    ctx.font = `700 ${tam}px Fredoka, sans-serif`; ctx.textAlign = alinha;
+    const w = ctx.measureText(txt).width;
+    const bx = alinha === 'left' ? x : x - w;
+    ctx.fillStyle = 'rgba(16,8,30,.62)'; rr(ctx, bx - p, y - p * .6, w + p * 2, tam + p * 1.2, p);
+    ctx.fillStyle = cor; ctx.fillText(txt, x, y);
+  };
+  caixa(`${nomeL(J)} ${T().ord(colocacao())}`, p * 1.5, p * 1.5, r, '#ffd23f', 'left');
+  caixa(`${T().volta(Math.min(volta + 1, VOLTAS), VOLTAS)} · 🪙 ${moedas}`, p * 1.5, p * 2.5 + r * 1.1, r * .55, '#fff', 'left');
+  caixa(`${Math.round(vel / VMAX * 180)} km/h${turbo > 0 ? ' ⚡' : ''}`, W - p * 1.5, p * 1.5, r * .6, '#fff', 'right');
+  ctx.textBaseline = 'alphabetic';
+}
+
+// as telas de cada piloto: uma só, ou dividida ao meio para dois no mesmo celular
+const bufs = [document.createElement('canvas'), document.createElement('canvas')];
+function desenharTudo() {
+  const locais = modo === 'menu' ? [menuJ] : jogadores.filter(j => !j.remoto);
+  if (locais.length < 2) { usar(locais[0]); render(); guardarJ(locais[0]); return; }
+  const Wt = W, Ht = H, deitado = W >= H;
+  const vw = deitado ? Math.floor(Wt / 2) : Wt, vh = deitado ? Ht : Math.floor(Ht / 2);
+  locais.forEach((j, i) => {
+    const b = bufs[i];
+    if (b.width !== vw || b.height !== vh) { b.width = vw; b.height = vh; }
+    ctx = b.getContext('2d'); W = vw; H = vh;
+    usar(j); render(); guardarJ(j);
+    W = Wt; H = Ht; ctx = ctxTela;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.drawImage(b, deitado ? i * vw : 0, deitado ? 0 : i * vh);
+  });
+  ctx.fillStyle = '#fff';
+  if (deitado) ctx.fillRect(vw - 2 * DPR, 0, 4 * DPR, H); else ctx.fillRect(0, vh - 2 * DPR, W, 4 * DPR);
+  usar(locais[0]);
+}
+
+// ---------------- online (PeerJS, igual ao Esquadrão Neon) ----------------
+const rede = {
+  papel: null, peer: null, conn: null, outro: null, code: '', te: 0, tr: 0,
+  cfg() { const q = new URLSearchParams(location.search).get('peer'); if (q) { const [h, p] = q.split(':'); return { host: h, port: +p || 9000, path: '/', secure: false, debug: 0 }; } return { debug: 0 }; },
+  enviar(m) { if (this.conn && this.conn.open) try { this.conn.send(m); } catch {} },
+  fechar() { const p = this.peer; this.enviar({ t: 'tchau' }); this.papel = null; this.conn = null; this.peer = null; this.outro = null; try { p && p.destroy(); } catch {} },
+  criar() {
+    if (!window.Peer) return painelSala('erro', T().semNet);
+    const code = Array.from({ length: 4 }, () => 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.random() * 32 | 0]).join('');
+    this.papel = 'host'; this.code = code;
+    const peer = this.peer = new Peer('turbojose-' + code.toLowerCase(), this.cfg());
+    painelSala('criando');
+    peer.on('open', () => painelSala('codigo'));
+    peer.on('error', e => { if (peer !== this.peer) return; if (e.type === 'unavailable-id') { this.fechar(); this.criar(); } else if (!this.conn) { this.fechar(); painelSala('erro', T().semNet); } });
+    peer.on('disconnected', () => { if (peer === this.peer && !peer.destroyed) try { peer.reconnect(); } catch {} });
+    peer.on('connection', c => {
+      if (this.conn) { c.on('open', () => { c.send({ t: 'cheia' }); setTimeout(() => c.close(), 500); }); return; }
+      this.conn = c; c.on('data', aoReceber); c.on('close', () => { if (this.conn === c) caiu(); }); c.on('error', () => { if (this.conn === c) caiu(); });
+    });
+  },
+  entrar(code) {
+    if (!window.Peer) return painelSala('erro', T().semNet);
+    this.papel = 'conv';
+    const peer = this.peer = new Peer(this.cfg()); let pronto = false;
+    painelSala('conectando');
+    const to = setTimeout(() => { if (!pronto && peer === this.peer) { pronto = true; this.fechar(); painelSala('erro', T().semNet); } }, 20000);
+    peer.on('open', () => {
+      const c = this.conn = peer.connect('turbojose-' + code.toLowerCase(), { reliable: true });
+      c.on('open', () => { pronto = true; clearTimeout(to); this.enviar({ t: 'oi', quem: salvo.eu, carro: salvo.carro }); painelSala('conectado'); });
+      c.on('data', aoReceber); c.on('close', () => { if (this.conn === c) caiu(); });
+    });
+    peer.on('error', e => { if (pronto || peer !== this.peer) return; pronto = true; clearTimeout(to); this.fechar(); painelSala('erro', e.type === 'peer-unavailable' ? T().naoAchou : T().semNet); });
+  },
+  iniciar() { // quem criou a sala começa a corrida
+    const eu = { quem: salvo.eu, carro: salvo.carro };
+    const ele = { quem: this.outro.quem === salvo.eu ? FAMILIA.find(f => f.id !== salvo.eu).id : this.outro.quem, carro: this.outro.carro };
+    if (ele.carro === eu.carro) ele.carro = 'p_' + ele.quem; // carros iguais confundem: usa o carro da cor da pessoa
+    this.enviar({ t: 'inicio', cfg: { pista: salvo.pista, pilotos: [ele, { ...eu, remoto: true }] } });
+    novaCorrida({ pista: salvo.pista, pilotos: [eu, { ...ele, remoto: true }] });
+  },
+  estado() {
+    if (!this.papel || tempo - this.te < .066) return; this.te = tempo;
+    const j = jogadores.find(j => !j.remoto);
+    this.enviar({ t: 'c', d: Math.round(j.dist), x: +j.x.toFixed(3), v: Math.round(j.vel), s: j.sireneLigada ? 1 : 0, m: j.moedas });
+  },
+  rivais() {
+    if (this.papel !== 'host' || tempo - this.tr < .1) return; this.tr = tempo;
+    this.enviar({ t: 'r', r: rivais.map(c => [Math.round(c.dist), +c.x.toFixed(3), Math.round(c.vel)]) });
+  },
+};
+function aoReceber(d) {
+  if (!d || typeof d !== 'object') return;
+  if (d.t === 'oi' && rede.papel === 'host') { rede.outro = { quem: pessoa(String(d.quem)).id, carro: String(d.carro) }; painelSala('pronto'); return; }
+  if (d.t === 'inicio' && rede.papel === 'conv' && d.cfg && Array.isArray(d.cfg.pilotos)) { novaCorrida(d.cfg); return; }
+  if (d.t === 'c') { const j = jogadores.find(j => j.remoto); if (!j || modo === 'menu') return; j.alvoD = +d.d || 0; j.alvoX = +d.x || 0; j.vel = +d.v || 0; j.sireneLigada = !!d.s; j.moedas = +d.m || 0; return; }
+  if (d.t === 'r' && rede.papel === 'conv' && Array.isArray(d.r)) { d.r.forEach((a, i) => { const c = rivais[i]; if (!c) return; c.alvoD = +a[0]; c.alvoX = +a[1]; c.vel = +a[2]; }); return; }
+  if (d.t === 'fim') { const j = jogadores.find(j => j.remoto); if (j && modo !== 'menu') chegouRemoto(j); return; }
+  if (d.t === 'cheia') { rede.fechar(); painelSala('erro', T().cheia); return; }
+  if (d.t === 'tchau') caiu();
+}
+function caiu() {
+  if (!rede.papel) return;
+  rede.fechar(); modo = 'menu'; som.motor(false); som.sirene(false); som.musica(false);
+  painelSala('erro', T().caiuTxt, T().caiu);
+}
+function nomeOutro() { const r = jogadores.find(j => j.remoto); return r ? nomeL(r) : rede.outro ? nomeL(pessoa(rede.outro.quem)) : (salvo.lingua === 'fi' ? 'kaveri' : 'o outro piloto'); }
+function painelSala(estado, msg, titulo) {
+  const el = document.getElementById('salaCartao'), t = T();
+  const botoes = (lista) => `<div class="acoes">${lista.map(([id, txt, cls]) => `<button class="btn ${cls || ''}" id="${id}">${txt}</button>`).join('')}</div>`;
+  if (estado === 'criando') el.innerHTML = `<h2>${t.criarSala}</h2><p><span class="gira"></span>${t.criando}</p>` + botoes([['salaSair', t.cancelar, 'cinza']]);
+  else if (estado === 'codigo') el.innerHTML = `<h2>${t.codigo}</h2><div class="codigo">${rede.code}</div><p>${t.mande}</p><p class="dica"><span class="gira"></span>${t.esperando}</p>` + botoes([['salaSair', t.cancelar, 'cinza']]);
+  else if (estado === 'pronto') el.innerHTML = `<div class="grande">🎉</div><h2>${t.entrou(nomeOutro())}</h2>` + botoes([['salaCorrer', t.correr], ['salaSair', t.cancelar, 'cinza']]);
+  else if (estado === 'digitar') el.innerHTML = `<h2>${t.digite}</h2><input class="cod" id="cod" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ABCD">` + botoes([['salaIr', t.ir], ['salaVoltar', t.voltar, 'cinza']]);
+  else if (estado === 'conectando') el.innerHTML = `<p><span class="gira"></span>${t.conectando}</p>` + botoes([['salaSair', t.cancelar, 'cinza']]);
+  else if (estado === 'conectado') el.innerHTML = `<div class="grande">🔗</div><p>${t.conectado(nomeOutro())}</p>` + botoes([['salaSair', t.sairSala, 'cinza']]);
+  else el.innerHTML = `<h2>${titulo || '😕'}</h2><p>${msg || ''}</p>` + botoes([['salaVoltar', t.voltar, 'cinza']]);
+  const on = (id, f) => { const b = document.getElementById(id); if (b) b.onclick = f; };
+  on('salaSair', () => { rede.fechar(); irMenu(); });
+  on('salaVoltar', () => irMenu());
+  on('salaCorrer', () => rede.iniciar());
+  on('salaIr', () => { const v = (document.getElementById('cod').value || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); if (v.length === 4) rede.entrar(v); });
+  const cod = document.getElementById('cod');
+  if (cod) { cod.focus(); cod.onkeydown = e => { if (e.key === 'Enter') document.getElementById('salaIr').click(); }; }
+  mostrar('sala');
+}
+
+// ---------------- som (tudo gerado aqui) ----------------
+const som = (() => {
+  let ac = null, mestre = null, motorOsc = null, motorG = null, motorF = null, sireneOsc = null, sireneG = null;
+  const iniciar = () => {
+    if (ac) { if (ac.state === 'suspended') ac.resume(); return true; }
+    try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch { return false; }
+    mestre = ac.createGain(); mestre.gain.value = salvo.som ? .7 : 0; mestre.connect(ac.destination);
+    return true;
+  };
+  const nota = (f, d, tipo = 'square', vol = .15, f2) => {
+    if (!iniciar()) return;
+    const t = ac.currentTime, o = ac.createOscillator(), g = ac.createGain();
+    o.type = tipo; o.frequency.setValueAtTime(f, t); if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.0001, t + d);
+    o.connect(g).connect(mestre); o.start(t); o.stop(t + d + .02);
+  };
+  return {
+    iniciar,
+    ligar(v) { salvo.som = v; guardar(); if (mestre) mestre.gain.value = v ? .7 : 0; },
+    motor(on) {
+      if (!iniciar()) return;
+      if (on && !motorOsc) {
+        motorOsc = ac.createOscillator(); motorOsc.type = 'sawtooth';
+        motorF = ac.createBiquadFilter(); motorF.type = 'lowpass'; motorF.frequency.value = 700;
+        motorG = ac.createGain(); motorG.gain.value = .05;
+        motorOsc.connect(motorF).connect(motorG).connect(mestre); motorOsc.start();
+      } else if (!on && motorOsc) { motorOsc.stop(); motorOsc = null; }
+    },
+    atualizar() {
+      if (!motorOsc) return;
+      const p = vel / VMAX;
+      motorOsc.frequency.setTargetAtTime(55 + p * 120 + (turbo > 0 ? 40 : 0), ac.currentTime, .05);
+      motorG.gain.setTargetAtTime(pausado ? 0 : .03 + p * .05, ac.currentTime, .1);
+    },
+    bip: (f, d = .18) => nota(f, d, 'square', .12),
+    moeda: () => { nota(1318, .08, 'triangle', .18); setTimeout(() => nota(1760, .14, 'triangle', .18), 70); },
+    turbo: () => nota(200, .6, 'sawtooth', .12, 900),
+    batida: () => nota(110, .25, 'square', .2, 40),
+    buzina: () => { nota(392, .32, 'square', .1); nota(494, .32, 'square', .1); },
+    sirene(on) {
+      if (!iniciar()) return;
+      if (on && !sireneOsc) {
+        sireneOsc = ac.createOscillator(); sireneOsc.type = 'triangle'; sireneG = ac.createGain(); sireneG.gain.value = .08;
+        const lfo = ac.createOscillator(), lg = ac.createGain(); lfo.frequency.value = 1.6; lg.gain.value = 180;
+        lfo.connect(lg).connect(sireneOsc.frequency); sireneOsc.frequency.value = 800;
+        sireneOsc.connect(sireneG).connect(mestre); sireneOsc.start(); lfo.start(); sireneOsc._lfo = lfo;
+      } else if (!on && sireneOsc) { sireneOsc.stop(); sireneOsc._lfo.stop(); sireneOsc = null; }
+    },
+    // musiquinha de corrida (baixo + melodia em loop)
+    musica(on) {
+      if (!iniciar()) return;
+      if (!on) { clearInterval(this._mus); this._mus = 0; return; }
+      if (this._mus) return;
+      const baixo = [110, 110, 165, 110, 147, 147, 196, 147, 131, 131, 196, 131, 165, 147, 131, 123];
+      const melo = [440, 0, 523, 587, 659, 0, 587, 523, 494, 0, 523, 587, 523, 494, 440, 0, 440, 0, 523, 587, 659, 0, 784, 659, 587, 0, 659, 587, 523, 494, 523, 0];
+      let i = 0;
+      this._mus = setInterval(() => {
+        if (pausado) return;
+        nota(baixo[i % 16], .18, 'triangle', .07);
+        const m = melo[i % 32]; if (m) nota(m, .14, 'square', .025);
+        if (i % 4 === 0) nota(60, .08, 'sine', .12, 40);
+        i++;
+      }, 150);
+    },
+    torcida() {
+      if (!iniciar()) return;
+      const t = ac.currentTime, d = 2.5, buf = ac.createBuffer(1, ac.sampleRate * d, ac.sampleRate), dd = buf.getChannelData(0);
+      for (let k = 0; k < dd.length; k++) dd[k] = (Math.random() * 2 - 1) * (.6 + .4 * Math.sin(k / 900));
+      const src = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain();
+      src.buffer = buf; f.type = 'bandpass'; f.frequency.value = 1200; f.Q.value = .6;
+      g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(.25, t + .3); g.gain.exponentialRampToValueAtTime(.0001, t + d);
+      src.connect(f).connect(g).connect(mestre); src.start(t);
+    },
+    vitoria(l) { [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => nota(f, .25, 'triangle', .2), i * 140 + (l > 1 ? 200 : 0))); },
+  };
+})();
+
+// ---------------- telas ----------------
+function mostrar(qual) {
+  document.getElementById('menu').hidden = qual !== 'menu';
+  document.getElementById('fim').hidden = qual !== 'fim';
+  document.getElementById('pausado').hidden = qual !== 'pausa';
+  document.getElementById('sala').hidden = qual !== 'sala';
+  const jogo = qual === 'jogo' || qual === 'pausa' || qual === 'fim';
+  const dupla = jogo && jogadores.filter(j => !j.remoto).length > 1;
+  document.getElementById('hud').hidden = !jogo || dupla;
+  document.getElementById('controles').hidden = qual !== 'jogo' || dupla;
+  document.getElementById('dupla').hidden = qual !== 'jogo' || !dupla;
+  document.getElementById('pausa').hidden = qual !== 'jogo';
+}
+function configurarControles() {
+  const eu = jogadores.find(j => !j.remoto);
+  document.getElementById('sirene').hidden = !eu.carro.sirene;
+  for (const j of jogadores) j.teclas = j.teclas || { esq: false, dir: false, freio: false };
+}
+
+function mostrarFim() {
+  if (fimMostrado) return; fimMostrado = true;
+  modo = 'fim'; som.motor(false); som.sirene(false); som.musica(false); som.torcida();
+  // ordem final: quem já chegou, depois os outros pela distância
+  const faltam = [...rivais.filter(c => !chegada.includes(c)),
+    ...jogadores.filter(j => !j.fim).map(j => ({ nome: j.nome, nomeFi: j.nomeFi, eu: true, humano: j.id, cor: j.cor, dist: j.dist }))].sort((a, b) => b.dist - a.dist);
+  const ordem = [...chegada, ...faltam];
+  const lugarDe = j => ordem.findIndex(o => o.humano === j.id) + 1;
+  const t = T(), frase = document.getElementById('frase');
+  document.getElementById('podio').innerHTML = ordem.map((c, i) =>
+    `<div class="linha${c.eu ? ' eu' : ''}"><b>${t.ord(i + 1)}</b><span class="bola" style="background:${c.cor}"></span><span>${nomeL(c)}</span><span>${i < 3 ? ['🥇', '🥈', '🥉'][i] : ''}</span></div>`).join('');
+  let melhor = 99;
+  if (jogadores.length === 1) {
+    const lugar = lugarDe(J); melhor = lugar;
+    document.getElementById('lugar').textContent = `${['🏆', '🥈', '🥉'][lugar - 1] || '🏁'} ${t.lugar(lugar)}`;
+    frase.textContent = `${t.frases[lugar] || t.fraseOutra} ${t.moedas(moedas)}`;
+    const ordFi = ['ensimmäinen', 'toinen', 'kolmas', 'neljäs', 'viides', 'kuudes'][lugar - 1];
+    const fi = lugar === 1 ? `Onneksi olkoon, ${J.nomeFi}! Olet mestari!` : `Onneksi olkoon, ${J.nomeFi}! Olit ${ordFi}!`;
+    voz(fi, '', { importante: true, mostrar: false });
+    frase.insertAdjacentHTML('beforeend', `<br><small>🗣️ “${fi}”</small>`);
+  } else {
+    const lista = jogadores.map(j => ({ j, l: lugarDe(j) })).sort((a, b) => a.l - b.l);
+    const v = lista[0].j;
+    for (const { j, l } of lista) if (!j.remoto) melhor = Math.min(melhor, l);
+    document.getElementById('lugar').textContent = `🏆 ${t.venceu(nomeL(v))}`;
+    frase.textContent = lista.map(({ j, l }) => `${nomeL(j)}: ${t.ord(l)} (🪙 ${j.moedas})`).join('  ·  ');
+    const fi = `Onneksi olkoon, ${v.nomeFi}! Voitit!`;
+    voz(fi, '', { importante: true, mostrar: false });
+    frase.insertAdjacentHTML('beforeend', `<br><small>🗣️ “${fi}”</small>`);
+  }
+  const tr = salvo.trofeus[P.id];
+  if (melhor < 99 && (!tr || melhor < tr)) { salvo.trofeus[P.id] = melhor; guardar(); }
+  // online: só quem criou a sala escolhe a próxima corrida
+  const conv = rede.papel === 'conv';
+  document.getElementById('denovo').hidden = conv;
+  document.getElementById('outra').textContent = conv ? t.sairSala : t.outra;
+  if (conv) frase.insertAdjacentHTML('beforeend', `<br><small>${t.aguardando(nomeOutro())}</small>`);
+  mostrar('fim');
+}
+
+function montarMenu() {
+  const elC = document.getElementById('carros'), elP = document.getElementById('pistas');
+  elC.innerHTML = ''; elP.innerHTML = '';
+  const elM = document.getElementById('modos'); elM.innerHTML = '';
+  for (const m of ['solo', 'dupla', 'online']) {
+    const b = document.createElement('button');
+    b.className = 'escolha'; b.setAttribute('aria-pressed', String(salvo.modo === m));
+    const [nome, sub] = T().modos[m];
+    b.innerHTML = `<span class="ic">${nome.split(' ')[0]}</span><b>${nome.split(' ').slice(1).join(' ')}</b><small>${sub}</small>`;
+    b.onclick = () => { salvo.modo = m; guardar(); montarMenu(); };
+    elM.append(b);
+  }
+  if (salvo.eu === salvo.eu2) salvo.eu2 = salvo.eu === 'gabi' ? 'jose' : 'gabi';
+  const p1 = pessoa(salvo.eu), p2 = pessoa(salvo.eu2);
+  document.getElementById('dicaModo').textContent = salvo.modo === 'dupla' ? T().dicaDupla(nomeL(p1), nomeL(p2)) : salvo.modo === 'online' ? T().dicaOnline : '';
+  const dupla = salvo.modo === 'dupla';
+  document.getElementById('quemTit').textContent = dupla ? T().piloto1 : T().quemEh;
+  document.getElementById('quem2Tit').textContent = dupla ? T().piloto2 : '';
+  const listaGente = (el, chave, outro) => {
+    el.innerHTML = '';
+    for (const f of FAMILIA) {
+      const b = document.createElement('button');
+      b.className = 'escolha'; b.setAttribute('aria-pressed', String(salvo[chave] === f.id));
+      b.innerHTML = `<span class="ic">${f.ic}</span><b>${nomeL(f)}</b>`;
+      b.onclick = () => { if (outro && salvo[outro] === f.id) salvo[outro] = salvo[chave]; salvo[chave] = f.id; guardar(); som.iniciar(); som.buzina(); montarMenu(); };
+      el.append(b);
+    }
+  };
+  listaGente(document.getElementById('quem'), 'eu', dupla ? 'eu2' : null);
+  if (dupla) listaGente(document.getElementById('quem2'), 'eu2', 'eu'); else document.getElementById('quem2').innerHTML = '';
+  const btC = document.getElementById('correr'), btE = document.getElementById('entrar');
+  const hostPronto = rede.papel === 'host' && rede.outro;
+  btC.textContent = salvo.modo === 'online' && !hostPronto ? T().criarSala : T().correr;
+  btE.textContent = T().entrar; btE.hidden = salvo.modo !== 'online' || !!rede.papel;
+  for (const c of CARROS) {
+    if (c.oculto) continue;
+    const b = document.createElement('button');
+    b.className = 'escolha'; b.setAttribute('aria-pressed', String(salvo.carro === c.id));
+    const img = new Image(); img.alt = ''; img.src = desenharCarro(c.cor, c.tipo || c.id, 1).toDataURL();
+    b.append(img); b.insertAdjacentHTML('beforeend', `<b>${nomeL(c)}</b>${c.sirene ? `<small>${T().sirene}</small>` : ''}`);
+    b.onclick = () => { salvo.carro = c.id; guardar(); som.iniciar(); som.buzina(); montarMenu(); };
+    elC.append(b);
+  }
+  for (const p of PISTAS) {
+    const b = document.createElement('button');
+    b.className = 'escolha pista'; b.setAttribute('aria-pressed', String(salvo.pista === p.id));
+    b.style.setProperty('--fundo-pista', p.fundoMenu);
+    const t = salvo.trofeus[p.id];
+    b.innerHTML = `<span class="ic">${p.ic}</span><b>${nomeL(p)}</b><small>${t ? (T().trofeu[t - 1] || T().melhor(t)) : T().semTrofeu}</small>`;
+    b.onclick = () => { salvo.pista = p.id; guardar(); montarMenu(); };
+    elP.append(b);
+  }
+  document.getElementById('som').textContent = salvo.som ? T().som : T().semSom;
+  document.documentElement.lang = salvo.lingua === 'fi' ? 'fi' : 'pt-BR';
+  document.title = T().titulo;
+  for (const el of document.querySelectorAll('[data-t]')) el.textContent = T()[el.dataset.t];
+  for (const b of document.querySelectorAll('.lingua')) {
+    b.setAttribute('aria-pressed', String(b.dataset.l === salvo.lingua));
+    b.onclick = () => { salvo.lingua = b.dataset.l; guardar(); criarSprites(); montarMenu(); };
+  }
+}
+
+function irMenu() {
+  modo = 'menu'; pausado = false; som.motor(false); som.sirene(false); som.musica(false);
+  if (rede.papel === 'conv') rede.fechar();   // quem entrou na sala sai dela ao voltar para o menu
+  for (const s of segs) s.carros = [];
+  jogadores = []; usar(menuJ); montarMenu(); mostrar('menu');
+}
+let ultimaCfg = null;
+function correr() {
+  som.iniciar();
+  if (salvo.modo === 'online') {
+    if (rede.papel === 'host' && rede.outro) rede.iniciar();
+    else if (rede.papel === 'host') painelSala('codigo');
+    else rede.criar();
+    return;
+  }
+  ultimaCfg = salvo.modo === 'dupla'
+    ? { pista: salvo.pista, pilotos: [{ quem: salvo.eu, carro: salvo.carro }, { quem: salvo.eu2, carro: 'p_' + salvo.eu2 }] }
+    : { pista: salvo.pista, pilotos: [{ quem: salvo.eu, carro: salvo.carro }] };
+  novaCorrida(ultimaCfg);
+}
+document.getElementById('correr').onclick = correr;
+document.getElementById('entrar').onclick = () => { som.iniciar(); painelSala('digitar'); };
+document.getElementById('denovo').onclick = () => { if (rede.papel === 'host' && rede.outro) rede.iniciar(); else if (ultimaCfg) novaCorrida(ultimaCfg); else correr(); };
+document.getElementById('outra').onclick = () => { if (rede.papel === 'conv') rede.fechar(); irMenu(); };
+document.getElementById('som').onclick = () => { som.ligar(!salvo.som); montarMenu(); };
+document.getElementById('pausa').onclick = () => { pausado = true; mostrar('pausa'); som.musica(false); };
+document.getElementById('continuar').onclick = () => { pausado = false; mostrar('jogo'); if (modo === 'corrida') som.musica(true); };
+document.getElementById('sair').onclick = () => { pausado = false; irMenu(); };
+
+// ---------------- controles ----------------
+function botao(id, ao, solta) {
+  const b = document.getElementById(id);
+  const on = e => { e.preventDefault(); som.iniciar(); b.classList.add('ativa'); ao(); try { b.setPointerCapture(e.pointerId); } catch {} };
+  const off = () => { b.classList.remove('ativa'); if (solta) solta(); };
+  b.addEventListener('pointerdown', on); b.addEventListener('pointerup', off); b.addEventListener('pointercancel', off); b.addEventListener('lostpointercapture', off);
+}
+const local = i => jogadores.filter(j => !j.remoto)[i];
+const tecla = (i, k, v) => { const j = local(i); if (j) j.teclas[k] = v; };
+botao('esq', () => tecla(0, 'esq', true), () => tecla(0, 'esq', false));
+botao('dir', () => tecla(0, 'dir', true), () => tecla(0, 'dir', false));
+botao('p1esq', () => tecla(0, 'esq', true), () => tecla(0, 'esq', false));
+botao('p1dir', () => tecla(0, 'dir', true), () => tecla(0, 'dir', false));
+botao('p2esq', () => tecla(1, 'esq', true), () => tecla(1, 'esq', false));
+botao('p2dir', () => tecla(1, 'dir', true), () => tecla(1, 'dir', false));
+botao('buzina', () => som.buzina());
+botao('sirene', () => { const j = local(0); if (!j) return; j.sireneLigada = !j.sireneLigada; som.sirene(j.sireneLigada); });
+// teclado: José usa A/D/S, a Gabi usa as setas (sozinho, as duas servem)
+function teclaPara(e) {
+  const dupla = jogadores.filter(j => !j.remoto).length > 1;
+  const k = { a: 'esq', d: 'dir', s: 'freio', arrowleft: 'esq', arrowright: 'dir', arrowdown: 'freio' }[e.key.toLowerCase()];
+  if (!k) return null;
+  return [dupla && e.key.startsWith('Arrow') ? 1 : 0, k];
+}
+addEventListener('keydown', e => {
+  const tk = teclaPara(e); if (tk) tecla(tk[0], tk[1], true);
+  if (e.key === ' ' && modo !== 'menu') { e.preventDefault(); som.buzina(); }
+  if ((e.key === 'Escape' || e.key === 'p') && (modo === 'corrida' || modo === 'largada')) { pausado = !pausado; mostrar(pausado ? 'pausa' : 'jogo'); }
+});
+addEventListener('keyup', e => { const tk = teclaPara(e); if (tk) tecla(tk[0], tk[1], false); });
+document.addEventListener('visibilitychange', () => { if (document.hidden && (modo === 'corrida' || modo === 'largada')) { pausado = true; mostrar('pausa'); } });
+
+// ---------------- laço principal ----------------
+criarSprites();
+montarPista(PISTAS.find(p => p.id === salvo.pista) || PISTAS[0]);
+const menuJ = novoPiloto(0, salvo.eu, 'corrida');
+menuJ.pos = mod(LARGADA * SEG - JOGADOR_Z - SEG * 6, comprimento);
+usar(menuJ); montarMenu(); mostrar('menu');
+let ultimo = performance.now(), acum = 0;
+function quadro(agora) {
+  const dt = Math.min(.1, (agora - ultimo) / 1000); ultimo = agora;
+  if (modo === 'menu') { tempo += dt; menuJ.pos = mod(menuJ.pos + VMAX * .25 * dt, comprimento); menuJ.ceuOff += .00005; }
+  else if (!pausado && modo !== 'fim') { acum += dt; while (acum >= 1 / 60) { passo(1 / 60); acum -= 1 / 60; } }
+  else if (modo === 'fim' && rede.papel) { tempo += dt; }
+  if (modo !== 'menu' && modo !== 'fim') { for (const j of jogadores) if (!j.remoto) j.obj.spr = j.sireneLigada && Math.floor(tempo * 6) % 2 ? j.spr[1] : j.spr[0]; rede.estado(); }
+  som.atualizar();
+  desenharTudo();
+  requestAnimationFrame(quadro);
+}
+requestAnimationFrame(quadro);
+window.__turbo = { get estado() { return { modo, dist, comprimento, volta, vel, x, lugar: J && modo !== 'menu' ? colocacao() : 0, pilotos: jogadores.map(j => [j.nome, Math.round(j.dist), j.fim ? 1 : 0]) }; }, pular(d) { for (const j of jogadores) if (!j.remoto) j.dist += d; } };
+</script>
+</body>
+</html>
