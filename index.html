@@ -80,12 +80,43 @@
     .jogo a{grid-template-columns:1fr;grid-template-areas:"orbe" "nome" "desc";justify-items:center;text-align:center;row-gap:6px}
     .desc{display:none}
   }
+  /* vídeo de abertura: a Gabi recebe o José na nave (abertura.js) */
+  #filme{position:fixed;inset:0;z-index:10;background:#02030c;transition:opacity .6s ease}
+  #filme[hidden]{display:none}
+  #filme.saindo{opacity:0;pointer-events:none}
+  #filme-tela{position:absolute;inset:0;width:100%;height:100%;display:block}
+  #filme-legenda{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom) + clamp(56px,11vh,96px));transform:translate(-50%,10px);width:min(92vw,720px);
+    margin:0;text-align:center;font-size:clamp(1rem,2.8vmin,1.35rem);line-height:1.4;font-weight:700;color:#fff;
+    padding:10px 16px;border-radius:14px;background:rgba(6,8,30,.62);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+    opacity:0;transition:opacity .35s ease,transform .35s ease;text-shadow:0 2px 6px rgba(0,0,0,.6)}
+  #filme-legenda.on{opacity:1;transform:translate(-50%,0)}
+  #filme-legenda .g{color:#7cc4ff}
+  #filme-legenda .j{color:#5ee07a}
+  #filme-legenda .m{color:#ff6b7f}
+  .filme-botoes{position:absolute;top:calc(env(safe-area-inset-top) + 12px);right:max(12px,env(safe-area-inset-right));display:flex;gap:8px}
+  .filme-botoes button,#rever{font:700 .85rem var(--texto);color:var(--tinta);background:rgba(6,8,30,.6);border:1px solid var(--linha);border-radius:12px;padding:9px 14px;cursor:pointer}
+  .filme-botoes button:hover,.filme-botoes button:focus-visible,#rever:hover,#rever:focus-visible{border-color:var(--neon);box-shadow:0 0 14px rgba(56,232,255,.4);outline:none}
+  #filme-pular{color:var(--sol)}
+  .filme-progresso{position:absolute;left:0;right:0;bottom:0;height:4px;background:rgba(255,255,255,.08)}
+  #filme-barra{height:100%;background:linear-gradient(90deg,var(--sol),var(--rosa),var(--neon));transform-origin:0 50%;transform:scaleX(0)}
+  body.com-filme{overflow:hidden}
+  body.com-filme #cheia{display:none}
   @media (prefers-reduced-motion:reduce){h1,.jogo a{animation:none}}
 </style>
 </head>
 <body>
 <canvas id="ceu" aria-hidden="true"></canvas>
 <button id="cheia" type="button" hidden>⛶ Tela cheia</button>
+
+<div id="filme" role="dialog" aria-modal="true" aria-label="Vídeo de abertura: a Gabi recebe o José na nave e a Super Madrinha chega voando" hidden>
+  <canvas id="filme-tela" aria-hidden="true"></canvas>
+  <p id="filme-legenda" aria-live="polite"></p>
+  <div class="filme-botoes">
+    <button id="filme-som" type="button" aria-pressed="false">🔇 Ligar som</button>
+    <button id="filme-pular" type="button">Pular ⏭</button>
+  </div>
+  <div class="filme-progresso"><div id="filme-barra"></div></div>
+</div>
 
 <div class="tela">
   <header>
@@ -103,7 +134,7 @@
     <li class="jogo" style="--c:#3dffb4;--i:4"><a href="historia.html"><span class="orbe" aria-hidden="true">📖</span><span class="nome">A Viagem da Madrinha</span><span class="desc">História de escolhas: você decide o caminho até Helsinque.</span></a></li>
   </ul>
 
-  <footer><span>💛 Com amor, Madrinha Ana</span><span>🇧🇷 🇫🇮</span></footer>
+  <footer><button id="rever" type="button">🎬 Ver a chegada do José</button><span>💛 Com amor, Madrinha Ana</span><span>🇧🇷 🇫🇮</span></footer>
 </div>
 
 <script>
@@ -183,5 +214,6 @@ if (pedir && (document.fullscreenEnabled || document.webkitFullscreenEnabled)) {
 const hoje = new Date();
 if (hoje.getMonth() === 9 && hoje.getDate() === 12) document.getElementById('festa').hidden = false;
 </script>
+<script src="abertura.js"></script>
 </body>
 </html>
