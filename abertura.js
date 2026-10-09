@@ -257,7 +257,7 @@
   // e o Branquinho (amarelinho, menor e super gordo, olhos azuis e coleira azul, amigão).
   // Sentados com as patinhas em (0,0); voando = deitados no ar, cabeça para a frente.
   const fotos = {};
-  for (const n of ['mimi', 'branquinho']) { const i = new Image(); i.src = `fotos/${n}-q.jpg`; fotos[n] = i; }
+  for (const n of ['mimi', 'branquinho']) { const i = new Image(); i.src = `fotos/${n}-recorte.webp`; fotos[n] = i; }
   function gato(x, y, s, t, quem, o = {}) {
     const mimi = quem === 'mimi';
     const pelo = mimi ? '#fbfbf6' : '#fde6c8', ponta = mimi ? '#f4c4cf' : '#e39a55';
@@ -266,7 +266,7 @@
     const arrepio = o.arrepio || 0;
     if (arrepio) { const tr = Math.sin(t * 60) * arrepio * 1.5; ctx.translate(tr, 0); ctx.scale(1 + arrepio * .12, 1 + arrepio * .14); }
     const onda = Math.sin(t * 9 + (mimi ? 0 : 2)) * 5;
-    const rx = mimi ? 36 : 44, ry = mimi ? 38 : 33, hy = -ry * 2 - 12;
+    const rx = mimi ? 36 : 50, ry = mimi ? 38 : 35, hy = -ry * 2 - 12;
     // capa: o Mimi de roxo, o Branquinho de vermelho
     ctx.fillStyle = mimi ? '#8a3fe0' : '#d42f4a';
     ctx.beginPath(); ctx.moveTo(-16, hy + 20);
@@ -344,16 +344,18 @@
     }
   }
 
-  // foto de verdade do gato num porta-retrato torto
+  // foto de verdade do gato, recortada, flutuando com um brilho e o nome embaixo
   function polaroide(x, y, ang, img, nome, a) {
     if (a <= 0) return;
-    ctx.save(); ctx.globalAlpha = a; ctx.translate(x, y); ctx.rotate(ang); ctx.scale(.7 + a * .3, .7 + a * .3);
-    ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(-72, -82, 152, 178);
-    ctx.fillStyle = '#fffaf0'; ctx.fillRect(-78, -88, 156, 180);
-    if (img.complete && img.naturalWidth) ctx.drawImage(img, -68, -78, 136, 136);
-    else { ctx.fillStyle = '#ddd'; ctx.fillRect(-68, -78, 136, 136); }
-    ctx.fillStyle = '#3a2a50'; ctx.font = '900 17px Orbitron, sans-serif'; ctx.textAlign = 'center';
-    ctx.fillText(nome, 0, 80);
+    ctx.save(); ctx.globalAlpha = a; ctx.translate(x, y + Math.sin(performance.now() / 600 + x) * 6); ctx.rotate(ang * .5); ctx.scale(.7 + a * .3, .7 + a * .3);
+    brilho(0, -10, 120, 'rgba(255,190,240,.35)');
+    if (img.complete && img.naturalWidth) {
+      const e = Math.min(170 / img.naturalWidth, 170 / img.naturalHeight), w = img.naturalWidth * e, h = img.naturalHeight * e;
+      ctx.drawImage(img, -w / 2, 70 - h - 8, w, h);
+    }
+    ctx.fillStyle = '#fff'; ctx.font = '900 17px Orbitron, sans-serif'; ctx.textAlign = 'center';
+    ctx.shadowColor = 'rgba(176,107,255,.9)'; ctx.shadowBlur = 10;
+    ctx.fillText(nome, 0, 86);
     ctx.restore();
   }
 
