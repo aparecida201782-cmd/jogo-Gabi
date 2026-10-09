@@ -22,7 +22,7 @@
   html,body{margin:0;height:100%;background:var(--ceu);color:var(--tinta);font-family:var(--texto)}
   body{overflow-x:hidden}
   #ceu{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0}
-  .tela{position:relative;z-index:1;min-height:100dvh;display:grid;grid-template-rows:auto 1fr auto;gap:clamp(10px,3vh,32px);
+  .tela{position:relative;z-index:1;min-height:100dvh;display:grid;grid-template-rows:auto 1fr auto auto;gap:clamp(10px,3vh,32px);
     padding:calc(env(safe-area-inset-top) + clamp(12px,3vh,28px)) max(16px,env(safe-area-inset-right)) calc(env(safe-area-inset-bottom) + 14px) max(16px,env(safe-area-inset-left))}
   header{text-align:center;display:grid;justify-items:center;gap:clamp(4px,1.2vh,12px);padding-top:clamp(8px,5vh,56px)}
   .selo{font-family:var(--titulo);font-size:clamp(.6rem,1.4vmin,.78rem);letter-spacing:.35em;color:var(--aurora);text-transform:uppercase;opacity:.9}
@@ -90,6 +90,16 @@
   #ouvir:hover,#ouvir:focus-visible,#ouvir.falando{border-color:var(--neon);box-shadow:0 0 14px rgba(56,232,255,.4);outline:none}
   #ouvir[hidden]{display:none}
   #filme-legenda .fi{font-size:1em;margin-top:4px;color:#bfe9ff}
+  /* os gatos da Madrinha, com fotos e vídeo de verdade */
+  .gatos{width:min(1180px,100%);margin:clamp(8px,3vh,28px) auto 0;text-align:center}
+  .gatos h2{margin:0 0 12px;font-family:var(--titulo);font-size:clamp(1rem,2.6vmin,1.35rem);letter-spacing:.04em;color:var(--sol)}
+  .gatos h2 .fi{font-size:.8em;letter-spacing:.06em}
+  .fotos-gatos{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:clamp(10px,2vmin,18px)}
+  .fotos-gatos figure{margin:0;padding:8px 8px 10px;border-radius:18px;background:linear-gradient(160deg,rgba(24,30,82,.72),rgba(8,10,34,.82));border:1px solid var(--linha)}
+  .fotos-gatos img,.fotos-gatos video{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;border-radius:12px;background:#0a0c26}
+  .fotos-gatos figcaption{margin-top:8px;font-size:.88rem;color:var(--suave);line-height:1.35}
+  .fotos-gatos figcaption b{color:var(--tinta)}
+  @media (orientation:landscape) and (max-height:520px){.gatos{display:none}}
   /* vídeo de abertura: a Gabi recebe o José na nave (abertura.js) */
   #filme{position:fixed;inset:0;z-index:10;background:#02030c;transition:opacity .6s ease}
   #filme[hidden]{display:none}
@@ -118,7 +128,7 @@
 <canvas id="ceu" aria-hidden="true"></canvas>
 <button id="cheia" type="button" hidden>⛶ Tela cheia · Koko näyttö</button>
 
-<div id="filme" role="dialog" aria-modal="true" aria-label="Vídeo de abertura: a Gabi recebe o José na nave e a Super Madrinha chega voando" hidden>
+<div id="filme" role="dialog" aria-modal="true" aria-label="Vídeo de abertura: a Gabi recebe o José na nave e a Super Madrinha chega voando com os gatos Mimi e Branquinho" hidden>
   <canvas id="filme-tela" aria-hidden="true"></canvas>
   <p id="filme-legenda" aria-live="polite"></p>
   <div class="filme-botoes">
@@ -145,6 +155,20 @@
     <li class="jogo" style="--c:#ff4fa3;--i:3"><a href="corrida.html"><span class="orbe" aria-hidden="true">🏃</span><span class="nome">Corrida Neon<span class="fi" lang="fi">Neonjuoksu</span></span><span class="desc">Corrida sem fim com a família. Desvie, pule e bata o recorde.<span class="fi" lang="fi">Loputon juoksu koko perheen kanssa. Väistä, hyppää ja tee ennätys.</span></span></a></li>
     <li class="jogo" style="--c:#3dffb4;--i:4"><a href="historia.html"><span class="orbe" aria-hidden="true">📖</span><span class="nome">A Viagem da Madrinha<span class="fi" lang="fi">Kummitädin matka</span></span><span class="desc">História de escolhas: você decide o caminho até Helsinque.<span class="fi" lang="fi">Valintatarina: sinä päätät reitin Helsinkiin.</span></span></a></li>
   </ul>
+
+  <section class="gatos" aria-labelledby="gatos-titulo">
+    <h2 id="gatos-titulo">🐱 Os supergatos da Super Madrinha<span class="fi" lang="fi">Superkummitädin superkissat</span></h2>
+    <div class="fotos-gatos">
+      <figure><img src="fotos/mimi.jpg" alt="O Mimi, gato branco grandão, sentado na cama como gente" loading="lazy" width="750" height="1000">
+        <figcaption><b>Mimi</b> · grandão e mandão<span class="fi" lang="fi">Iso ja pomottava</span></figcaption></figure>
+      <figure><img src="fotos/branquinho.jpg" alt="O Branquinho, gato amarelinho de olhos azuis, apoiado numa caixa" loading="lazy" width="562" height="1000">
+        <figcaption><b>Branquinho</b> · menor, super gordo e amigão<span class="fi" lang="fi">Pienempi, pullea ja kiltti kaveri</span></figcaption></figure>
+      <figure><video src="videos/mimi.mp4" poster="fotos/mimi-video.jpg" controls muted playsinline preload="none" width="478" height="850" aria-label="Vídeo do Mimi"></video>
+        <figcaption>🎥 Vídeo do Mimi<span class="fi" lang="fi">Mimin video</span></figcaption></figure>
+      <figure><img src="fotos/branquinho2.jpg" alt="O Branquinho, de coleira azul, olhando para cima" loading="lazy" width="562" height="1000">
+        <figcaption>Branquinho de coleira azul<span class="fi" lang="fi">Branquinho ja sininen panta</span></figcaption></figure>
+    </div>
+  </section>
 
   <footer><button id="rever" type="button">🎬 Ver a chegada do José · <span lang="fi">Katso Josén saapuminen</span></button><span>💛 Com amor, Madrinha Ana · <span lang="fi">Rakkaudella, kummitäti Ana</span></span><span>🇧🇷 🇫🇮</span></footer>
 </div>

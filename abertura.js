@@ -1,9 +1,10 @@
 // Vídeo de abertura da Galáxia da Gabi: a capitã Gabi recebe o José na nave Estrela Rosa
-// e, no fim, a Super Madrinha chega voando para a festa.
+// e, no fim, a Super Madrinha chega voando para a festa com os supergatos Mimi e Branquinho
+// (e o Ilo, o cachorro do José, que não se dá muito bem com eles).
 // É um "filminho" desenhado no canvas (fica nítido em qualquer tela e não pesa no download).
 // Passa sozinho uma vez por visita; o botão "Ver a chegada do José" passa de novo.
 (() => {
-  const DUR = 32;
+  const DUR = 44;
   const filme = document.getElementById('filme');
   const cv = document.getElementById('filme-tela');
   const ctx = cv.getContext('2d');
@@ -193,8 +194,110 @@
     ctx.fillStyle = VERM; ctx.font = '900 13px Orbitron, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('M', 0, -88);
     // cabeça
     ctx.save(); ctx.translate(0, -132); if (voando) ctx.rotate(-Math.PI / 2 + .4);
-    rosto(0, 0, .72, 'ana', { corpo: false, pisca: (t % 2.8) < .1, boca: voando ? null : (t * 6 % 2 < 1 && t > 27 && t < 30 ? 'o' : null) });
+    rosto(0, 0, .72, 'ana', { corpo: false, pisca: (t % 2.8) < .1, boca: voando ? null : (t * 6 % 2 < 1 && ((t > 25.2 && t < 27) || (t > 38.4 && t < 41)) ? 'o' : null) });
     ctx.restore();
+    ctx.restore();
+  }
+
+  // Os gatos da Madrinha, de capa: o Mimi (branco, grandão e mandão, olhos de sono)
+  // e o Branquinho (amarelinho, menor e super gordo, olhos azuis e coleira azul, amigão).
+  // Sentados com as patinhas em (0,0); voando = deitados no ar, cabeça para a frente.
+  const fotos = {};
+  for (const n of ['mimi', 'branquinho']) { const i = new Image(); i.src = `fotos/${n}-q.jpg`; fotos[n] = i; }
+  function gato(x, y, s, t, quem, o = {}) {
+    const mimi = quem === 'mimi';
+    const pelo = mimi ? '#fbfbf6' : '#fde6c8', ponta = mimi ? '#f4c4cf' : '#e39a55';
+    ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+    if (o.voando) ctx.rotate(Math.PI / 2);
+    const arrepio = o.arrepio || 0;
+    if (arrepio) { const tr = Math.sin(t * 60) * arrepio * 1.5; ctx.translate(tr, 0); ctx.scale(1 + arrepio * .12, 1 + arrepio * .14); }
+    const onda = Math.sin(t * 9 + (mimi ? 0 : 2)) * 5;
+    const rx = mimi ? 36 : 44, ry = mimi ? 38 : 33, hy = -ry * 2 - 12;
+    // capa: o Mimi de roxo, o Branquinho de vermelho
+    ctx.fillStyle = mimi ? '#8a3fe0' : '#d42f4a';
+    ctx.beginPath(); ctx.moveTo(-16, hy + 20);
+    if (o.voando) { ctx.quadraticCurveTo(-30, -20, -24 + onda, 26); ctx.lineTo(24 + onda, 30); }
+    else { ctx.quadraticCurveTo(-46, -30, -44 + onda, 0); ctx.lineTo(44 + onda, 0); }
+    ctx.quadraticCurveTo(30, -30, 16, hy + 20); ctx.fill();
+    // rabo
+    ctx.strokeStyle = mimi ? '#eeeee8' : ponta; ctx.lineWidth = arrepio ? 14 : 10; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(rx - 8, -8); ctx.quadraticCurveTo(rx + 26, -10 + Math.sin(t * 3) * 6, rx + 14, -50 - arrepio * 14); ctx.stroke();
+    // pelo arrepiado (quando o Ilo late)
+    if (arrepio) {
+      ctx.fillStyle = pelo;
+      for (let i = 0; i < 14; i++) { const a = Math.PI + i / 13 * Math.PI, bx = Math.cos(a) * rx, by = -ry + Math.sin(a) * ry;
+        ctx.beginPath(); ctx.moveTo(bx - 6, by); ctx.lineTo(bx + Math.cos(a) * 14 * arrepio, by + Math.sin(a) * 14 * arrepio); ctx.lineTo(bx + 6, by); ctx.fill(); }
+    }
+    // corpo gordinho, barriga e patinhas
+    elipse(0, -ry, rx, ry, pelo);
+    elipse(0, -ry * .8, rx * .55, ry * .6, mimi ? 'rgba(255,190,205,.35)' : 'rgba(255,255,255,.5)');
+    elipse(-14, -5, 10, 7, pelo); elipse(14, -5, 10, 7, pelo);
+    ctx.strokeStyle = 'rgba(0,0,0,.12)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.ellipse(0, -ry, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
+    // orelhas
+    for (const l of [-1, 1]) {
+      ctx.fillStyle = mimi ? pelo : ponta; ctx.beginPath(); ctx.moveTo(l * 24, hy - 2); ctx.lineTo(l * 20, hy - 34); ctx.lineTo(l * 4, hy - 18); ctx.fill();
+      ctx.fillStyle = '#ffb3c4'; ctx.beginPath(); ctx.moveTo(l * 20, hy - 6); ctx.lineTo(l * 18, hy - 26); ctx.lineTo(l * 9, hy - 16); ctx.fill();
+    }
+    // cabeça (o Branquinho tem a carinha alaranjada no meio)
+    elipse(0, hy, 28, 24, pelo);
+    if (!mimi) { brilho(0, hy + 2, 20, 'rgba(227,154,85,.7)'); ctx.fillStyle = '#1f7ad8'; ctx.beginPath(); ctx.roundRect(-20, hy + 19, 40, 7, 3); ctx.fill(); elipse(0, hy + 29, 4, 4, '#ffc93c'); }
+    // olhos
+    ctx.strokeStyle = '#3a3040'; ctx.lineWidth = 2; ctx.lineCap = 'round';
+    const olho = mimi ? '#9fb8d8' : '#4f86d6';
+    for (const l of [-1, 1]) {
+      const ex = l * 10, ey = hy - 2;
+      if (o.feliz) { ctx.beginPath(); ctx.arc(ex, ey + 2, 4, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke(); continue; }
+      if (mimi && !arrepio) {
+        // Mimi: olhinhos meio fechados de quem manda em tudo, e as sobrancelhas bravas
+        elipse(ex, ey + 1, 5, 2.4, olho); ctx.beginPath(); ctx.moveTo(ex - 6, ey - 1); ctx.lineTo(ex + 6, ey - 1); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(ex - l * 6, ey - 8); ctx.lineTo(ex + l * 5, ey - 4); ctx.stroke();
+      } else {
+        const r = arrepio ? 6.5 : 5.5;
+        elipse(ex, ey, r, r, olho); elipse(ex, ey, r * .45, r * (arrepio ? .9 : .7), '#1a1a28'); elipse(ex + 1.6, ey - 1.8, 1.5, 1.5, '#fff');
+      }
+    }
+    // focinho, boca e bigodes
+    ctx.fillStyle = '#f08aa0'; ctx.beginPath(); ctx.moveTo(-3.5, hy + 6); ctx.lineTo(3.5, hy + 6); ctx.lineTo(0, hy + 10); ctx.fill();
+    if (o.boca || arrepio) { elipse(0, hy + 15, 5, 5, '#7a2a3a'); ctx.fillStyle = '#fff'; ctx.fillRect(-4, hy + 11, 2, 3); ctx.fillRect(2, hy + 11, 2, 3); }
+    else { ctx.beginPath(); ctx.arc(-3, hy + 11, 3, 0, Math.PI); ctx.arc(3, hy + 11, 3, 0, Math.PI); ctx.stroke(); }
+    ctx.strokeStyle = 'rgba(80,70,80,.55)'; ctx.lineWidth = 1.2;
+    for (const l of [-1, 1]) for (const d of [-4, 0, 4]) { ctx.beginPath(); ctx.moveTo(l * 9, hy + 9); ctx.lineTo(l * 32, hy + 7 + d * 1.5); ctx.stroke(); }
+    ctx.restore();
+  }
+
+  // Ilo, o cachorro do José: parece um poodle marronzinho
+  function ilo(x, y, s, t, latindo) {
+    ctx.save(); ctx.translate(x, y); ctx.scale(-s, s);
+    const C = '#9a6440', E = '#7a4a2c', pulo = latindo ? Math.abs(Math.sin(t * 12)) * 6 : 0;
+    ctx.translate(0, -pulo);
+    for (const [px, py, r] of [[-22, -6, 8], [-8, -6, 8], [14, -6, 8], [26, -6, 8]]) elipse(px, py, r * .8, r, E);
+    for (const [px, py, r] of [[-18, -26, 17], [0, -30, 19], [18, -28, 17], [-34, -40, 9]]) elipse(px, py, r, r, C);
+    // cabeça com o topete enroladinho
+    elipse(28, -56, 17, 16, C);
+    for (const [px, py] of [[18, -72], [28, -76], [38, -72]]) elipse(px, py, 8, 8, C);
+    elipse(16, -50, 7, 13, E, .3);
+    elipse(42, -50, 9, 7, '#b8805a');
+    elipse(48, -52, 3.5, 3, '#1a1010');
+    elipse(32, -60, 2.6, 3, '#1a1010');
+    if (latindo) { elipse(44, -43, 5, 4, '#7a2a3a'); elipse(44, -40, 3, 4, '#ff7a9a'); }
+    ctx.restore();
+    if (latindo && Math.sin(t * 12) > 0) {
+      ctx.save(); ctx.fillStyle = '#fff'; ctx.font = '900 20px Orbitron, sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('AU AU!', x - 20 * s, y - 100 * s); ctx.restore();
+    }
+  }
+
+  // foto de verdade do gato num porta-retrato torto
+  function polaroide(x, y, ang, img, nome, a) {
+    if (a <= 0) return;
+    ctx.save(); ctx.globalAlpha = a; ctx.translate(x, y); ctx.rotate(ang); ctx.scale(.7 + a * .3, .7 + a * .3);
+    ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(-72, -82, 152, 178);
+    ctx.fillStyle = '#fffaf0'; ctx.fillRect(-78, -88, 156, 180);
+    if (img.complete && img.naturalWidth) ctx.drawImage(img, -68, -78, 136, 136);
+    else { ctx.fillStyle = '#ddd'; ctx.fillRect(-68, -78, 136, 136); }
+    ctx.fillStyle = '#3a2a50'; ctx.font = '900 17px Orbitron, sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(nome, 0, 80);
     ctx.restore();
   }
 
@@ -250,7 +353,11 @@
     [18.8, 22.4, 'Bem-vindo à Galáxia da Gabi, <b class="j">José</b>! 💛', 'Tervetuloa Gabin galaksiin, José!'],
     [22.6, 25, '<b class="j">José:</b> “Ué… quem é aquela voando lá fora?” 👀', 'José: ”Häh… kuka tuolla ulkona lentää?”'],
     [25.2, 27.2, 'É um cometa? É um foguete? É a <b class="m">SUPER MADRINHA</b>! 🦸‍♀️', 'Onko se komeetta? Raketti? Se on Superkummitäti!'],
-    [27.4, 31.5, '<b class="m">Super Madrinha:</b> “Festa na galáxia sem a Madrinha? Nunca!” 💛', 'Superkummitäti: ”Juhlat ilman kummitätiä? Ei ikinä!”'],
+    [27.4, 30.4, 'E com ela, os supergatos: o <b class="m">Mimi</b>, o mandão, e o <b class="m">Branquinho</b>, o amigão! 🐱🐱', 'Ja hänen kanssaan superkissat: pomo Mimi ja kaveri Branquinho!'],
+    [30.6, 33, '<b class="m">Mimi:</b> “Miau! Aqui quem manda sou eu!” 😼', 'Mimi: ”Miau! Täällä minä määrään!”'],
+    [33.2, 35.4, '<b class="m">Branquinho:</b> “Miau, José! Vamos brincar?” 🐾', 'Branquinho: ”Miau, José! Leikitäänkö?”'],
+    [35.6, 38.2, '<b class="j">Ilo:</b> “Au au!” 🐶 Ih… os gatos não gostam muito do Ilo!', 'Ilo: ”Hau hau!” Voi ei… kissat eivät oikein tykkää Ilosta!'],
+    [38.4, 42.5, '<b class="m">Super Madrinha:</b> “Calma, turma! Na galáxia todo mundo é amigo!” 💛', 'Superkummitäti: ”Rauhassa, porukka! Galaksissa kaikki ovat ystäviä!”'],
   ];
   const html = t => t.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]);
   let falaAtual = -1;
@@ -266,7 +373,7 @@
   }
   // narração em finlandês quando o som está ligado
   function falarFi() {
-    if (somLigado && falaAtual >= 0 && window.puhu) puhu(FALAS[falaAtual][3].replace(/^(Gabi|José|Superkummitäti): /, ''));
+    if (somLigado && falaAtual >= 0 && window.puhu) puhu(FALAS[falaAtual][3].replace(/^(Gabi|José|Superkummitäti|Mimi|Branquinho): /, ''));
   }
 
   // ---------- cenas ----------
@@ -362,7 +469,11 @@
         const e = suave(chega);
         const vx = mix(-260, 40, e), vy = mix(-200, -40, e) + Math.sin(e * 7) * 14;
         for (let i = 1; i <= 7; i++) brilho(vx - i * 16 * mix(.3, 1, e), vy - i * 10 * mix(.3, 1, e), (9 - i) * 3, `rgba(255,79,163,${.3 - i * .035})`);
-        ctx.save(); ctx.translate(vx, vy); ctx.rotate(.55); superMadrinha(0, 0, mix(.25, 1.1, e), t, true); ctx.restore();
+        const sc = mix(.25, 1.1, e);
+        ctx.save(); ctx.translate(vx, vy); ctx.rotate(.55);
+        gato(-70 * sc, -60 * sc + Math.sin(t * 4) * 4, sc * .55, t, 'mimi', { voando: true });
+        gato(-50 * sc, 70 * sc + Math.sin(t * 4 + 1) * 4, sc * .45, t, 'branquinho', { voando: true });
+        superMadrinha(0, 0, sc, t, true); ctx.restore();
       }
       ctx.restore();
       ctx.strokeStyle = '#b06bff'; ctx.lineWidth = 14; ctx.beginPath(); ctx.arc(0, -40, 236, 0, Math.PI * 2); ctx.stroke();
@@ -379,9 +490,9 @@
 
       // quando a Super Madrinha pousa, os dois abrem espaço para ela no meio
       const abre = suave(prog(t, 25.2, 25.9));
-      const dist = mix(mix(150, 46, junto), 125, abre);
+      const dist = mix(mix(150, 46, junto), 178, abre);
       const gx = mix(-VW / 2 - 120, -dist, k), jx = mix(VW / 2 + 120, dist, k);
-      const pulo = junto >= 1 && (t < 22.6 || t > 25.4) ? Math.abs(Math.sin(t * (t > 25.4 ? 8 : 5))) * (t > 25.4 ? 16 : 10) : 0;
+      const pulo = junto >= 1 && (t < 22.6 || (t > 25.4 && t < 35.6) || t > 39.4) ? Math.abs(Math.sin(t * (t > 25.4 ? 8 : 5))) * (t > 25.4 ? 16 : 10) : 0;
       // bracinhos do abraço
       if (junto > 0 && abre < 1) {
         ctx.save(); ctx.globalAlpha = junto * (1 - abre);
@@ -398,9 +509,26 @@
         ctx.beginPath(); ctx.moveTo(jx - 10, 160 - pulo); ctx.quadraticCurveTo(gx, 130 - pulo, gx - 40, 160 - pulo); ctx.stroke();
         ctx.restore();
       }
+      // os supergatos pousam na frente da Madrinha; o Ilo chega latindo e eles se assustam
+      if (dentro) {
+        const pg = mola(prog(t, 25.5, 26.3));
+        const susto = suave(prog(t, 35.6, 36)) * (1 - suave(prog(t, 38.6, 39.4)));
+        const calma = t > 39.4;
+        const fala = (a, b) => t > a && t < b && (t * 6 % 2) < 1;
+        gato(-74, mix(-300, 232, pg), 1.9, t, 'mimi', { arrepio: susto, boca: fala(30.6, 33), feliz: calma });
+        // o Branquinho pula no colo da Madrinha de medo
+        const colo = suave(prog(t, 35.7, 36.2)) * (1 - suave(prog(t, 39, 39.6)));
+        gato(mix(72, 30, colo), mix(mix(-300, 232, mola(prog(t, 25.7, 26.5))), 40, colo), 1.45, t, 'branquinho', { arrepio: susto * .6, boca: fala(33.2, 35.4), feliz: calma || (t > 33.2 && t < 35.4 && !fala(33.2, 35.4)) });
+        if (t > 35.4) ilo(mix(VW / 2 + 80, Math.min(300, VW / 2 - 70), mola(prog(t, 35.4, 36))), 222, 1.5, t, t < 38.4);
+        // as fotos de verdade dos dois
+        const fa = suave(prog(t, 27.4, 28.2)) * (1 - suave(prog(t, 35, 35.6)));
+        const pxF = Math.min(VW / 2 - 105, 440), pyF = VW > 1000 ? -120 : -440;
+        polaroide(-pxF, pyF, -.12, fotos.mimi, 'MIMI', fa);
+        polaroide(pxF, pyF + 20, .1, fotos.branquinho, 'BRANQUINHO', fa);
+      }
       // corações e estrelinhas subindo
-      for (let i = 0; i < 40; i++) {
-        const nasc = i < 16 ? 20.8 + i * .22 : 25.4 + (i - 16) * .2; if (t < nasc) continue;
+      for (let i = 0; i < 64; i++) {
+        const nasc = i < 16 ? 20.8 + i * .22 : i < 40 ? 25.4 + (i - 16) * .2 : 39.4 + (i - 40) * .12; if (t < nasc) continue;
         const q = (t - nasc) / 3.2; if (q > 1) continue;
         const x = Math.sin(i * 2.3) * 220, y = 80 - q * 380;
         ctx.globalAlpha = 1 - q;
@@ -409,15 +537,15 @@
         ctx.globalAlpha = 1;
       }
       // faixa de boas-vindas
-      const fb = mola(prog(t, 21.6, 22.6)) * (1 - suave(prog(t, 22.4, 22.9))) + mola(prog(t, 27.6, 28.4));
+      const fb = mola(prog(t, 21.6, 22.6)) * (1 - suave(prog(t, 22.4, 22.9))) + mola(prog(t, 39.6, 40.4));
       if (fb > 0) {
         ctx.save(); ctx.translate(0, -250 + (1 - fb) * -200);
         const larg = Math.min(600, VW - 40);
         ctx.fillStyle = '#ff4fa3'; ctx.beginPath(); ctx.roundRect(-larg / 2, -40, larg, 84, 18); ctx.fill();
         ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.font = `900 ${Math.min(26, larg / 18)}px Orbitron, sans-serif`;
-        ctx.fillText(t > 27 ? 'FAMÍLIA NA GALÁXIA!' : 'BEM-VINDO, JOSÉ!', 0, -4);
+        ctx.fillText(t > 30 ? 'FAMÍLIA NA GALÁXIA!' : 'BEM-VINDO, JOSÉ!', 0, -4);
         ctx.fillStyle = '#fff6c8';
-        ctx.fillText(t > 27 ? 'PERHE GALAKSISSA!' : 'TERVETULOA, JOSÉ!', 0, 28);
+        ctx.fillText(t > 30 ? 'PERHE GALAKSISSA!' : 'TERVETULOA, JOSÉ!', 0, 28);
         ctx.restore();
       }
     }
@@ -461,9 +589,24 @@
     g.gain.setValueAtTime(0, quando); g.gain.linearRampToValueAtTime(vol, quando + dur * .3); g.gain.linearRampToValueAtTime(0, quando + dur);
     src.connect(f); f.connect(g); g.connect(mestre); src.start(quando);
   }
+  function miau(quando, f0, dur) {
+    const o = AC.createOscillator(), fl = AC.createBiquadFilter(), g = AC.createGain();
+    o.type = 'sawtooth'; fl.type = 'bandpass'; fl.Q.value = 3;
+    o.frequency.setValueAtTime(f0, quando); o.frequency.linearRampToValueAtTime(f0 * 1.5, quando + dur * .35); o.frequency.linearRampToValueAtTime(f0 * .8, quando + dur);
+    fl.frequency.setValueAtTime(900, quando); fl.frequency.linearRampToValueAtTime(1800, quando + dur * .4); fl.frequency.linearRampToValueAtTime(700, quando + dur);
+    g.gain.setValueAtTime(0, quando); g.gain.linearRampToValueAtTime(.18, quando + .06); g.gain.linearRampToValueAtTime(0, quando + dur);
+    o.connect(fl); fl.connect(g); g.connect(mestre); o.start(quando); o.stop(quando + dur + .05);
+  }
+  function latido(quando) {
+    const o = AC.createOscillator(), g = AC.createGain();
+    o.type = 'square'; o.frequency.setValueAtTime(420, quando); o.frequency.exponentialRampToValueAtTime(180, quando + .14);
+    g.gain.setValueAtTime(.1, quando); g.gain.exponentialRampToValueAtTime(.001, quando + .16);
+    o.connect(g); g.connect(mestre); o.start(quando); o.stop(quando + .2);
+    ruido(quando, .12, .2, 1200, 600);
+  }
   // música: arpejo alegre de 4 acordes (Dó, Lá menor, Fá, Sol) em colcheias
   const ACORDES = [[261.6, 329.6, 392, 523.2], [220, 261.6, 329.6, 440], [174.6, 220, 261.6, 349.2], [196, 246.9, 293.7, 392]];
-  const EVENTOS = [[0, 'dobra'], [10.2, 'foguete'], [13.2, 'looping'], [15.1, 'raio'], [18.9, 'abraco'], [21.6, 'festa'], [22.8, 'voo'], [25.2, 'super']];
+  const EVENTOS = [[0, 'dobra'], [10.2, 'foguete'], [13.2, 'looping'], [15.1, 'raio'], [18.9, 'abraco'], [21.6, 'festa'], [22.8, 'voo'], [25.2, 'super'], [30.6, 'miauMimi'], [33.2, 'miauBranquinho'], [35.6, 'latido'], [36, 'chiado'], [39.4, 'festa2']];
   function sons(t) {
     if (!somLigado || !AC) return;
     const agora = AC.currentTime;
@@ -482,6 +625,11 @@
       if (nome === 'looping') { const o = AC.createOscillator(), g = AC.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(300, agora); o.frequency.exponentialRampToValueAtTime(900, agora + .9); o.frequency.exponentialRampToValueAtTime(300, agora + 1.8); g.gain.setValueAtTime(.08, agora); g.gain.linearRampToValueAtTime(0, agora + 1.8); o.connect(g); g.connect(mestre); o.start(agora); o.stop(agora + 1.9); }
       if (nome === 'raio') { for (let i = 0; i < 6; i++) nota(440 + i * 110, agora + i * .4, .6, .04, 'sine'); }
       if (nome === 'abraco') [523.2, 659.3, 784, 1046.5].forEach((f, i) => nota(f, agora + i * .12, 1.4, .08));
+      if (nome === 'miauMimi') miau(agora, 380, 1);
+      if (nome === 'miauBranquinho') { miau(agora, 620, .7); miau(agora + .6, 700, .5); }
+      if (nome === 'latido') for (let i = 0; i < 4; i++) { latido(agora + i * .45); }
+      if (nome === 'chiado') ruido(agora, .9, .25, 5000, 2500);
+      if (nome === 'festa2') [523.2, 659.3, 784, 1046.5, 1318.5].forEach((f, i) => nota(f, agora + i * .1, .9, .07));
       if (nome === 'voo') ruido(agora, 2.4, .3, 400, 4000);
       if (nome === 'super') [392, 523.2, 659.3, 784, 659.3, 784, 1046.5].forEach((f, i) => nota(f, agora + i * .14 + (i > 4 ? .14 : 0), i === 6 ? 1.6 : .3, .09, 'square'));
       if (nome === 'festa') [784, 988, 1175, 1568, 1318.5, 1568].forEach((f, i) => nota(f, agora + i * .1, .5, .05, 'square'));
