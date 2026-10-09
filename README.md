@@ -66,23 +66,37 @@ Nave espacial em 5 setores (Nebulosa Rosa, Anéis de Gelo, Cinturão de Asteroid
 - O modo online usa o PeerJS (`lib/peerjs.min.js`) e o servidor gratuito de salas do PeerJS; as duas precisam de internet.
 
 ## Operação Mystic Falls (jogo de mistério por chat)
-Um escape room de conversa no universo de *The Vampire Diaries*. Um número desconhecido (uma bruxa que teve a memória apagada por compulsão) manda mensagens, arquivos e áudios, e a jogadora resolve os enigmas respondendo no chat. São 7 fases e 2 finais:
+Um escape room de conversa no universo de *The Vampire Diaries*. Um número desconhecido (uma bruxa que teve a memória apagada por compulsão) manda mensagens, arquivos e áudios, e a jogadora resolve os enigmas respondendo no chat. São **2 capítulos, 12 fases e 4 finais**.
+
+**Capítulo 1: A Bruxa Sem Memória**
 1. **O Grimório Digitalizado:** achar a arma escondida num arquivo XML.
 2. **O SMS dos Salvatore:** uma mensagem escrita de trás para frente.
 3. **O Diário de Stefan:** uma palavra escondida na primeira letra de cada linha.
 4. **A Caixa de Ferro:** o código do cadeado embaixo da Ponte Wickery.
 5. **O Interrogatório:** descobrir qual dos três suspeitos é o vampiro.
 6. **A Revelação:** onde a bruxa escondeu a estaca.
-7. **A Escolha:** soltar ou não o Lucien, e cada escolha leva a um final diferente.
+7. **A Escolha:** soltar ou não o Lucien. Cada escolha leva a um final diferente do capítulo 1 **e muda o capítulo 2**.
+
+**Capítulo 2: O Eclipse de Sangue** (uma semana depois, a lua fica vermelha e a estátua de pedra do Silas some)
+
+8. **O Mapa dos Túneis:** juntar as letras de coordenadas (coluna + linha) num mapa antigo.
+9. **A Cifra das Três Luas:** uma palavra gravada no poço, com cada letra andando 3 casas no alfabeto.
+10. **As Lápides:** cinco lápides e três regras para achar a certa.
+11. **O Espelho da Cripta:** uma frase escrita ao contrário num espelho velho. Se o Lucien ficou preso no capítulo 1, quem está na cripta é ele...
+12. **O Feitiço do Eclipse:** achar no grimório completo o único feitiço que funciona na lua de sangue, usa verbena e sela a pedra (cuidado: um deles acorda o Silas!).
+
+Os finais: *O Aliado da Neblina* e *A Sombra no Porão* (capítulo 1), *Amigos de Sangue* e *A Lua Branca* (capítulo 2). Quem já tinha terminado a versão antiga continua direto no capítulo 2.
 
 Na conversa: *dica* dá uma ajudinha, *repetir* manda a pista de novo e *reiniciar* começa do zero. A história e as respostas ficam em `mystic-historia.js`.
 
 O que deixa o jogo mais misterioso:
 - **Ilustrações** em cada fase (`mystic-imagens.js`, desenhos próprios). No navegador, toque na imagem para ampliar e procurar pistas.
-- **Vídeos** curtos com som (`videos/`, 720p): a abertura na floresta, a Ponte Wickery, as câmeras do Baile dos Fundadores, os olhos no porão, o túmulo e os dois finais. Cinco deles usam cenas realistas geradas no Canva (`fotos/`), animadas com câmera em movimento, neblina, luzes e som. São gerados por `node scripts/gerar-videos.mjs` (precisa do Playwright e do ffmpeg).
+- **Caderno de pistas** (botão 📓): mostra as fases já resolvidas com as respostas e os finais descobertos (guardados mesmo depois de reiniciar).
+- **Capítulo 2 com a cor do eclipse:** a conversa fica vermelha, com cartela de capítulo no meio do chat.
+- **Vídeos** curtos com som (`videos/`, 720p): a abertura na floresta, a Ponte Wickery, as câmeras do Baile dos Fundadores, os olhos no porão, o túmulo, os dois finais e, no capítulo 2, o eclipse de sangue, o cemitério e o selo da estátua. Cinco deles usam cenas realistas geradas no Canva (`fotos/`), animadas com câmera em movimento, neblina, luzes e som. São gerados por `node scripts/gerar-videos.mjs` (precisa do Playwright e do ffmpeg).
 - **Mensagens que se apagam** sozinhas, "digitando..." que para sem mandar nada, tela que pisca, treme ou fica vermelha nos sustos, e som de vento e coração (botão 🔊).
 - **Botões** para escolher o suspeito e o final.
-- **Segredos:** mande nomes da série (Damon, Stefan, Elena, Katherine, Klaus, Caroline, Bonnie) a qualquer momento para ver o que a bruxa responde.
+- **Segredos:** mande nomes da série (Damon, Stefan, Elena, Katherine, Klaus, Caroline, Bonnie, Matt, Tyler, Alaric, Sheila, Lucien, Silas) a qualquer momento para ver o que a bruxa responde.
 
 ### No celular, pelo navegador
 Abra `mystic.html` (no site: https://jogodamadrinhaana.dynosai.cloud/mystic.html). Parece uma conversa de aplicativo de mensagens, com "digitando...", arquivo para abrir e áudio falado. O progresso fica salvo no celular.

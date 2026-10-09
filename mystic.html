@@ -9,7 +9,7 @@
   :root{--bg:#0b100e;--top:#16201c;--ink:#e8efe9;--muted:#8fa59a;--eles:#1c2723;--eu:#5a1420;--eu-ink:#fbe9ec;--acc:#c8344a;--gold:#e7c36a;--line:rgba(255,255,255,.08)}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-  body{display:flex;flex-direction:column;height:100dvh;max-width:720px;margin:0 auto}
+  body{display:flex;flex-direction:column;height:100dvh;max-width:860px;margin:0 auto}
   header{display:flex;align-items:center;gap:12px;padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top));background:var(--top);border-bottom:1px solid var(--line)}
   .av{flex:none;width:42px;height:42px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f2f2e8,#9aa39a 45%,#2b3330 70%);box-shadow:0 0 14px rgba(231,195,106,.35)}
   header .nm{font-weight:700}
@@ -18,7 +18,7 @@
   header .fs{margin-left:auto;font-size:.75rem;color:var(--gold);border:1px solid rgba(231,195,106,.4);border-radius:99px;padding:3px 10px;white-space:nowrap}
   main{flex:1;overflow-y:auto;padding:14px 12px 6px;background:radial-gradient(120% 60% at 50% 0%,rgba(200,52,74,.10),transparent 60%),repeating-linear-gradient(45deg,rgba(255,255,255,.012) 0 12px,transparent 12px 24px)}
   .aviso{margin:0 auto 14px;max-width:88%;text-align:center;font-size:.78rem;color:var(--gold);background:rgba(231,195,106,.08);border:1px solid rgba(231,195,106,.2);border-radius:10px;padding:6px 10px}
-  .b{position:relative;max-width:84%;width:fit-content;margin:3px 0 7px;padding:7px 10px 18px;border-radius:12px;line-height:1.38;font-size:.97rem;white-space:pre-wrap;word-wrap:break-word;animation:in .25s ease-out both}
+  .b{position:relative;max-width:84%;width:fit-content;margin:3px 0 7px;padding:7px 10px 18px;border-radius:12px;line-height:1.42;font-size:1.03rem;white-space:pre-wrap;word-wrap:break-word;animation:in .25s ease-out both}
   @keyframes in{from{transform:translateY(6px);opacity:0}}
   .b.eles{background:var(--eles);border-top-left-radius:3px}
   .b.eu{background:var(--eu);color:var(--eu-ink);margin-left:auto;border-top-right-radius:3px}
@@ -47,11 +47,11 @@
   dialog .hd{display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);font-weight:700}
   dialog .hd button{margin-left:auto;font:inherit;border:0;background:none;color:var(--gold);font-size:1rem;cursor:pointer}
   dialog pre{margin:0;padding:14px;overflow:auto;max-height:72vh;font-size:.8rem;line-height:1.5;color:#b9d7c6;white-space:pre}
-  .b .ilu{display:block;width:100%;max-width:320px;border-radius:8px;margin:-2px -4px 5px;cursor:zoom-in;border:0;padding:0;background:none}
+  .b .ilu{display:block;width:100%;max-width:460px;border-radius:8px;margin:-2px -4px 5px;cursor:zoom-in;border:0;padding:0;background:none}
   .b .ilu img{display:block;width:100%;border-radius:8px}
   .b.ilu-b{padding:5px 5px 18px}
   .b.ilu-b .cap{padding:0 5px}
-  .b video{display:block;width:100%;max-width:320px;border-radius:8px;background:#000}
+  .b video{display:block;width:100%;max-width:460px;border-radius:8px;background:#000}
   .b.apagada{color:var(--muted);font-style:italic}
   .b.sumindo{animation:some .6s ease-in forwards}
   @keyframes some{to{filter:blur(6px);opacity:0}}
@@ -79,6 +79,26 @@
   body.tremor{animation:tremor .08s linear 10}
   @keyframes tremor{25%{transform:translate(2px,-2px)}50%{transform:translate(-2px,1px)}75%{transform:translate(1px,2px)}}
   body.sangue main{box-shadow:inset 0 0 120px 30px rgba(140,10,25,.75);transition:box-shadow .4s}
+  /* cartela de capítulo no meio da conversa */
+  .capb{margin:18px auto 14px;text-align:center;animation:in .6s ease-out both}
+  .capb small{display:block;font-family:"Courier New",monospace;letter-spacing:4px;color:var(--gold);font-size:.8rem}
+  .capb b{display:block;font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:1.6rem;letter-spacing:1px;margin-top:4px}
+  .capb::before,.capb::after{content:"";display:block;height:1px;margin:10px auto;width:60%;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+  /* Capítulo 2: tudo fica com a cor do eclipse */
+  body.cap2{--gold:#ff8a6a;--acc:#b0182c;--top:#1c1214;--eles:#2a1a1c;--eu:#6a0f1c}
+  body.cap2 .av{background:radial-gradient(circle at 35% 30%,#e0573a,#9a1e14 55%,#3a0806 75%);box-shadow:0 0 16px rgba(255,60,40,.55)}
+  body.cap2 main{background:radial-gradient(120% 60% at 50% 0%,rgba(200,30,40,.22),transparent 60%),repeating-linear-gradient(45deg,rgba(255,255,255,.012) 0 12px,transparent 12px 24px)}
+  #cad[open]{display:flex;flex-direction:column}
+  #cad ol{flex:1;min-height:0;margin:0;padding:12px 16px 16px 40px;overflow:auto;line-height:1.5}
+  #cad .fin{flex:none;border-top:1px solid var(--line);padding-top:10px!important}
+  body.cap2 #capa .lua{background:radial-gradient(circle at 35% 30%,#ff8a6a,#b0281c 55%,#5a0a08);box-shadow:0 0 70px rgba(255,50,40,.5)}
+  #cad li{padding:5px 0;border-bottom:1px solid var(--line)}
+  #cad li small{display:block;color:var(--muted)}
+  #cad li.ok small{color:var(--gold)}
+  #cad li.cap{list-style:none;margin-left:-24px;border:0;padding-top:12px;font-family:"Courier New",monospace;letter-spacing:3px;font-size:.78rem;color:var(--gold)}
+  #cad .fin{padding:0 16px 14px;color:var(--muted);font-size:.85rem}
+  #capa .info{color:var(--muted);font-size:.85rem;line-height:1.5}
+  #capa .info b{color:var(--gold);font-weight:600}
   @media (prefers-reduced-motion:reduce){body.glitch main,body.tremor,#capa .lua{animation:none}}
 </style>
 </head>
@@ -91,22 +111,24 @@
   <button id="som" aria-label="Ligar som ambiente" title="Som ambiente">🔇</button>
 </header>
 <main id="chat" aria-live="polite"><div class="aviso">🔒 As mensagens desta conversa somem quando a lua cheia acabar.</div></main>
-<div class="rap"><button data-t="dica">💡 dica</button><button data-t="repetir">🔁 repetir</button><button data-t="reiniciar">↺ reiniciar</button></div>
+<div class="rap"><button id="cadbt">📓 caderno</button><button data-t="dica">💡 dica</button><button data-t="repetir">🔁 repetir</button><button data-t="reiniciar">↺ reiniciar</button></div>
 <footer>
   <input id="txt" placeholder="Mensagem" autocomplete="off" enterkeyhint="send">
   <button id="env" aria-label="Enviar">➤</button>
 </footer>
 <dialog id="vis"><div class="hd"><span id="visnm"></span><button onclick="vis.close()">fechar ✕</button></div><pre id="viscont"></pre></dialog>
+<dialog id="cad"><div class="hd"><span>📓 Caderno de pistas</span><button onclick="cad.close()">fechar ✕</button></div><ol id="cadlista"></ol><div class="fin" id="cadfin"></div></dialog>
 <dialog id="lupa"><div class="hd"><span>🔍 Investigar imagem</span><button onclick="lupa.close()">fechar ✕</button></div><div class="zoom"><img id="lupaimg" alt=""></div><div class="dica">Toque na imagem para aproximar e procurar pistas.</div></dialog>
 <div id="capa" role="button" tabindex="0" aria-label="Abrir a conversa">
   <div class="lua" aria-hidden="true"></div>
   <h1>OPERAÇÃO MYSTIC FALLS</h1>
   <div class="notif"><b>📵 Número desconhecido</b><span>1 chamada perdida · 1 nova mensagem</span></div>
+  <div class="info" id="capainfo">2 capítulos · 12 fases · 4 finais</div>
   <small>toque para abrir a conversa · use fones 🎧</small>
 </div>
 
 <script type="module">
-import { responder, estadoInicial, CONTATO, TOTAL_FASES } from './mystic-historia.js';
+import { responder, estadoInicial, CONTATO, TOTAL_FASES, FIM, CADERNO } from './mystic-historia.js';
 import { IMAGENS } from './mystic-imagens.js';
 
 const chat = document.getElementById('chat'), st = document.getElementById('st'), fs = document.getElementById('fs');
@@ -126,15 +148,42 @@ const fmt = s => esc(s)
   .replace(/(^|[\s"(])_([^_\n]+)_(?=$|[\s.,!?:)"])/gm, '$1<i>$2</i>');
 const hora = () => new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 const rolar = () => chat.scrollTop = chat.scrollHeight;
-const POSTER = { abertura: 'floresta', cameras: 'suspeitos', final_sombra: 'parede' };
+const POSTER = { abertura: 'floresta', cameras: 'suspeitos', final_sombra: 'parede', cemiterio: 'lapides', selo: 'estatua' };
 // capas com as fotos realistas (fotos/, geradas no Canva)
 const FOTO = { abertura: 'floresta', ponte: 'ponte', porao: 'porao', cripta: 'cripta', final_aliado: 'praca' };
 const imgURL = nome => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(IMAGENS[nome] || '');
 
 function mostrarFase() {
-  const f = salvo.estado.fase;
-  fs.textContent = f >= 1 && f <= TOTAL_FASES ? `Fase ${f}/${TOTAL_FASES}` : f > TOTAL_FASES ? '🏆 concluído' : '';
+  const { fase: f, cap2 } = salvo.estado;
+  fs.textContent = f === 8 && !cap2 ? 'Capítulo 1 ✓' : f >= 1 && f <= TOTAL_FASES ? `Cap. ${f <= 7 ? 1 : 2} · Fase ${f}/${TOTAL_FASES}` : f >= FIM ? '🏆 concluído' : '';
+  document.body.classList.toggle('cap2', !!cap2);
 }
+
+// ---------- finais descobertos (ficam guardados mesmo depois de reiniciar) ----------
+const FINAIS = { 'cap1-aliado': 'Cap. 1 · O Aliado da Neblina', 'cap1-sombra': 'Cap. 1 · A Sombra no Porão', 'cap2-aliado': 'Final A · Amigos de Sangue', 'cap2-sombra': 'Final B · A Lua Branca' };
+let finais = [];
+try { finais = JSON.parse(localStorage.getItem(CHAVE + 'Finais')) || []; } catch {}
+function marcarFinal(e) {
+  const id = e.fase >= FIM ? 'cap2-' + e.final : e.fase === 8 && e.final ? 'cap1-' + e.final : null;
+  if (!id || finais.includes(id)) return;
+  finais.push(id);
+  try { localStorage.setItem(CHAVE + 'Finais', JSON.stringify(finais)); } catch {}
+}
+marcarFinal(salvo.estado); // quem já tinha terminado a versão antiga
+
+// ---------- caderno de pistas ----------
+const cad = document.getElementById('cad');
+document.getElementById('cadbt').onclick = () => {
+  const e = salvo.estado;
+  document.getElementById('cadlista').innerHTML = CADERNO.map(([titulo, resp], i) => {
+    const n = i + 1, ok = e.fase > n, atual = e.fase === n && (n !== 8 || e.cap2);
+    const r = typeof resp === 'function' ? resp(e) : resp;
+    const cap = n === 1 ? '<li class="cap">CAPÍTULO 1 · A BRUXA SEM MEMÓRIA</li>' : n === 8 ? '<li class="cap">CAPÍTULO 2 · O ECLIPSE DE SANGUE</li>' : '';
+    return cap + `<li class="${ok ? 'ok' : ''}" value="${n}">${ok || atual ? esc(titulo) : '🔒 ???'}<small>${ok ? '✓ ' + esc(r) : atual ? '🔎 investigando agora...' : 'ainda não descoberta'}</small></li>`;
+  }).join('');
+  document.getElementById('cadfin').innerHTML = `🏆 Finais descobertos: <b>${finais.length}/4</b>` + (finais.length ? '<br>' + finais.map(f => '• ' + esc(FINAIS[f])).join('<br>') : '');
+  cad.showModal();
+};
 
 // ---------- som: vento, coração e o "plim" das mensagens (tudo gerado aqui, sem arquivos) ----------
 let audio = null, somLigado = false;
@@ -205,6 +254,12 @@ document.getElementById('lupaimg').onclick = () => lupa.classList.toggle('perto'
 function bolha(m, quem, h, apagada) {
   const b = document.createElement('div');
   b.className = 'b ' + quem;
+  if (m.capitulo && !apagada) {
+    b.className = 'capb';
+    b.innerHTML = `<small>${esc(m.capitulo)}</small><b>${esc(m.titulo)}</b>`;
+    chat.appendChild(b); rolar();
+    return b;
+  }
   if (apagada) {
     b.classList.add('apagada');
     b.textContent = '🚫 Esta mensagem foi apagada';
@@ -259,6 +314,7 @@ let fila = Promise.resolve();
 
 async function chegam(msgs) {
   for (const m of msgs) {
+    if (m.capitulo) { await pausa(m.espera ?? 600); bolha(m, 'eles', hora()); salvo.hist.push({ m, quem: 'eles', h: '' }); guardar(); await pausa(500); continue; }
     st.textContent = m.audio ? 'gravando áudio...' : 'digitando...';
     st.classList.add('dig');
     const d = document.createElement('div');
@@ -300,14 +356,14 @@ function enviar(texto) {
       chat.querySelectorAll('.b').forEach(b => b.remove());
       bolha(m, 'eu', h);
     }
-    salvo.estado = r.estado; guardar(); mostrarFase();
+    salvo.estado = r.estado; guardar(); mostrarFase(); marcarFinal(r.estado);
     await chegam(r.msgs);
   });
 }
 
 document.getElementById('env').onclick = () => { enviar(txt.value); txt.value = ''; txt.focus(); };
 txt.addEventListener('keydown', e => { if (e.key === 'Enter') { enviar(txt.value); txt.value = ''; } });
-document.querySelectorAll('.rap button').forEach(b => b.onclick = () => enviar(b.dataset.t));
+document.querySelectorAll('.rap button[data-t]').forEach(b => b.onclick = () => enviar(b.dataset.t));
 
 // redesenha a conversa salva
 for (const { m, quem, h, apagada } of salvo.hist) bolha(m, quem, h, apagada);
@@ -330,6 +386,7 @@ function abrir() {
 capa.onclick = abrir;
 capa.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') abrir(); };
 if (salvo.estado.fase !== 0) { capa.querySelector('.notif span').textContent = 'Toque para continuar a conversa'; }
+if (finais.length) document.getElementById('capainfo').innerHTML = `2 capítulos · 12 fases<br>🏆 Finais descobertos: <b>${finais.length}/4</b>`;
 </script>
 </body>
 </html>
