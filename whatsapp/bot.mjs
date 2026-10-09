@@ -21,7 +21,8 @@ const jogadoras = existsSync(ARQ_ESTADO) ? JSON.parse(readFileSync(ARQ_ESTADO, '
 const salvar = () => writeFileSync(ARQ_ESTADO, JSON.stringify(jogadoras, null, 2));
 const filas = new Map(); // mensagens de cada pessoa são respondidas uma de cada vez, na ordem
 
-async function enviar(sock, jid, m) {
+// lg = língua da jogadora: as imagens em finlandês e inglês ficam em imagens/fi/ e imagens/en/
+async function enviar(sock, jid, m, lg = 'pt') {
   await sock.sendPresenceUpdate(m.audio ? 'recording' : 'composing', jid);
   await esperar(m.espera ?? 1500);
   await sock.sendPresenceUpdate('paused', jid);
@@ -29,7 +30,7 @@ async function enviar(sock, jid, m) {
   const legenda = (m.texto || '') + (m.opcoes ? `\n\n👉 ${m.opcoes.map(o => '*' + o + '*').join(' ou ')}` : '');
   let conteudo;
   if (m.imagem) {
-    conteudo = { image: readFileSync(PASTA + 'imagens/' + m.imagem + '.png'), caption: legenda || undefined };
+    conteudo = { image: readFileSync(PASTA + 'imagens/' + (lg === 'pt' ? '' : lg + '/') + m.imagem + '.png'), caption: legenda || undefined };
   } else if (m.video) {
     conteudo = { video: readFileSync(PASTA + '../videos/' + m.video + '.mp4'), mimetype: 'video/mp4', caption: legenda || undefined };
   } else if (m.arquivo) {
@@ -54,7 +55,7 @@ async function tratar(sock, key, texto) {
     const { estado, msgs } = responder(jogadoras[jid] || estadoInicial(), texto);
     jogadoras[jid] = estado;
     salvar();
-    for (const m of msgs) await enviar(sock, jid, m);
+    for (const m of msgs) await enviar(sock, jid, m, estado.lingua);
   } catch (err) {
     console.error('Erro ao responder', jid, err);
   }

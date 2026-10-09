@@ -59,6 +59,7 @@
   .opc button{font:inherit;font-weight:700;border:1px solid var(--gold);background:rgba(231,195,106,.08);color:var(--gold);border-radius:99px;padding:8px 16px;cursor:pointer}
   .opc button:hover,.opc button:focus-visible{background:rgba(231,195,106,.2);outline:none}
   #volta{flex:none;color:var(--muted);text-decoration:none;font-size:1.8rem;line-height:1;margin:-4px -4px 0 -4px;padding:0 4px}
+  #lgbt{flex:none;border:1px solid var(--line);background:none;color:var(--muted);border-radius:99px;font:inherit;font-size:.72rem;padding:3px 7px;cursor:pointer}
   #som{flex:none;border:0;background:none;font-size:1.25rem;cursor:pointer;padding:4px;color:var(--ink)}
   #lupa .zoom{overflow:auto;max-height:78vh;touch-action:pan-x pan-y pinch-zoom}
   #lupa .quadro{position:relative;width:100%;transition:width .25s}
@@ -106,6 +107,9 @@
   #cad li.ok small{color:var(--gold)}
   #cad li.cap{list-style:none;margin-left:-24px;border:0;padding-top:12px;font-family:"Courier New",monospace;letter-spacing:3px;font-size:.78rem;color:var(--gold)}
   #cad .fin{padding:0 16px 14px;color:var(--muted);font-size:.85rem}
+  #capa .linguas{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  #capa .linguas button{font:inherit;font-size:.9rem;border:1px solid var(--line);background:var(--top);color:var(--muted);border-radius:99px;padding:6px 14px;cursor:pointer}
+  #capa .linguas button.on{border-color:var(--gold);color:var(--gold);background:rgba(231,195,106,.1)}
   #capa .info{color:var(--muted);font-size:.85rem;line-height:1.5}
   #capa .info b{color:var(--gold);font-weight:600}
   @media (prefers-reduced-motion:reduce){body.glitch main,body.tremor,#capa .lua{animation:none}}
@@ -117,37 +121,95 @@
   <div class="av" aria-hidden="true"></div>
   <div><div class="nm" id="nome">Número desconhecido</div><div class="st" id="st">online</div></div>
   <div class="fs" id="fs"></div>
+  <button id="lgbt" aria-label="Língua · Kieli · Language">🌐 PT</button>
   <button id="som" aria-label="Ligar som ambiente" title="Som ambiente">🔇</button>
 </header>
-<main id="chat" aria-live="polite"><div class="aviso">🔒 As mensagens desta conversa somem quando a lua cheia acabar.</div></main>
-<div class="rap"><button id="cadbt">📓 caderno</button><button data-t="dica">💡 dica</button><button data-t="repetir">🔁 repetir</button><button data-t="reiniciar">↺ reiniciar</button></div>
+<main id="chat" aria-live="polite"><div class="aviso" data-u="aviso">🔒 As mensagens desta conversa somem quando a lua cheia acabar.</div></main>
+<div class="rap"><button id="cadbt" data-u="caderno">📓 caderno</button><button data-t="dica" data-u="dica">💡 dica</button><button data-t="repetir" data-u="repetir">🔁 repetir</button><button data-t="reiniciar" data-u="reiniciar">↺ reiniciar</button></div>
 <footer>
   <input id="txt" placeholder="Mensagem" autocomplete="off" enterkeyhint="send">
   <button id="env" aria-label="Enviar">➤</button>
 </footer>
-<dialog id="vis"><div class="hd"><span id="visnm"></span><button onclick="vis.close()">fechar ✕</button></div><pre id="viscont"></pre></dialog>
-<dialog id="cad"><div class="hd"><span>📓 Caderno de pistas</span><button onclick="cad.close()">fechar ✕</button></div><ol id="cadlista"></ol><div class="fin" id="cadfin"></div></dialog>
-<dialog id="lupa"><div class="hd"><span>🔍 Investigar imagem</span><button onclick="lupa.close()">fechar ✕</button></div><div class="zoom"><div class="quadro" id="quadro"><img id="lupaimg" alt=""></div></div><div class="dica" id="lupadica">Toque na imagem para aproximar e procurar pistas.</div></dialog>
+<dialog id="vis"><div class="hd"><span id="visnm"></span><button onclick="vis.close()" data-u="fechar">fechar ✕</button></div><pre id="viscont"></pre></dialog>
+<dialog id="cad"><div class="hd"><span data-u="cadTitulo">📓 Caderno de pistas</span><button onclick="cad.close()" data-u="fechar">fechar ✕</button></div><ol id="cadlista"></ol><div class="fin" id="cadfin"></div></dialog>
+<dialog id="lupa"><div class="hd"><span data-u="investigar">🔍 Investigar imagem</span><button onclick="lupa.close()" data-u="fechar">fechar ✕</button></div><div class="zoom"><div class="quadro" id="quadro"><img id="lupaimg" alt=""></div></div><div class="dica" id="lupadica">Toque na imagem para aproximar e procurar pistas.</div></dialog>
 <div id="capa" role="button" tabindex="0" aria-label="Abrir a conversa">
   <div class="lua" aria-hidden="true"></div>
-  <h1>OPERAÇÃO MYSTIC FALLS</h1>
-  <div class="notif"><b>📵 Número desconhecido</b><span>1 chamada perdida · 1 nova mensagem</span></div>
+  <h1 data-u="titulo">OPERAÇÃO MYSTIC FALLS</h1>
+  <div class="notif"><b id="capanome">📵 Número desconhecido</b><span id="capanotif">1 chamada perdida · 1 nova mensagem</span></div>
+  <div class="linguas" id="linguas"><button data-lg="pt">🇧🇷 Português</button><button data-lg="fi">🇫🇮 Suomi</button><button data-lg="en">🇬🇧 English</button></div>
   <div class="info" id="capainfo">2 capítulos · 12 fases · 4 finais</div>
-  <small>toque para abrir a conversa · use fones 🎧</small>
+  <small data-u="tocar">toque para abrir a conversa · use fones 🎧</small>
 </div>
 
 <script type="module">
-import { responder, estadoInicial, CONTATO, TOTAL_FASES, FIM, CADERNO } from './mystic-historia.js';
-import { IMAGENS, PISTAS_ESCONDIDAS } from './mystic-imagens.js';
+import { responder, estadoInicial, em, CONTATO, TOTAL_FASES, FIM, CADERNO, FINAIS } from './mystic-historia.js';
+import { imagensEm, pistasEm } from './mystic-imagens.js';
 
 const chat = document.getElementById('chat'), st = document.getElementById('st'), fs = document.getElementById('fs');
 const txt = document.getElementById('txt'), vis = document.getElementById('vis'), lupa = document.getElementById('lupa');
 const capa = document.getElementById('capa'), somBtn = document.getElementById('som');
-document.getElementById('nome').textContent = CONTATO;
 const CHAVE = 'mysticFalls';
 let salvo = { estado: estadoInicial(), hist: [] };
 try { salvo = JSON.parse(localStorage.getItem(CHAVE)) || salvo; } catch {}
 const guardar = () => { try { localStorage.setItem(CHAVE, JSON.stringify(salvo)); } catch {} };
+
+// ---------- línguas: português, finlandês e inglês ----------
+const lg = () => ['fi', 'en'].includes(salvo.estado.lingua) ? salvo.estado.lingua : 'pt';
+const U = {
+  titulo: ['OPERAÇÃO MYSTIC FALLS', 'OPERAATIO MYSTIC FALLS', 'OPERATION MYSTIC FALLS'],
+  aviso: ['🔒 As mensagens desta conversa somem quando a lua cheia acabar.', '🔒 Tämän keskustelun viestit katoavat, kun täysikuu loppuu.', '🔒 The messages in this chat vanish when the full moon ends.'],
+  caderno: ['📓 caderno', '📓 muistikirja', '📓 notebook'],
+  dica: ['💡 dica', '💡 vihje', '💡 hint'],
+  repetir: ['🔁 repetir', '🔁 toista', '🔁 repeat'],
+  reiniciar: ['↺ reiniciar', '↺ alusta', '↺ restart'],
+  fechar: ['fechar ✕', 'sulje ✕', 'close ✕'],
+  cadTitulo: ['📓 Caderno de pistas', '📓 Vihjemuistikirja', '📓 Clue notebook'],
+  investigar: ['🔍 Investigar imagem', '🔍 Tutki kuvaa', '🔍 Investigate picture'],
+  tocar: ['toque para abrir a conversa · use fones 🎧', 'napauta avataksesi keskustelun · käytä kuulokkeita 🎧', 'tap to open the chat · use headphones 🎧'],
+  notif: ['1 chamada perdida · 1 nova mensagem', '1 vastaamaton puhelu · 1 uusi viesti', '1 missed call · 1 new message'],
+  continuar: ['Toque para continuar a conversa', 'Napauta jatkaaksesi keskustelua', 'Tap to continue the chat'],
+  info: ['2 capítulos · 12 fases · 4 finais', '2 lukua · 12 tasoa · 4 loppua', '2 chapters · 12 levels · 4 endings'],
+  infoCurta: ['2 capítulos · 12 fases', '2 lukua · 12 tasoa', '2 chapters · 12 levels'],
+  finais: ['🏆 Finais descobertos', '🏆 Löydetyt loput', '🏆 Endings found'],
+  mensagem: ['Mensagem', 'Viesti', 'Message'],
+  online: ['online', 'paikalla', 'online'],
+  digitando: ['digitando...', 'kirjoittaa...', 'typing...'],
+  gravando: ['gravando áudio...', 'nauhoittaa ääntä...', 'recording audio...'],
+  apagada: ['🚫 Esta mensagem foi apagada', '🚫 Tämä viesti poistettiin', '🚫 This message was deleted'],
+  abrir: ['toque para abrir', 'avaa napauttamalla', 'tap to open'],
+  cap1: ['Capítulo 1 ✓', 'Luku 1 ✓', 'Chapter 1 ✓'],
+  concluido: ['🏆 concluído', '🏆 valmis', '🏆 finished'],
+  faseCurta: ['Cap. {c} · Fase {f}/{t}', 'Luku {c} · Taso {f}/{t}', 'Ch. {c} · Level {f}/{t}'],
+  capitulo1: ['CAPÍTULO 1 · A BRUXA SEM MEMÓRIA', 'LUKU 1 · NOITA ILMAN MUISTIA', 'CHAPTER 1 · THE WITCH WITHOUT A MEMORY'],
+  capitulo2: ['CAPÍTULO 2 · O ECLIPSE DE SANGUE', 'LUKU 2 · VERIKUUN PIMENNYS', 'CHAPTER 2 · THE BLOOD ECLIPSE'],
+  investigando: ['🔎 investigando agora...', '🔎 tutkitaan nyt...', '🔎 investigating now...'],
+  naoDescoberta: ['ainda não descoberta', 'ei vielä löydetty', 'not found yet'],
+  lupaSem: ['Toque na imagem para aproximar e procurar pistas.', 'Napauta kuvaa lähentääksesi ja etsiäksesi vihjeitä.', 'Tap the picture to zoom in and look for clues.'],
+  lupaTodas: ['🔍 Você achou todas as {n} pistas escondidas desta imagem!', '🔍 Löysit kaikki {n} piilotettua vihjettä tästä kuvasta!', '🔍 You found all {n} hidden clues in this picture!'],
+  lupaFalta: ['🔍 Esta imagem tem {n} pistas escondidas (você achou {a}). Toque nos lugares suspeitos!', '🔍 Tässä kuvassa on {n} piilotettua vihjettä (löysit {a}). Napauta epäilyttäviä kohtia!', '🔍 This picture has {n} hidden clues (you found {a}). Tap the suspicious spots!'],
+  tagFalta: ['🔍 {n} pistas escondidas', '🔍 {n} piilovihjettä', '🔍 {n} hidden clues'],
+  tagFalta1: ['🔍 1 pista escondida', '🔍 1 piilovihje', '🔍 1 hidden clue'],
+  investigada: ['✓ investigada', '✓ tutkittu', '✓ investigated'],
+};
+const u = (k, v = {}) => U[k][['pt', 'fi', 'en'].indexOf(lg())].replace(/\{(\w)\}/g, (_, x) => v[x]);
+// o que os botões de comando mandam em cada língua
+const CMD_LG = { dica: { pt: 'dica', fi: 'vihje', en: 'hint' }, repetir: { pt: 'repetir', fi: 'toista', en: 'repeat' }, reiniciar: { pt: 'reiniciar', fi: 'aloita alusta', en: 'restart' } };
+const NOME_LG = { pt: 'português', fi: 'suomi', en: 'english' };
+const FALA_LG = { pt: 'pt-BR', fi: 'fi-FI', en: 'en-US' };
+function aplicarLingua() {
+  document.documentElement.lang = FALA_LG[lg()];
+  document.querySelectorAll('[data-u]').forEach(el => el.textContent = u(el.dataset.u));
+  document.getElementById('nome').textContent = em(CONTATO, lg());
+  document.getElementById('capanome').textContent = '📵 ' + em(CONTATO, lg());
+  document.getElementById('capanotif').textContent = u(salvo.estado.fase !== 0 ? 'continuar' : 'notif');
+  document.getElementById('capainfo').innerHTML = finais.length ? `${u('infoCurta')}<br>${u('finais')}: <b>${finais.length}/4</b>` : u('info');
+  document.getElementById('lgbt').textContent = '🌐 ' + lg().toUpperCase();
+  document.querySelectorAll('#linguas button').forEach(b => b.classList.toggle('on', b.dataset.lg === lg()));
+  txt.placeholder = u('mensagem');
+  if (!st.classList.contains('dig')) st.textContent = u('online');
+  mostrarFase(); marcarBolhas();
+}
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 // formatação do WhatsApp: ```código```, *negrito*, _itálico_
@@ -155,21 +217,21 @@ const fmt = s => esc(s)
   .replace(/```([\s\S]+?)```/g, '<code>$1</code>')
   .replace(/\*([^*\n]+)\*/g, '<b>$1</b>')
   .replace(/(^|[\s"(])_([^_\n]+)_(?=$|[\s.,!?:)"])/gm, '$1<i>$2</i>');
-const hora = () => new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+const hora = () => new Date().toLocaleTimeString(FALA_LG[lg()], { hour: '2-digit', minute: '2-digit' });
 const rolar = () => chat.scrollTop = chat.scrollHeight;
 const POSTER = { abertura: 'floresta', cameras: 'suspeitos', final_sombra: 'parede', cemiterio: 'lapides', selo: 'estatua' };
 // capas com as fotos realistas (fotos/, geradas no Canva)
 const FOTO = { abertura: 'floresta', ponte: 'ponte', porao: 'porao', cripta: 'cripta', final_aliado: 'praca' };
-const imgURL = nome => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(IMAGENS[nome] || '');
+const imgURL = nome => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(imagensEm(lg())[nome] || '');
+const pistasImg = nome => pistasEm(lg())[nome] || [];
 
 function mostrarFase() {
   const { fase: f, cap2 } = salvo.estado;
-  fs.textContent = f === 8 && !cap2 ? 'Capítulo 1 ✓' : f >= 1 && f <= TOTAL_FASES ? `Cap. ${f <= 7 ? 1 : 2} · Fase ${f}/${TOTAL_FASES}` : f >= FIM ? '🏆 concluído' : '';
+  fs.textContent = f === 8 && !cap2 ? u('cap1') : f >= 1 && f <= TOTAL_FASES ? u('faseCurta', { c: f <= 7 ? 1 : 2, f, t: TOTAL_FASES }) : f >= FIM ? u('concluido') : '';
   document.body.classList.toggle('cap2', !!cap2);
 }
 
 // ---------- finais descobertos (ficam guardados mesmo depois de reiniciar) ----------
-const FINAIS = { 'cap1-aliado': 'Cap. 1 · O Aliado da Neblina', 'cap1-sombra': 'Cap. 1 · A Sombra no Porão', 'cap2-aliado': 'Final A · Amigos de Sangue', 'cap2-sombra': 'Final B · A Lua Branca' };
 let finais = [];
 try { finais = JSON.parse(localStorage.getItem(CHAVE + 'Finais')) || []; } catch {}
 function marcarFinal(e) {
@@ -186,11 +248,11 @@ document.getElementById('cadbt').onclick = () => {
   const e = salvo.estado;
   document.getElementById('cadlista').innerHTML = CADERNO.map(([titulo, resp], i) => {
     const n = i + 1, ok = e.fase > n, atual = e.fase === n && (n !== 8 || e.cap2);
-    const r = typeof resp === 'function' ? resp(e) : resp;
-    const cap = n === 1 ? '<li class="cap">CAPÍTULO 1 · A BRUXA SEM MEMÓRIA</li>' : n === 8 ? '<li class="cap">CAPÍTULO 2 · O ECLIPSE DE SANGUE</li>' : '';
-    return cap + `<li class="${ok ? 'ok' : ''}" value="${n}">${ok || atual ? esc(titulo) : '🔒 ???'}<small>${ok ? '✓ ' + esc(r) : atual ? '🔎 investigando agora...' : 'ainda não descoberta'}</small></li>`;
+    const r = em(typeof resp === 'function' ? resp(e) : resp, lg());
+    const cap = n === 1 ? `<li class="cap">${u('capitulo1')}</li>` : n === 8 ? `<li class="cap">${u('capitulo2')}</li>` : '';
+    return cap + `<li class="${ok ? 'ok' : ''}" value="${n}">${ok || atual ? esc(em(titulo, lg())) : '🔒 ???'}<small>${ok ? '✓ ' + esc(r) : atual ? u('investigando') : u('naoDescoberta')}</small></li>`;
   }).join('');
-  document.getElementById('cadfin').innerHTML = `🏆 Finais descobertos: <b>${finais.length}/4</b>` + (finais.length ? '<br>' + finais.map(f => '• ' + esc(FINAIS[f])).join('<br>') : '');
+  document.getElementById('cadfin').innerHTML = `${u('finais')}: <b>${finais.length}/4</b>` + (finais.length ? '<br>' + finais.map(f => '• ' + esc(em(FINAIS[f], lg()))).join('<br>') : '');
   cad.showModal();
 };
 
@@ -245,8 +307,8 @@ function falar(texto, caixa) {
   if (!('speechSynthesis' in window)) return;
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(texto);
-  u.lang = 'pt-BR'; u.rate = 0.92; u.pitch = 0.7;
-  const voz = speechSynthesis.getVoices().find(v => v.lang?.toLowerCase().startsWith('pt'));
+  u.lang = FALA_LG[lg()]; u.rate = 0.92; u.pitch = 0.7;
+  const voz = speechSynthesis.getVoices().find(v => v.lang?.toLowerCase().startsWith(lg()));
   if (voz) u.voice = voz;
   caixa.classList.add('tocando');
   u.onend = u.onerror = () => caixa.classList.remove('tocando');
@@ -258,13 +320,11 @@ let achadas = [];
 try { achadas = JSON.parse(localStorage.getItem(CHAVE + 'Achadas')) || []; } catch {}
 const quadro = document.getElementById('quadro'), lupaDica = document.getElementById('lupadica');
 function contarAchadas(nome) {
-  const lista = PISTAS_ESCONDIDAS[nome] || [], n = lista.filter((_, i) => achadas.includes(nome + ':' + i)).length;
-  lupaDica.textContent = !lista.length ? 'Toque na imagem para aproximar e procurar pistas.'
-    : n === lista.length ? `🔍 Você achou todas as ${lista.length} pistas escondidas desta imagem!`
-    : `🔍 Tem ${lista.length} pista${lista.length > 1 ? 's' : ''} escondida${lista.length > 1 ? 's' : ''} nesta imagem (achou ${n}). Toque nos lugares suspeitos!`;
+  const lista = pistasImg(nome), n = lista.filter((_, i) => achadas.includes(nome + ':' + i)).length;
+  lupaDica.textContent = !lista.length ? u('lupaSem') : n === lista.length ? u('lupaTodas', { n: lista.length }) : u('lupaFalta', { n: lista.length, a: n });
 }
 function mostrarPista(nome, i) {
-  const p = PISTAS_ESCONDIDAS[nome][i];
+  const p = pistasImg(nome)[i];
   quadro.querySelectorAll('.rot').forEach(r => r.remove());
   const rot = document.createElement('div');
   rot.className = 'rot';
@@ -278,7 +338,7 @@ function abrirLupa(nome) {
   document.getElementById('lupaimg').src = imgURL(nome);
   lupa.classList.remove('perto');
   quadro.querySelectorAll('.esc,.rot').forEach(x => x.remove());
-  (PISTAS_ESCONDIDAS[nome] || []).forEach((p, i) => {
+  pistasImg(nome).forEach((p, i) => {
     const bt = document.createElement('button');
     const id = nome + ':' + i;
     bt.className = 'esc' + (achadas.includes(id) ? ' achou' : '');
@@ -300,12 +360,12 @@ function abrirLupa(nome) {
 // selo nas imagens do chat: quantas pistas escondidas ainda faltam achar
 function marcarBolhas() {
   chat.querySelectorAll('.ilu[data-img]').forEach(b => {
-    const nome = b.dataset.img, lista = PISTAS_ESCONDIDAS[nome] || [];
+    const nome = b.dataset.img, lista = pistasImg(nome);
     const falta = lista.filter((_, i) => !achadas.includes(nome + ':' + i)).length;
     let tag = b.querySelector('.tag');
     if (!lista.length) return;
     if (!tag) { tag = document.createElement('span'); tag.className = 'tag'; b.appendChild(tag); }
-    tag.textContent = falta ? `🔍 ${falta} pista${falta > 1 ? 's' : ''} escondida${falta > 1 ? 's' : ''}` : '✓ investigada';
+    tag.textContent = falta ? (falta > 1 ? u('tagFalta', { n: falta }) : u('tagFalta1')) : u('investigada');
   });
 }
 document.getElementById('lupaimg').onclick = () => { quadro.querySelectorAll('.rot').forEach(r => r.remove()); lupa.classList.toggle('perto'); };
@@ -321,7 +381,7 @@ function bolha(m, quem, h, apagada) {
   }
   if (apagada) {
     b.classList.add('apagada');
-    b.textContent = '🚫 Esta mensagem foi apagada';
+    b.textContent = u('apagada');
   } else if (m.imagem) {
     b.classList.add('ilu-b');
     b.innerHTML = `<button class="ilu" data-img="${esc(m.imagem)}" aria-label="Ampliar imagem"><img src="${imgURL(m.imagem)}" alt=""></button>${m.texto ? `<div class="cap">${fmt(m.texto)}</div>` : ''}`;
@@ -329,14 +389,15 @@ function bolha(m, quem, h, apagada) {
     setTimeout(marcarBolhas);
   } else if (m.video) {
     b.classList.add('ilu-b');
-    b.innerHTML = `<video src="videos/${esc(m.video)}.mp4" controls playsinline preload="metadata" poster="${FOTO[m.video] ? `fotos/${FOTO[m.video]}.jpg` : imgURL(POSTER[m.video] || m.video)}"></video>${m.texto ? `<div class="cap">${fmt(m.texto)}</div>` : ''}`;
+    const base = m.video.replace(/_(fi|en)$/, ''); // nome_fi / nome_en: o mesmo vídeo com os letreiros em outra língua
+    b.innerHTML = `<video src="videos/${esc(m.video)}.mp4" controls playsinline preload="metadata" poster="${FOTO[base] ? `fotos/${FOTO[base]}.jpg` : imgURL(POSTER[base] || base)}"></video>${m.texto ? `<div class="cap">${fmt(m.texto)}</div>` : ''}`;
     // o som ambiente baixa enquanto o vídeo toca
     const v = b.querySelector('video');
     v.onplay = () => { document.querySelectorAll('.b video').forEach(o => o !== v && o.pause()); if (audio) audio.mestre.gain.setTargetAtTime(0, audio.ctx.currentTime, .2); };
     v.onpause = v.onended = () => aplicarSom();
   } else if (m.arquivo) {
     const kb = (new Blob([m.arquivo.conteudo]).size / 1024).toFixed(1);
-    b.innerHTML = `<button class="doc"><span class="ic">${esc(m.arquivo.nome.split('.').pop().toUpperCase())}</span><span>${esc(m.arquivo.nome)}<small>${kb} kB · toque para abrir</small></span></button>${m.texto ? fmt(m.texto) : ''}`;
+    b.innerHTML = `<button class="doc"><span class="ic">${esc(m.arquivo.nome.split('.').pop().toUpperCase())}</span><span>${esc(m.arquivo.nome)}<small>${kb} kB · ${u('abrir')}</small></span></button>${m.texto ? fmt(m.texto) : ''}`;
     b.querySelector('.doc').onclick = () => {
       document.getElementById('visnm').textContent = m.arquivo.nome;
       document.getElementById('viscont').textContent = m.arquivo.conteudo;
@@ -377,7 +438,7 @@ async function chegam(msgs) {
   for (const [i, m] of msgs.entries()) {
     salvo.falta = msgs.slice(i); guardar();
     if (m.capitulo) { await pausa(m.espera ?? 600); bolha(m, 'eles', hora()); salvo.hist.push({ m, quem: 'eles', h: '' }); salvo.falta = msgs.slice(i + 1); guardar(); await pausa(500); continue; }
-    st.textContent = m.audio ? 'gravando áudio...' : 'digitando...';
+    st.textContent = u(m.audio ? 'gravando' : 'digitando');
     st.classList.add('dig');
     const d = document.createElement('div');
     d.className = 'b eles dig';
@@ -385,7 +446,7 @@ async function chegam(msgs) {
     chat.appendChild(d); rolar();
     await pausa(Math.min(m.espera ?? 1500, 4000));
     d.remove();
-    st.textContent = 'online'; st.classList.remove('dig');
+    st.classList.remove('dig'); st.textContent = u('online');
     if (m.fantasma) { await pausa(900); continue; } // começou a digitar... e desistiu
     const h = hora();
     const b = bolha(m, 'eles', h);
@@ -419,14 +480,23 @@ function enviar(texto) {
       chat.querySelectorAll('.b').forEach(b => b.remove());
       bolha(m, 'eu', h);
     }
-    salvo.estado = r.estado; guardar(); mostrarFase(); marcarFinal(r.estado);
+    salvo.estado = r.estado; guardar(); marcarFinal(r.estado); aplicarLingua();
     await chegam(r.msgs);
   });
 }
 
 document.getElementById('env').onclick = () => { enviar(txt.value); txt.value = ''; txt.focus(); };
 txt.addEventListener('keydown', e => { if (e.key === 'Enter') { enviar(txt.value); txt.value = ''; } });
-document.querySelectorAll('.rap button[data-t]').forEach(b => b.onclick = () => enviar(b.dataset.t));
+document.querySelectorAll('.rap button[data-t]').forEach(b => b.onclick = () => enviar(CMD_LG[b.dataset.t][lg()]));
+// trocar de língua no meio do jogo: a Bonnie confirma e continua na língua nova
+document.getElementById('lgbt').onclick = () => { const l = ['pt', 'fi', 'en']; enviar(NOME_LG[l[(l.indexOf(lg()) + 1) % 3]]); };
+// na capa: só escolhe a língua (sem abrir a conversa)
+document.querySelectorAll('#linguas button').forEach(b => b.onclick = ev => {
+  ev.stopPropagation();
+  if (b.dataset.lg === lg()) return;
+  if (salvo.estado.fase === 0) { salvo.estado.lingua = b.dataset.lg; guardar(); aplicarLingua(); }
+  else { abrir(); enviar(NOME_LG[b.dataset.lg]); }
+});
 
 // redesenha a conversa salva
 for (const { m, quem, h, apagada } of salvo.hist) bolha(m, quem, h, apagada);
@@ -449,8 +519,9 @@ function abrir() {
 }
 capa.onclick = abrir;
 capa.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') abrir(); };
-if (salvo.estado.fase !== 0) { capa.querySelector('.notif span').textContent = 'Toque para continuar a conversa'; }
-if (finais.length) document.getElementById('capainfo').innerHTML = `2 capítulos · 12 fases<br>🏆 Finais descobertos: <b>${finais.length}/4</b>`;
+// primeira vez: a língua do navegador escolhe (finlandês ou inglês), senão português
+if (!salvo.estado.lingua) { const n = (navigator.language || '').slice(0, 2); salvo.estado.lingua = ['fi', 'en'].includes(n) ? n : 'pt'; }
+aplicarLingua();
 </script>
 </body>
 </html>

@@ -87,6 +87,8 @@ Um escape room de conversa no universo de *The Vampire Diaries*. Um número desc
 
 Os finais: *O Aliado da Neblina* e *A Sombra no Porão* (capítulo 1), *Amigos de Sangue* e *A Lua Branca* (capítulo 2). Quem já tinha terminado a versão antiga continua direto no capítulo 2.
 
+**Em três línguas:** português, finlandês e inglês. Na capa, a jogadora escolhe 🇧🇷 🇫🇮 🇬🇧; no jogo, o botão 🌐 no topo troca a língua (ou mande *suomi*, *english* ou *português* na conversa). Tudo muda junto: a história, os áudios falados, as imagens com texto, os letreiros dos vídeos e as pistas escondidas. Os enigmas de palavras têm versão própria em cada língua (no diário a palavra escondida é PONTE, SILTA ou BRIDGE; o mapa forma POÇO, KAIVO ou WELL), e as respostas valem em qualquer uma das três. Os vídeos em finlandês e inglês são `videos/nome_fi.mp4` e `videos/nome_en.mp4` (`node scripts/gerar-videos.mjs --lingua fi`), e as imagens do robô ficam em `whatsapp/imagens/fi/` e `whatsapp/imagens/en/`.
+
 Na conversa: *dica* dá uma ajudinha, *repetir* manda a pista de novo e *reiniciar* começa do zero. A história e as respostas ficam em `mystic-historia.js`.
 
 O que deixa o jogo mais misterioso:
