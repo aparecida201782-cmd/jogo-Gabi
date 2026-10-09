@@ -91,6 +91,8 @@ Na conversa: *dica* dá uma ajudinha, *repetir* manda a pista de novo e *reinici
 
 O que deixa o jogo mais misterioso:
 - **Ilustrações** em cada fase (`mystic-imagens.js`, desenhos próprios). No navegador, toque na imagem para ampliar e procurar pistas.
+- **Pistas escondidas nas imagens:** na lupa 🔍, tocar nos lugares suspeitos mostra uma pista escondida (a imagem do chat mostra quantas ainda faltam achar). Ficam em `PISTAS_ESCONDIDAS`, no fim de `mystic-imagens.js`.
+- **A conversa não se perde:** se a página fechar enquanto as mensagens chegam, as que faltavam chegam quando a jogadora volta.
 - **Caderno de pistas** (botão 📓): mostra as fases já resolvidas com as respostas e os finais descobertos (guardados mesmo depois de reiniciar).
 - **Capítulo 2 com a cor do eclipse:** a conversa fica vermelha, com cartela de capítulo no meio do chat.
 - **Vídeos** curtos com som (`videos/`, 720p): a abertura na floresta, a Ponte Wickery, as câmeras do Baile dos Fundadores, os olhos no porão, o túmulo, os dois finais e, no capítulo 2, o eclipse de sangue, o cemitério e o selo da estátua. Cinco deles usam cenas realistas geradas no Canva (`fotos/`), animadas com câmera em movimento, neblina, luzes e som. São gerados por `node scripts/gerar-videos.mjs` (precisa do Playwright e do ffmpeg).

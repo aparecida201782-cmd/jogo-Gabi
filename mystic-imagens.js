@@ -312,3 +312,75 @@ export const IMAGENS = {
     ${[[230, 290, 18], [420, 120, 12], [380, 300, 22], [250, 150, 10]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#000" opacity=".25"/>`).join('')}
     ${legenda('O ESPELHO DA CRIPTA', '#ff8a7a')}`),
 };
+
+// Pistas escondidas nas imagens: no navegador, ao ampliar a imagem (lupa), tocar nestes pontos mostra a pista.
+// x, y = centro do ponto no desenho (640x400); r = raio da área de toque.
+export const PISTAS_ESCONDIDAS = {
+  floresta: [
+    { x: 300, y: 352, r: 34, texto: '📱 A tela diz: "1 mensagem não lida"... mandada às 23:47.' },
+    { x: 470, y: 95, r: 50, texto: '🌕 Lua cheia. É hoje à noite que tudo acontece.' },
+  ],
+  grimorio: [
+    { x: 210, y: 282, r: 40, texto: '✍️ Escrito na margem, bem pequeno: "a ARMA está no feitiço 093".' },
+    { x: 430, y: 270, r: 32, texto: '⭐ O símbolo de proteção do clã Bennett.' },
+    { x: 518, y: 130, r: 28, texto: '🕯️ A vela não apaga nunca... alguém quer que você leia.' },
+  ],
+  sms: [
+    { x: 320, y: 135, r: 50, texto: '🔁 A última letra é "p"... e a penúltima é "r". P-R-O...' },
+    { x: 110, y: 210, r: 50, texto: '↺ Alguém já tentou ler isso de trás para frente.' },
+  ],
+  diario: [
+    { x: 590, y: 160, r: 40, texto: '🪶 A pena sublinhou só a *primeira letra* de cada linha.' },
+    { x: 322, y: 200, r: 50, texto: '📖 S. S. = Stefan Salvatore. Ele escreve diários desde 1864.' },
+  ],
+  ponte: [
+    { x: 470, y: 300, r: 30, texto: '📦 Uma caixa de ferro presa nas pedras, embaixo da ponte!' },
+    { x: 320, y: 164, r: 40, texto: '🌉 WICKERY. Onde a água passa por baixo da madeira.' },
+  ],
+  caixa: [
+    { x: 320, y: 262, r: 60, texto: '🔢 Alguém arranhou dois números no cadeado: 1 e 8...' },
+    { x: 320, y: 160, r: 50, texto: '⛪ "...embaixo da igreja." Faça a conta: 2009 − 145.' },
+  ],
+  suspeitos: [
+    { x: 176, y: 70, r: 40, texto: '☀️ Sol forte e nenhum anel. Um vampiro viraria cinza!' },
+    { x: 366, y: 255, r: 36, texto: '🍵 Verbena queima vampiros... e ele nem fez careta.' },
+    { x: 564, y: 240, r: 30, texto: '💍 Lápis-lazúli! O anel que deixa vampiro andar no sol.' },
+  ],
+  porao: [
+    { x: 140, y: 150, r: 36, texto: '⛓️ As correntes estão molhadas de verbena. Queimam vampiros.' },
+    { x: 320, y: 160, r: 40, texto: '👁️ Ele está olhando para você.' },
+  ],
+  cripta: [
+    { x: 320, y: 325, r: 50, texto: '🏛️ MDCCCLXIV em números romanos é 1864.' },
+    { x: 320, y: 220, r: 40, texto: '🪵 A estaca de carvalho branco. Ainda está quente.' },
+  ],
+  final_aliado: [{ x: 120, y: 160, r: 30, texto: '🔔 Tem alguém no campanário...' }],
+  final_sombra: [{ x: 320, y: 175, r: 60, texto: '🩸 Essa letra... é a letra do Lucien.' }],
+  eclipse: [
+    { x: 106, y: 210, r: 30, texto: '🕰️ O relógio da torre parou às 23:12, quando a lua ficou vermelha.' },
+    { x: 450, y: 100, r: 50, texto: '🔴 No eclipse, feitiço velho fica fraco.' },
+  ],
+  mapa: [
+    { x: 458, y: 110, r: 26, texto: '👉 Coluna C, linha 1 é o "L". Então C4 é 3 quadrados mais para baixo!' },
+    { x: 290, y: 332, r: 26, texto: '❌ O X marca onde a estátua entrou nos túneis. Mas para onde ela foi?' },
+    { x: 600, y: 360, r: 22, texto: '🩸 Uma mancha de sangue... ainda fresca.' },
+  ],
+  poco: [
+    { x: 380, y: 308, r: 30, texto: '🌙🌙🌙 Três luas: cada letra anda 3 casas para trás.' },
+    { x: 330, y: 272, r: 24, texto: '🔤 F → E → D → C. A primeira letra é C!' },
+    { x: 150, y: 352, r: 50, texto: '👣 Marcas de arrastar uma coisa muito pesada.' },
+  ],
+  lapides: [
+    { x: 556, y: 300, r: 40, texto: '🪦 A terra na frente desta lápide está remexida...' },
+    { x: 202, y: 270, r: 40, texto: '🚫 O bilhete disse: ele NÃO é um Salvatore.' },
+    { x: 84, y: 180, r: 36, texto: '👼 Um anjo de pedra. O bilhete disse: a pedra dele não tem anjo.' },
+  ],
+  estatua: [
+    { x: 320, y: 148, r: 28, texto: '👀 Os olhos dele... brilharam?!' },
+    { x: 320, y: 260, r: 40, texto: '🔴 A luz das rachaduras é da mesma cor da lua lá fora.' },
+  ],
+  espelho: [
+    { x: 230, y: 290, r: 26, texto: '🪞 Vire o celular para um espelho de verdade e leia!' },
+    { x: 400, y: 138, r: 30, texto: '🔤 A primeira palavra é "SÓ".' },
+  ],
+};

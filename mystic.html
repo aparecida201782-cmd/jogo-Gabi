@@ -61,8 +61,17 @@
   #volta{flex:none;color:var(--muted);text-decoration:none;font-size:1.8rem;line-height:1;margin:-4px -4px 0 -4px;padding:0 4px}
   #som{flex:none;border:0;background:none;font-size:1.25rem;cursor:pointer;padding:4px;color:var(--ink)}
   #lupa .zoom{overflow:auto;max-height:78vh;touch-action:pan-x pan-y pinch-zoom}
-  #lupa img{display:block;width:100%;cursor:zoom-in;transition:width .25s}
-  #lupa.perto img{width:220%;cursor:zoom-out}
+  #lupa .quadro{position:relative;width:100%;transition:width .25s}
+  #lupa.perto .quadro{width:220%}
+  #lupa img{display:block;width:100%;cursor:zoom-in}
+  #lupa.perto img{cursor:zoom-out}
+  /* pistas escondidas: um brilho fraquinho de vez em quando; tocando, a pista aparece */
+  #lupa .esc{position:absolute;transform:translate(-50%,-50%);aspect-ratio:1;border-radius:50%;border:0;padding:0;background:radial-gradient(circle,rgba(255,240,200,.5),transparent 60%);opacity:0;cursor:pointer;animation:brilha 4s infinite}
+  #lupa .esc.achou{opacity:1;animation:none;background:none;box-shadow:0 0 0 3px var(--gold),0 0 22px var(--gold)}
+  @keyframes brilha{0%,80%,100%{opacity:0}90%{opacity:.6}}
+  #lupa .rot{position:absolute;transform:translateX(-50%);max-width:70%;width:max-content;background:rgba(10,8,8,.88);color:var(--ink);border:1px solid var(--gold);border-radius:10px;padding:6px 10px;font-size:.85rem;line-height:1.35;pointer-events:none;animation:in .3s ease-out both;z-index:1}
+  .b .ilu{position:relative}
+  .b .ilu .tag{position:absolute;right:6px;top:6px;background:rgba(0,0,0,.7);color:var(--gold);font-size:.72rem;border-radius:99px;padding:2px 8px}
   #lupa .dica{padding:6px 14px 10px;font-size:.8rem;color:var(--muted)}
   #capa{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;background:radial-gradient(60% 40% at 50% 35%,rgba(244,236,210,.12),transparent 70%),#05070a;cursor:pointer}
   #capa[hidden]{display:none}
@@ -118,7 +127,7 @@
 </footer>
 <dialog id="vis"><div class="hd"><span id="visnm"></span><button onclick="vis.close()">fechar ✕</button></div><pre id="viscont"></pre></dialog>
 <dialog id="cad"><div class="hd"><span>📓 Caderno de pistas</span><button onclick="cad.close()">fechar ✕</button></div><ol id="cadlista"></ol><div class="fin" id="cadfin"></div></dialog>
-<dialog id="lupa"><div class="hd"><span>🔍 Investigar imagem</span><button onclick="lupa.close()">fechar ✕</button></div><div class="zoom"><img id="lupaimg" alt=""></div><div class="dica">Toque na imagem para aproximar e procurar pistas.</div></dialog>
+<dialog id="lupa"><div class="hd"><span>🔍 Investigar imagem</span><button onclick="lupa.close()">fechar ✕</button></div><div class="zoom"><div class="quadro" id="quadro"><img id="lupaimg" alt=""></div></div><div class="dica" id="lupadica">Toque na imagem para aproximar e procurar pistas.</div></dialog>
 <div id="capa" role="button" tabindex="0" aria-label="Abrir a conversa">
   <div class="lua" aria-hidden="true"></div>
   <h1>OPERAÇÃO MYSTIC FALLS</h1>
@@ -129,7 +138,7 @@
 
 <script type="module">
 import { responder, estadoInicial, CONTATO, TOTAL_FASES, FIM, CADERNO } from './mystic-historia.js';
-import { IMAGENS } from './mystic-imagens.js';
+import { IMAGENS, PISTAS_ESCONDIDAS } from './mystic-imagens.js';
 
 const chat = document.getElementById('chat'), st = document.getElementById('st'), fs = document.getElementById('fs');
 const txt = document.getElementById('txt'), vis = document.getElementById('vis'), lupa = document.getElementById('lupa');
@@ -244,12 +253,62 @@ function falar(texto, caixa) {
   speechSynthesis.speak(u);
 }
 
+// pistas escondidas já achadas (ficam guardadas), por imagem: "nome:índice"
+let achadas = [];
+try { achadas = JSON.parse(localStorage.getItem(CHAVE + 'Achadas')) || []; } catch {}
+const quadro = document.getElementById('quadro'), lupaDica = document.getElementById('lupadica');
+function contarAchadas(nome) {
+  const lista = PISTAS_ESCONDIDAS[nome] || [], n = lista.filter((_, i) => achadas.includes(nome + ':' + i)).length;
+  lupaDica.textContent = !lista.length ? 'Toque na imagem para aproximar e procurar pistas.'
+    : n === lista.length ? `🔍 Você achou todas as ${lista.length} pistas escondidas desta imagem!`
+    : `🔍 Tem ${lista.length} pista${lista.length > 1 ? 's' : ''} escondida${lista.length > 1 ? 's' : ''} nesta imagem (achou ${n}). Toque nos lugares suspeitos!`;
+}
+function mostrarPista(nome, i) {
+  const p = PISTAS_ESCONDIDAS[nome][i];
+  quadro.querySelectorAll('.rot').forEach(r => r.remove());
+  const rot = document.createElement('div');
+  rot.className = 'rot';
+  rot.innerHTML = fmt(p.texto);
+  rot.style.left = Math.min(64, Math.max(36, p.x / 6.4)) + '%'; // o balão (até 70% de largura) não sai da imagem
+  const embaixo = p.y < 260;
+  rot.style[embaixo ? 'top' : 'bottom'] = (embaixo ? (p.y + p.r) / 4 : 100 - (p.y - p.r) / 4) + '%';
+  quadro.appendChild(rot);
+}
 function abrirLupa(nome) {
   document.getElementById('lupaimg').src = imgURL(nome);
   lupa.classList.remove('perto');
+  quadro.querySelectorAll('.esc,.rot').forEach(x => x.remove());
+  (PISTAS_ESCONDIDAS[nome] || []).forEach((p, i) => {
+    const bt = document.createElement('button');
+    const id = nome + ':' + i;
+    bt.className = 'esc' + (achadas.includes(id) ? ' achou' : '');
+    bt.setAttribute('aria-label', 'Pista escondida');
+    Object.assign(bt.style, { left: p.x / 6.4 + '%', top: p.y / 4 + '%', width: p.r / 3.2 + '%', animationDelay: (i * 1.3) + 's' });
+    bt.onclick = ev => {
+      ev.stopPropagation();
+      if (!achadas.includes(id)) { achadas.push(id); try { localStorage.setItem(CHAVE + 'Achadas', JSON.stringify(achadas)); } catch {} }
+      bt.classList.add('achou');
+      if (navigator.vibrate) try { navigator.vibrate(40); } catch {}
+      if (audio && somLigado) audio.plim();
+      mostrarPista(nome, i); contarAchadas(nome); marcarBolhas();
+    };
+    quadro.appendChild(bt);
+  });
+  contarAchadas(nome);
   lupa.showModal();
 }
-document.getElementById('lupaimg').onclick = () => lupa.classList.toggle('perto');
+// selo nas imagens do chat: quantas pistas escondidas ainda faltam achar
+function marcarBolhas() {
+  chat.querySelectorAll('.ilu[data-img]').forEach(b => {
+    const nome = b.dataset.img, lista = PISTAS_ESCONDIDAS[nome] || [];
+    const falta = lista.filter((_, i) => !achadas.includes(nome + ':' + i)).length;
+    let tag = b.querySelector('.tag');
+    if (!lista.length) return;
+    if (!tag) { tag = document.createElement('span'); tag.className = 'tag'; b.appendChild(tag); }
+    tag.textContent = falta ? `🔍 ${falta} pista${falta > 1 ? 's' : ''} escondida${falta > 1 ? 's' : ''}` : '✓ investigada';
+  });
+}
+document.getElementById('lupaimg').onclick = () => { quadro.querySelectorAll('.rot').forEach(r => r.remove()); lupa.classList.toggle('perto'); };
 
 function bolha(m, quem, h, apagada) {
   const b = document.createElement('div');
@@ -265,8 +324,9 @@ function bolha(m, quem, h, apagada) {
     b.textContent = '🚫 Esta mensagem foi apagada';
   } else if (m.imagem) {
     b.classList.add('ilu-b');
-    b.innerHTML = `<button class="ilu" aria-label="Ampliar imagem"><img src="${imgURL(m.imagem)}" alt=""></button>${m.texto ? `<div class="cap">${fmt(m.texto)}</div>` : ''}`;
+    b.innerHTML = `<button class="ilu" data-img="${esc(m.imagem)}" aria-label="Ampliar imagem"><img src="${imgURL(m.imagem)}" alt=""></button>${m.texto ? `<div class="cap">${fmt(m.texto)}</div>` : ''}`;
     b.querySelector('.ilu').onclick = () => abrirLupa(m.imagem);
+    setTimeout(marcarBolhas);
   } else if (m.video) {
     b.classList.add('ilu-b');
     b.innerHTML = `<video src="videos/${esc(m.video)}.mp4" controls playsinline preload="metadata" poster="${FOTO[m.video] ? `fotos/${FOTO[m.video]}.jpg` : imgURL(POSTER[m.video] || m.video)}"></video>${m.texto ? `<div class="cap">${fmt(m.texto)}</div>` : ''}`;
@@ -312,9 +372,11 @@ function botoes(opcoes) {
 const pausa = ms => new Promise(r => setTimeout(r, ms));
 let fila = Promise.resolve();
 
+// as mensagens que ainda faltam chegar ficam salvas: se a página fechar no meio, elas chegam quando voltar
 async function chegam(msgs) {
-  for (const m of msgs) {
-    if (m.capitulo) { await pausa(m.espera ?? 600); bolha(m, 'eles', hora()); salvo.hist.push({ m, quem: 'eles', h: '' }); guardar(); await pausa(500); continue; }
+  for (const [i, m] of msgs.entries()) {
+    salvo.falta = msgs.slice(i); guardar();
+    if (m.capitulo) { await pausa(m.espera ?? 600); bolha(m, 'eles', hora()); salvo.hist.push({ m, quem: 'eles', h: '' }); salvo.falta = msgs.slice(i + 1); guardar(); await pausa(500); continue; }
     st.textContent = m.audio ? 'gravando áudio...' : 'digitando...';
     st.classList.add('dig');
     const d = document.createElement('div');
@@ -328,7 +390,7 @@ async function chegam(msgs) {
     const h = hora();
     const b = bolha(m, 'eles', h);
     const reg = { m, quem: 'eles', h };
-    salvo.hist.push(reg); guardar();
+    salvo.hist.push(reg); salvo.falta = msgs.slice(i + 1); guardar();
     if (audio && somLigado) audio.plim();
     efeito(m.efeito);
     if (m.audio) falar(m.audio, b.querySelector('.aud'));
@@ -340,6 +402,7 @@ async function chegam(msgs) {
     if (m.opcoes) botoes(m.opcoes);
     await pausa(350);
   }
+  delete salvo.falta; guardar();
 }
 
 function enviar(texto) {
@@ -376,7 +439,8 @@ function abrir() {
   capa.hidden = true;
   if (salvo.estado.fase === 0) { somLigado = true; try { localStorage.setItem(CHAVE + 'Som', '1'); } catch {} }
   aplicarSom();
-  if (salvo.estado.fase === 0) fila = fila.then(async () => {
+  if (salvo.falta?.length) { const falta = salvo.falta; fila = fila.then(() => chegam(falta)); }
+  else if (salvo.estado.fase === 0) fila = fila.then(async () => {
     await pausa(600);
     const r = responder(salvo.estado, '');
     salvo.estado = r.estado; guardar(); mostrarFase();

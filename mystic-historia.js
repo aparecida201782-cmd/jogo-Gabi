@@ -101,11 +101,14 @@ const FASE1 = [
 
 // ---------- Fase 2: O SMS dos Salvatore ----------
 const FASE2 = [
-  m('✨ *Estaca de carvalho branco.* A única arma capaz de matar um *Original*. Se meu clã escondeu isso... alguém muito antigo está vindo.'),
-  m('Meu celular vibrou. Interceptei uma mensagem de um número oculto, mandada para o celular do Damon Salvatore.'),
-  img('sms', '', { efeito: 'glitch' }),
-  m('📱 *SMS interceptado:*\n\n```LliRg CitsyM on Erucorp```', D, R),
-  m('🔎 *Fase 2 de 12: O SMS dos Salvatore*\nVampiros mais velhos costumam olhar o mundo de trás para frente. Consegue decifrar *onde* eles vão se encontrar?', D, R),
+  m('✨ *Estaca de carvalho branco!* É a única arma que consegue matar um *Original*, o tipo de vampiro mais antigo e mais forte que existe.'),
+  m('Se meu clã escondeu essa arma, é porque um Original está vindo para Mystic Falls. 😨 Eu preciso de ajuda. Preciso achar o *Damon Salvatore*: ele é vampiro, mas está do nosso lado.'),
+  m('Espera... meu celular acabou de vibrar.', 1500, { efeito: 'glitch' }),
+  m('Antes de perder a memória, eu fiz um feitiço para ver as mensagens que chegam no celular do Damon. Alguém de número escondido acabou de mandar para ele *o lugar do encontro de hoje à noite*.'),
+  img('sms', 'A mensagem que chegou para o Damon.'),
+  m('📱 Só que ela chegou assim, toda embaralhada:\n\n```LliRg CitsyM on Erucorp```', D, R),
+  m('Se a gente descobrir *o lugar*, eu encontro o Damon lá.', 1500, R),
+  m('🔎 *Fase 2 de 12: O SMS dos Salvatore*\nVampiros antigos escrevem *de trás para frente* para esconder segredos. Leia a mensagem começando pela *última letra* até a primeira. Qual é o *lugar* do encontro?', D, R),
 ];
 
 // ---------- Fase 3: O Diário de Stefan ----------
@@ -205,16 +208,18 @@ const aliado = e => e.final === 'aliado';
 // ---------- Fase 8: O Mapa dos Túneis ----------
 const FASE8 = e => [
   { capitulo: 'CAPÍTULO 2', titulo: 'O Eclipse de Sangue', texto: '🩸 *CAPÍTULO 2*\n_O Eclipse de Sangue_', espera: 800 },
-  m('Sou eu, a Bonnie. Desta vez eu lembro de tudo. 😅', 2000),
-  m('Faz uma semana que o Silas virou pedra. E hoje à noite tem *eclipse de sangue*: a lua cheia vai ficar vermelha. Minha avó dizia que, no eclipse, feitiço velho fica fraco.'),
-  vid('eclipse', 'A lua começou a ficar vermelha. 🌕➡️🔴'),
+  m('Caçadora! Sou eu, a *Bonnie Bennett*, a bruxa que você ajudou. Agora eu lembro de tudo. 😅', 2000),
+  m('Lembra do *Silas*, o Original que virou *estátua de pedra*? Isso foi há uma semana. A cidade estava em paz desde então.'),
+  m('Mas hoje à noite vai ter um *eclipse de sangue*: a lua cheia fica *vermelha*. E no eclipse os feitiços ficam fracos... inclusive o feitiço que prendeu o Silas na pedra. Se ninguém fizer nada, *ele pode acordar*.'),
+  vid('eclipse', 'Olha a lua. Já começou a ficar vermelha. 🌕➡️🔴'),
   aliado(e)
-    ? m('A estátua de pedra do Silas *sumiu da praça*. O Lucien jura que não foi ele. Ele está procurando pela cidade, mas não acha nem rastro.')
-    : m('O Damon mergulhou no rio para conferir... a estátua de pedra do Silas *sumiu do fundo do rio*. E o Lucien continua solto por aí. 😰'),
-  m('No lugar dela deixaram um mapa velho dos túneis que passam embaixo de Mystic Falls, com um recado escrito à mão: _"Siga as coordenadas, bruxinha."_', D, { efeito: 'glitch' }),
-  img('mapa', 'Toque para ampliar. A letra é a coluna, o número é a linha.', R),
-  m('📜 No verso do mapa, riscado com carvão:\n\n```C4 · A2 · E5 · B1```', D, R),
-  m('🔎 *Fase 8 de 12: O Mapa dos Túneis*\nAche as letras das coordenadas no mapa e junte. Para *onde* levaram a estátua?', D, R),
+    ? m('E o pior: a estátua do Silas *sumiu da praça*. Alguém levou ela embora! O Lucien jura que não foi ele e está procurando pela cidade, mas não acha nem rastro.')
+    : m('E o pior: o Damon mergulhou no rio para conferir, e a estátua do Silas *sumiu do fundo do rio*. Alguém levou ela embora! E o Lucien continua solto por aí. 😰'),
+  m('No lugar da estátua, deixaram um *mapa velho dos túneis* que passam embaixo de Mystic Falls, com um recado: _"Siga as coordenadas, bruxinha."_', D, { efeito: 'glitch' }),
+  img('mapa', 'O mapa. Toque na imagem para ampliar.', R),
+  m('📜 No verso do mapa estavam escritas 4 coordenadas:\n\n```C4 · A2 · E5 · B1```', D, R),
+  m('Cada coordenada é *uma letra* do mapa. A letra (C) é a *coluna*, lá em cima. O número (4) é a *linha*, do lado.\nExemplo: *C4* = desce na coluna C até a linha 4.', D, R),
+  m('🔎 *Fase 8 de 12: O Mapa dos Túneis*\nAche as 4 letras e junte na ordem. Para *onde* levaram a estátua?', D, R),
 ];
 
 // ---------- Fase 9: A Cifra das Três Luas ----------
@@ -391,7 +396,9 @@ const AJUDA = [m('Comandos: *dica* (uma ajudinha), *repetir* (ver a pista de nov
 
 function dica(e) {
   const lista = DICAS[e.fase];
-  return m('💡 ' + lista[Math.min(Math.max(e.erros - 1, 0), lista.length - 1)], 1500);
+  const n = Math.max(e.erros - 1, 0);
+  // depois da última dica, lembra que dá para ver a pista (o arquivo, a imagem...) de novo
+  return m('💡 ' + lista[Math.min(n, lista.length - 1)] + (n >= lista.length - 1 ? '\n\n_Não está vendo a pista? Mande_ *repetir*.' : ''), 1500);
 }
 
 function avancar(fase, e = {}) {
