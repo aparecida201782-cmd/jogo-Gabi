@@ -240,24 +240,33 @@
   }
 
   // ---------- legendas ----------
+  // [começo, fim, legenda em português, legenda em finlandês (também falada, para o José)]
   const FALAS = [
-    [1.2, 4.2, ''],
-    [4.6, 8.4, 'Na nave <b>Estrela Rosa</b>, a capitã <b class="g">Gabi</b> recebe um chamado no rádio…'],
-    [8.6, 11.2, '<b class="g">Gabi:</b> “Estrela Rosa para José: pode vir, maninho!” 📡'],
-    [11.4, 15, '<b class="j">José:</b> “Tô chegando! Olha minha manobra! Vrummm!” 🚀'],
-    [15.2, 18.6, '<b class="g">Gabi:</b> “Raio trator ligado… pouso perfeito!” ✨'],
-    [18.8, 22.4, 'Bem-vindo à Galáxia da Gabi, <b class="j">José</b>! 💛'],
-    [22.6, 25, '<b class="j">José:</b> “Ué… quem é aquela voando lá fora?” 👀'],
-    [25.2, 27.2, 'É um cometa? É um foguete? É a <b class="m">SUPER MADRINHA</b>! 🦸‍♀️'],
-    [27.4, 31.5, '<b class="m">Super Madrinha:</b> “Festa na galáxia sem a Madrinha? Nunca!” 💛'],
+    [1.2, 4.2, '', 'Gabin galaksi esittää: Josén saapuminen!'],
+    [4.6, 8.4, 'Na nave <b>Estrela Rosa</b>, a capitã <b class="g">Gabi</b> recebe um chamado no rádio…', 'Estrela Rosa -aluksella kapteeni Gabi saa radiokutsun…'],
+    [8.6, 11.2, '<b class="g">Gabi:</b> “Estrela Rosa para José: pode vir, maninho!” 📡', 'Gabi: ”Tule vain, pikkuveli!”'],
+    [11.4, 15, '<b class="j">José:</b> “Tô chegando! Olha minha manobra! Vrummm!” 🚀', 'José: ”Tulossa! Katso temppuani! Vrummm!”'],
+    [15.2, 18.6, '<b class="g">Gabi:</b> “Raio trator ligado… pouso perfeito!” ✨', 'Gabi: ”Vetosäde päällä… täydellinen lasku!”'],
+    [18.8, 22.4, 'Bem-vindo à Galáxia da Gabi, <b class="j">José</b>! 💛', 'Tervetuloa Gabin galaksiin, José!'],
+    [22.6, 25, '<b class="j">José:</b> “Ué… quem é aquela voando lá fora?” 👀', 'José: ”Häh… kuka tuolla ulkona lentää?”'],
+    [25.2, 27.2, 'É um cometa? É um foguete? É a <b class="m">SUPER MADRINHA</b>! 🦸‍♀️', 'Onko se komeetta? Raketti? Se on Superkummitäti!'],
+    [27.4, 31.5, '<b class="m">Super Madrinha:</b> “Festa na galáxia sem a Madrinha? Nunca!” 💛', 'Superkummitäti: ”Juhlat ilman kummitätiä? Ei ikinä!”'],
   ];
+  const html = t => t.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[c]);
   let falaAtual = -1;
   function mostrarFala(t) {
     const i = FALAS.findIndex(([a, b]) => t >= a && t < b);
     if (i === falaAtual) return;
     falaAtual = i;
     legenda.classList.remove('on');
-    if (i >= 0 && FALAS[i][2]) { legenda.innerHTML = FALAS[i][2]; void legenda.offsetWidth; legenda.classList.add('on'); }
+    if (i < 0) return;
+    const [, , pt, fi] = FALAS[i];
+    if (pt) { legenda.innerHTML = pt + `<span class="fi" lang="fi">${html(fi)}</span>`; void legenda.offsetWidth; legenda.classList.add('on'); }
+    falarFi();
+  }
+  // narração em finlandês quando o som está ligado
+  function falarFi() {
+    if (somLigado && falaAtual >= 0 && window.puhu) puhu(FALAS[falaAtual][3].replace(/^(Gabi|José|Superkummitäti): /, ''));
   }
 
   // ---------- cenas ----------
@@ -279,7 +288,11 @@
       ctx.fillStyle = g; ctx.shadowColor = 'rgba(176,107,255,.8)'; ctx.shadowBlur = 30;
       ctx.fillText('A CHEGADA', 0, 10 + (1 - a) * 10);
       ctx.fillText('DO JOSÉ', 0, 10 + tam * 1.05 + (1 - a) * 10);
-      ctx.shadowBlur = 0; ctx.globalAlpha = 1;
+      ctx.shadowBlur = 0;
+      ctx.font = `700 ${Math.min(26, VW / 22)}px Orbitron, sans-serif`; ctx.fillStyle = '#a9e6ff';
+      ctx.fillText('GABIN GALAKSI ESITTÄÄ:', 0, 10 + tam * 2.1);
+      ctx.fillText('JOSÉN SAAPUMINEN', 0, 10 + tam * 2.1 + Math.min(34, VW / 17));
+      ctx.globalAlpha = 1;
     } else if (t < 19) {
       // espaço aberto: planeta, nave-mãe e o foguetinho do José
       const ent = mola(prog(t, 4.4, 7));
@@ -400,9 +413,11 @@
       if (fb > 0) {
         ctx.save(); ctx.translate(0, -250 + (1 - fb) * -200);
         const larg = Math.min(600, VW - 40);
-        ctx.fillStyle = '#ff4fa3'; ctx.beginPath(); ctx.roundRect(-larg / 2, -32, larg, 64, 18); ctx.fill();
-        ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.font = `900 ${Math.min(28, larg / 17)}px Orbitron, sans-serif`;
-        ctx.fillText(t > 27 ? 'FAMÍLIA NA GALÁXIA!' : 'BEM-VINDO, JOSÉ!', 0, 10);
+        ctx.fillStyle = '#ff4fa3'; ctx.beginPath(); ctx.roundRect(-larg / 2, -40, larg, 84, 18); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.font = `900 ${Math.min(26, larg / 18)}px Orbitron, sans-serif`;
+        ctx.fillText(t > 27 ? 'FAMÍLIA NA GALÁXIA!' : 'BEM-VINDO, JOSÉ!', 0, -4);
+        ctx.fillStyle = '#fff6c8';
+        ctx.fillText(t > 27 ? 'PERHE GALAKSISSA!' : 'TERVETULOA, JOSÉ!', 0, 28);
         ctx.restore();
       }
     }
@@ -424,11 +439,13 @@
     try {
       AC = AC || new (window.AudioContext || window.webkitAudioContext)();
       if (AC.state === 'suspended') AC.resume();
-      if (!mestre) { mestre = AC.createGain(); mestre.gain.value = .5; mestre.connect(AC.destination); }
-      somLigado = true; btSom.textContent = '🔊 Som ligado'; btSom.setAttribute('aria-pressed', 'true');
+      if (!mestre) { mestre = AC.createGain(); mestre.gain.value = window.temVozFi?.() ? .3 : .5; mestre.connect(AC.destination); }
+      somLigado = true; btSom.textContent = '🔊 Som · Ääni';
+      // a voz finlandesa só pode começar depois de um toque: começa já com a fala da cena atual
+      falarFi(); btSom.setAttribute('aria-pressed', 'true');
     } catch { btSom.hidden = true; }
   }
-  function desligarSom() { somLigado = false; btSom.textContent = '🔇 Ligar som'; btSom.setAttribute('aria-pressed', 'false'); }
+  function desligarSom() { somLigado = false; window.hiljaa?.(); btSom.textContent = '🔇 Ligar som · Ääni'; btSom.setAttribute('aria-pressed', 'false'); }
   function nota(freq, quando, dur, vol, tipo = 'triangle') {
     const o = AC.createOscillator(), g = AC.createGain();
     o.type = tipo; o.frequency.value = freq; o.connect(g); g.connect(mestre);
@@ -499,6 +516,7 @@
     document.body.classList.remove('com-filme');
     setTimeout(() => { if (!rodando) filme.hidden = true; }, 600);
     if (AC && AC.state === 'running') AC.suspend().catch(() => {});
+    window.hiljaa?.();
   }
 
   addEventListener('resize', () => { if (rodando) medir(); });

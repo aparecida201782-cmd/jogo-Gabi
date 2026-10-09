@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#03040f">
-<meta name="description" content="Os jogos da Gabi, feitos com carinho pela Madrinha Ana.">
+<meta name="description" content="Os jogos da Gabi, feitos com carinho pela Madrinha Ana. Gabin pelit, kummitäti Anan tekemät.">
 <title>Galáxia da Gabi</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='18' fill='%23ffc93c'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' fill='none' stroke='%2338e8ff' stroke-width='4' transform='rotate(-20 32 32)'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -75,11 +75,21 @@
     header{padding-top:4px}
     h1 span{display:inline}
     h1{font-size:clamp(1.8rem,9vh,3rem)}
-    .sub{display:none}
+    .sub,.h1-fi,#ouvir{display:none}
     .jogos{grid-template-columns:repeat(5,1fr)}
     .jogo a{grid-template-columns:1fr;grid-template-areas:"orbe" "nome" "desc";justify-items:center;text-align:center;row-gap:6px}
     .desc{display:none}
   }
+  /* finlandês embaixo do português, para o José ler */
+  .fi{display:block;margin-top:3px;color:#a9e6ff;font-weight:600}
+  .sub .fi{margin-top:6px}
+  .nome .fi{font-family:var(--texto);font-size:.86em;letter-spacing:0;color:#bfe9ff}
+  .desc .fi{color:#8fcfe8}
+  .h1-fi{margin:-2px 0 0;font-family:var(--titulo);font-weight:700;letter-spacing:.12em;font-size:clamp(.9rem,3vmin,1.6rem);color:#a9e6ff;text-transform:uppercase}
+  #ouvir{font:700 .9rem var(--texto);color:#a9e6ff;background:rgba(6,8,30,.6);border:1px solid var(--linha);border-radius:99px;padding:8px 16px;cursor:pointer}
+  #ouvir:hover,#ouvir:focus-visible,#ouvir.falando{border-color:var(--neon);box-shadow:0 0 14px rgba(56,232,255,.4);outline:none}
+  #ouvir[hidden]{display:none}
+  #filme-legenda .fi{font-size:1em;margin-top:4px;color:#bfe9ff}
   /* vídeo de abertura: a Gabi recebe o José na nave (abertura.js) */
   #filme{position:fixed;inset:0;z-index:10;background:#02030c;transition:opacity .6s ease}
   #filme[hidden]{display:none}
@@ -106,35 +116,37 @@
 </head>
 <body>
 <canvas id="ceu" aria-hidden="true"></canvas>
-<button id="cheia" type="button" hidden>⛶ Tela cheia</button>
+<button id="cheia" type="button" hidden>⛶ Tela cheia · Koko näyttö</button>
 
 <div id="filme" role="dialog" aria-modal="true" aria-label="Vídeo de abertura: a Gabi recebe o José na nave e a Super Madrinha chega voando" hidden>
   <canvas id="filme-tela" aria-hidden="true"></canvas>
   <p id="filme-legenda" aria-live="polite"></p>
   <div class="filme-botoes">
-    <button id="filme-som" type="button" aria-pressed="false">🔇 Ligar som</button>
-    <button id="filme-pular" type="button">Pular ⏭</button>
+    <button id="filme-som" type="button" aria-pressed="false">🔇 Ligar som · Ääni</button>
+    <button id="filme-pular" type="button">Pular · Ohita ⏭</button>
   </div>
   <div class="filme-progresso"><div id="filme-barra"></div></div>
 </div>
 
 <div class="tela">
   <header>
-    <div class="selo">Solonópole ⇄ Helsinque</div>
+    <div class="selo">Solonópole ⇄ Helsinque · Helsinki</div>
     <h1><span>Galáxia</span> <span>da Gabi</span></h1>
-    <p class="sub">Cinco jogos feitos com carinho pela <b>Madrinha Ana</b>. Escolha um planeta para começar.</p>
-    <p class="festa" id="festa" hidden>🎂 Hoje é aniversário da Madrinha Ana e Dia das Crianças!</p>
+    <p class="h1-fi" lang="fi">Gabin galaksi</p>
+    <p class="sub">Cinco jogos feitos com carinho pela <b>Madrinha Ana</b>. Escolha um planeta para começar.<span class="fi" lang="fi">Viisi peliä, jotka <b>kummitäti Ana</b> teki rakkaudella. Valitse planeetta ja aloita!</span></p>
+    <button id="ouvir" type="button" lang="fi" hidden>🔊 Kuuntele suomeksi</button>
+    <p class="festa" id="festa" hidden>🎂 Hoje é aniversário da Madrinha Ana e Dia das Crianças!<span class="fi" lang="fi">Tänään on kummitäti Anan syntymäpäivä ja lasten päivä!</span></p>
   </header>
 
   <ul class="jogos">
-    <li class="jogo" style="--c:#ffc93c;--i:0"><a href="madrinha.html"><span class="orbe" aria-hidden="true">✈️</span><span class="nome">Madrinha Ana ao Resgate</span><span class="desc">Aventura de pular e correr, do sertão do Ceará até a neve da Finlândia.</span></a></li>
-    <li class="jogo" style="--c:#e0384f;--i:1"><a href="mystic.html"><span class="tag">NOVO</span><span class="orbe" aria-hidden="true">🌕</span><span class="nome">Operação Mystic Falls</span><span class="desc">Mistério de vampiros por mensagens. Decifre as pistas e salve a cidade.</span></a></li>
-    <li class="jogo" style="--c:#38e8ff;--i:2"><a href="neon.html"><span class="orbe" aria-hidden="true">🚀</span><span class="nome">Esquadrão Neon</span><span class="desc">Nave espacial contra chefões. Jogue sozinha ou em dupla, até online.</span></a></li>
-    <li class="jogo" style="--c:#ff4fa3;--i:3"><a href="corrida.html"><span class="orbe" aria-hidden="true">🏃</span><span class="nome">Corrida Neon</span><span class="desc">Corrida sem fim com a família. Desvie, pule e bata o recorde.</span></a></li>
-    <li class="jogo" style="--c:#3dffb4;--i:4"><a href="historia.html"><span class="orbe" aria-hidden="true">📖</span><span class="nome">A Viagem da Madrinha</span><span class="desc">História de escolhas: você decide o caminho até Helsinque.</span></a></li>
+    <li class="jogo" style="--c:#ffc93c;--i:0"><a href="madrinha.html"><span class="orbe" aria-hidden="true">✈️</span><span class="nome">Madrinha Ana ao Resgate<span class="fi" lang="fi">Kummitäti Ana apuun</span></span><span class="desc">Aventura de pular e correr, do sertão do Ceará até a neve da Finlândia.<span class="fi" lang="fi">Hyppy- ja juoksuseikkailu Brasilian Cearásta Suomen lumeen asti.</span></span></a></li>
+    <li class="jogo" style="--c:#e0384f;--i:1"><a href="mystic.html"><span class="tag">NOVO · UUSI</span><span class="orbe" aria-hidden="true">🌕</span><span class="nome">Operação Mystic Falls<span class="fi" lang="fi">Operaatio Mystic Falls</span></span><span class="desc">Mistério de vampiros por mensagens. Decifre as pistas e salve a cidade.<span class="fi" lang="fi">Vampyyrimysteeri viesteinä. Ratkaise vihjeet ja pelasta kaupunki.</span></span></a></li>
+    <li class="jogo" style="--c:#38e8ff;--i:2"><a href="neon.html"><span class="orbe" aria-hidden="true">🚀</span><span class="nome">Esquadrão Neon<span class="fi" lang="fi">Neonlaivue</span></span><span class="desc">Nave espacial contra chefões. Jogue sozinha ou em dupla, até online.<span class="fi" lang="fi">Avaruusalus isoja pomoja vastaan. Pelaa yksin tai kaksin, myös netissä.</span></span></a></li>
+    <li class="jogo" style="--c:#ff4fa3;--i:3"><a href="corrida.html"><span class="orbe" aria-hidden="true">🏃</span><span class="nome">Corrida Neon<span class="fi" lang="fi">Neonjuoksu</span></span><span class="desc">Corrida sem fim com a família. Desvie, pule e bata o recorde.<span class="fi" lang="fi">Loputon juoksu koko perheen kanssa. Väistä, hyppää ja tee ennätys.</span></span></a></li>
+    <li class="jogo" style="--c:#3dffb4;--i:4"><a href="historia.html"><span class="orbe" aria-hidden="true">📖</span><span class="nome">A Viagem da Madrinha<span class="fi" lang="fi">Kummitädin matka</span></span><span class="desc">História de escolhas: você decide o caminho até Helsinque.<span class="fi" lang="fi">Valintatarina: sinä päätät reitin Helsinkiin.</span></span></a></li>
   </ul>
 
-  <footer><button id="rever" type="button">🎬 Ver a chegada do José</button><span>💛 Com amor, Madrinha Ana</span><span>🇧🇷 🇫🇮</span></footer>
+  <footer><button id="rever" type="button">🎬 Ver a chegada do José · <span lang="fi">Katso Josén saapuminen</span></button><span>💛 Com amor, Madrinha Ana · <span lang="fi">Rakkaudella, kummitäti Ana</span></span><span>🇧🇷 🇫🇮</span></footer>
 </div>
 
 <script>
@@ -205,9 +217,46 @@ if (pedir && (document.fullscreenEnabled || document.webkitFullscreenEnabled)) {
       if (r && r.catch) r.catch(() => {});
     } catch {}
   };
-  const marcar = () => { cheia.textContent = (document.fullscreenElement || document.webkitFullscreenElement) ? '✕ Sair da tela cheia' : '⛶ Tela cheia'; };
+  const marcar = () => { cheia.textContent = (document.fullscreenElement || document.webkitFullscreenElement) ? '✕ Sair · Poistu' : '⛶ Tela cheia · Koko näyttö'; };
   document.addEventListener('fullscreenchange', marcar);
   document.addEventListener('webkitfullscreenchange', marcar);
+}
+
+// Voz em finlandês para o José ouvir (o José mora em Helsinque e quase não entende português).
+// Usa a voz finlandesa do próprio aparelho; se ele não tiver nenhuma, o botão fica escondido.
+const ouvir = document.getElementById('ouvir');
+let vozFi = null;
+function acharVoz() {
+  try { vozFi = speechSynthesis.getVoices().find(v => /^fi([-_]|$)/i.test(v.lang)) || null; } catch { vozFi = null; }
+  ouvir.hidden = !vozFi;
+}
+window.temVozFi = () => !!vozFi;
+window.puhu = (texto, { parar = false } = {}) => {
+  if (!vozFi || !texto) return;
+  if (parar) speechSynthesis.cancel();
+  try {
+    const f = new SpeechSynthesisUtterance(texto);
+    f.voice = vozFi; f.lang = vozFi.lang; f.rate = .92; f.pitch = 1.1;
+    speechSynthesis.speak(f);
+    return f;
+  } catch {}
+};
+window.hiljaa = () => { try { speechSynthesis.cancel(); } catch {} };
+if ('speechSynthesis' in window) {
+  acharVoz();
+  speechSynthesis.addEventListener?.('voiceschanged', acharVoz);
+  ouvir.onclick = () => {
+    if (speechSynthesis.speaking) { hiljaa(); ouvir.classList.remove('falando'); return; }
+    const sem = el => el.textContent.replace(/[^\p{L}\p{N}\s.,:!?'-]/gu, '').trim();
+    const partes = [document.querySelector('.h1-fi').textContent + '.', sem(document.querySelector('.sub .fi'))];
+    document.querySelectorAll('.jogo').forEach((j, i) => {
+      partes.push(`${['Yksi', 'Kaksi', 'Kolme', 'Neljä', 'Viisi'][i]}: ${sem(j.querySelector('.nome .fi'))}. ${sem(j.querySelector('.desc .fi'))}`);
+    });
+    if (!document.getElementById('festa').hidden) partes.push(sem(document.querySelector('#festa .fi')));
+    ouvir.classList.add('falando');
+    const fim = puhu(partes.join(' '), { parar: true });
+    if (fim) fim.onend = fim.onerror = () => ouvir.classList.remove('falando');
+  };
 }
 
 // 12 de outubro: aniversário da Madrinha e Dia das Crianças
