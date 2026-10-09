@@ -110,6 +110,8 @@ Abre em `turbo.html` ou pela Galáxia da Gabi. Feito para criança de 6 anos: o 
 - **Voz em finlandês com legenda em português:** "Kolme, kaksi, yksi... Aja!", "Ohitit Gabin!" (Você passou a Gabi!), "Viimeinen kierros!" (Última volta!), "Varo!" (Cuidado!) e os parabéns no fim. Tem musiquinha durante a corrida e torcida na chegada.
 - **Bolhas mágicas 🫧:** o botão 🫧 joga uma bolha para a frente. O carro acertado rodopia dentro da bolha e fica lento por um instante, e dá para passar na frente ("Osuma!" / Acertou!). No modo de dois e online, os pilotos também podem acertar um ao outro.
 - **Festa na chegada:** pódio com os três primeiros pulando em cima dos carros, taça dourada girando, fogos de artifício, holofotes e a torcida comemorando com bandeiras do Brasil e da Finlândia ("Uhuu!", "Hurraa!"), mais o ranking completo ao lado. Quem sobe no pódio ganha uma taça de ouro, prata ou bronze, e a estante de taças aparece no menu.
+- **Campeonatos:** Copa Brasil 🇧🇷 (Sertão e Praia), Copa Finlândia 🇫🇮 (Neve e Aurora) e Grande Copa da Família 🏆 (as 4 pistas). Cada corrida dá pontos (1º 10, 2º 8, 3º 6, 4º 5, 5º 4, 6º 3, 7º 2), a classificação aparece depois de cada corrida e, no fim, o campeão da copa sobe no pódio. A melhor colocação em cada copa fica guardada no menu. Funciona sozinho, em dupla e online.
+- **Dificuldade:** 🐢 Fácil (rivais mais devagar e ajudinha forte no volante), 🚗 Médio e 🔥 Difícil (rivais rápidos, ajudinha fraca e os rivais também jogam bolhas em você).
 - Teclado: setas viram, ↓ freia, Espaço/W/↑ jogam bolha, B buzina, Esc pausa. No modo de dois: A/D/W para o piloto 1 e ←/→/↑ para o piloto 2.
 
 ## Visual e efeitos especiais

@@ -101,6 +101,12 @@
   .taca{margin:4px 0;text-align:center;font-weight:700;color:var(--amarelo);font-size:1.05rem}
   .tacas{margin:4px 0 0;text-align:center;font-weight:600;color:#ffe9a8}
   .tacas:empty{display:none}
+  .tabela{display:grid;gap:4px;margin:8px 0}
+  .tabela .linha{grid-template-columns:auto auto 1fr auto}
+  .tabela .pts{font-weight:700;color:var(--amarelo)}
+  .tabela .mais{color:#7dff9a;font-size:.8em;margin-left:6px}
+  h3.copa{margin:10px 0 4px;text-align:center;color:#ffd23f;font-size:1rem}
+  #tituloPista[hidden],#pistas[hidden]{display:none}
   @media (prefers-reduced-motion:reduce){.escolha,.btn{transition:none}h1,.escolha img,.escolha .ic{animation:none!important}}
 </style>
 </head>
@@ -134,8 +140,13 @@
     <div id="quemBox"><h2 id="quemTit"></h2><div class="grade gente" id="quem"></div><h2 id="quem2Tit"></h2><div class="grade gente" id="quem2"></div></div>
     <h2 data-t="escolhaCarro"></h2>
     <div class="grade" id="carros"></div>
-    <h2 data-t="escolhaPista"></h2>
+    <h2 data-t="dificuldade"></h2>
+    <div class="grade" id="difs"></div>
+    <h2 data-t="tipoCorrida"></h2>
+    <div class="grade" id="tipos"></div>
+    <h2 data-t="escolhaPista" id="tituloPista"></h2>
     <div class="grade" id="pistas"></div>
+    <p class="dica" id="dicaCopa"></p>
     <div class="acoes">
       <button class="btn" id="correr"></button>
       <button class="btn" id="entrar" hidden></button>
@@ -150,6 +161,7 @@
     <div class="grande" id="lugar">🏆 1º lugar!</div>
     <p class="taca" id="taca"></p>
     <p class="sub" id="frase"></p>
+    <div id="classif"></div>
     <div class="podio" id="podio"></div>
     <div class="acoes">
       <button class="btn" id="denovo" data-t="denovo"></button>
@@ -193,7 +205,7 @@ const easeInOut = (a, b, p) => a + (b - a) * (-Math.cos(p * Math.PI) / 2 + .5);
 const mod = (v, m) => ((v % m) + m) % m;
 function sobrepoe(x1, w1, x2, w2, pct = 1) { const h = pct / 2; return !(x1 + w1 * h < x2 - w2 * h || x1 - w1 * h > x2 + w2 * h); }
 
-let salvo = { tacas: { ouro: 0, prata: 0, bronze: 0 }, carro: 'corrida', pista: 'sertao', som: true, trofeus: {}, modo: 'solo', eu: 'jose', eu2: 'gabi', lingua: /^fi/i.test(navigator.language || '') ? 'fi' : 'pt' };
+let salvo = { dif: 'medio', tipo: 'rapida', copas: {}, tacas: { ouro: 0, prata: 0, bronze: 0 }, carro: 'corrida', pista: 'sertao', som: true, trofeus: {}, modo: 'solo', eu: 'jose', eu2: 'gabi', lingua: /^fi/i.test(navigator.language || '') ? 'fi' : 'pt' };
 try { salvo = { ...salvo, ...JSON.parse(localStorage.getItem('turboJose') || '{}') }; } catch {}
 const guardar = () => { try { localStorage.setItem('turboJose', JSON.stringify(salvo)); } catch {} };
 
@@ -201,7 +213,7 @@ const guardar = () => { try { localStorage.setItem('turboJose', JSON.stringify(s
 const TXT = {
   pt: {
     titulo: 'Turbo do José', sub: '🏎️ Corrida da família: José, Gabi, Madrinha, Keka, Emiel, Vovó e até o Ilo! O carro acelera sozinho: é só virar ◀ ▶, pegar as moedas 🪙 e jogar bolhas mágicas 🫧 nos outros carros para passar na frente!',
-    escolhaCarro: '3. Escolha o carro', escolhaPista: '4. Escolha a pista', correr: '🏁 CORRER!', som: '🔊 Som', semSom: '🔇 Sem som',
+    escolhaCarro: '3. Escolha o carro', escolhaPista: '6. Escolha a pista', dificuldade: '4. Dificuldade', tipoCorrida: '5. Corrida ou campeonato?', correr: '🏁 CORRER!', som: '🔊 Som', semSom: '🔇 Sem som',
     galaxia: '⬅ Galáxia da Gabi', denovo: '🔁 Correr de novo', outra: '🗺️ Outra pista', continuar: '▶ Continuar', menu: '🗺️ Menu',
     sirene: 'tem sirene!', semTrofeu: 'ainda sem troféu', trofeu: ['🏆 campeão', '🥈 2º lugar', '🥉 3º lugar'], melhor: n => `melhor: ${n}º`,
     ord: n => `${n}º`, volta: (a, b) => `Volta ${a}/${b}`, prepare: 'Prepare-se!', vai: 'VAI!', chegada: 'CHEGADA!',
@@ -212,6 +224,12 @@ const TXT = {
     policia: 'POLÍCIA', taxi: 'TÁXI',
     taca: ['Você ganhou a TAÇA DE OURO! 🏆', 'Você ganhou a TAÇA DE PRATA! 🥈', 'Você ganhou a TAÇA DE BRONZE! 🥉'], tacas: (o, p, b) => `Suas taças: 🏆 ${o} · 🥈 ${p} · 🥉 ${b}`,
     campeao: 'CAMPEÃO!', vivas: ['Uhuu!', 'Bravo!', 'Isso aí!', 'É campeão!', 'Viva!'],
+    difs: { facil: ['🐢', 'Fácil', 'rivais devagar'], medio: ['🚗', 'Médio', 'corrida de verdade'], dificil: ['🔥', 'Difícil', 'rivais jogam bolhas!'] },
+    rapida: ['🏁', 'Corrida rápida', 'uma pista'], copas: { br: 'Copa Brasil', fi: 'Copa Finlândia', familia: 'Grande Copa da Família' },
+    corridas: n => `${n} corridas`, corridaN: (a, b) => `Corrida ${a} de ${b}`, classificacao: 'Classificação da copa', proxima: (a, b) => `▶ Próxima corrida (${a}/${b})`,
+    novaCopa: '🔁 Nova copa', campeaoCopa: n => `${n} é campeão da copa! 🏆`, copaTit: 'CAMPEÃO DA COPA!', dicaCopa: 'A copa passa por estas pistas, uma depois da outra. Cada corrida dá pontos: 1º 10, 2º 8, 3º 6, 4º 5, 5º 4, 6º 3, 7º 2.',
+    copaGanha: ['Você ganhou a COPA DE OURO! 🏆', 'Você ganhou a COPA DE PRATA! 🥈', 'Você ganhou a COPA DE BRONZE! 🥉'], ptsAbrev: 'pts',
+    acertado: n => `${n} te acertou!`,
     comoJogar: '1. Como vamos jogar?', quemEh: '2. Quem é o piloto?',
     modos: { solo: ['👦 Sozinho', 'contra a família'], dupla: ['👫 Dois juntos', 'no mesmo celular'], online: ['🌐 Online', 'cada um no seu celular'] },
     dicaDupla: (a, b) => `${a} usa ◀ ▶ 🫧 da esquerda e ${b} usa 🫧 ◀ ▶ da direita. No teclado: A/D/W e as setas.`, piloto1: 'Piloto 1 (◀ ▶ da esquerda)', piloto2: 'Piloto 2 (◀ ▶ da direita)',
@@ -225,7 +243,7 @@ const TXT = {
   },
   fi: {
     titulo: 'Josén Turbo', sub: '🏎️ Perheen kisa: José, Gabi, Kummi, Keka, Emiel, Mummi ja jopa Ilo! Auto kiihdyttää itse: käännä vain ◀ ▶, kerää kolikoita 🪙 ja heitä taikakuplia 🫧 muiden autojen päälle!',
-    escolhaCarro: '3. Valitse auto', escolhaPista: '4. Valitse rata', correr: '🏁 AJA!', som: '🔊 Ääni', semSom: '🔇 Ei ääntä',
+    escolhaCarro: '3. Valitse auto', escolhaPista: '6. Valitse rata', dificuldade: '4. Vaikeustaso', tipoCorrida: '5. Kisa vai mestaruus?', correr: '🏁 AJA!', som: '🔊 Ääni', semSom: '🔇 Ei ääntä',
     galaxia: '⬅ Gabin galaksi', denovo: '🔁 Aja uudestaan', outra: '🗺️ Toinen rata', continuar: '▶ Jatka', menu: '🗺️ Valikko',
     sirene: 'siinä on sireeni!', semTrofeu: 'ei vielä pokaalia', trofeu: ['🏆 mestari', '🥈 2. sija', '🥉 3. sija'], melhor: n => `paras: ${n}.`,
     ord: n => `${n}.`, volta: (a, b) => `Kierros ${a}/${b}`, prepare: 'Valmiina!', vai: 'AJA!', chegada: 'MAALI!',
@@ -236,6 +254,12 @@ const TXT = {
     policia: 'POLIISI', taxi: 'TAKSI',
     taca: ['Voitit KULTAPOKAALIN! 🏆', 'Voitit HOPEAPOKAALIN! 🥈', 'Voitit PRONSSIPOKAALIN! 🥉'], tacas: (o, p, b) => `Pokaalisi: 🏆 ${o} · 🥈 ${p} · 🥉 ${b}`,
     campeao: 'MESTARI!', vivas: ['Hurraa!', 'Jee!', 'Mahtavaa!', 'Hienoa!', 'Bravo!'],
+    difs: { facil: ['🐢', 'Helppo', 'hitaat kilpailijat'], medio: ['🚗', 'Keskitaso', 'oikea kisa'], dificil: ['🔥', 'Vaikea', 'kilpailijat heittävät kuplia!'] },
+    rapida: ['🏁', 'Pikakisa', 'yksi rata'], copas: { br: 'Brasilian mestaruus', fi: 'Suomen mestaruus', familia: 'Perheen suurmestaruus' },
+    corridas: n => `${n} kisaa`, corridaN: (a, b) => `Kisa ${a}/${b}`, classificacao: 'Mestaruuden pisteet', proxima: (a, b) => `▶ Seuraava kisa (${a}/${b})`,
+    novaCopa: '🔁 Uusi mestaruus', campeaoCopa: n => `${n} on mestari! 🏆`, copaTit: 'MESTARUUS!', dicaCopa: 'Mestaruudessa ajetaan nämä radat peräkkäin. Jokaisesta kisasta saa pisteitä: 1. 10, 2. 8, 3. 6, 4. 5, 5. 4, 6. 3, 7. 2.',
+    copaGanha: ['Voitit KULTAPOKAALIN! 🏆', 'Voitit HOPEAPOKAALIN! 🥈', 'Voitit PRONSSIPOKAALIN! 🥉'], ptsAbrev: 'p',
+    acertado: n => `${n} osui sinuun!`,
     comoJogar: '1. Miten pelataan?', quemEh: '2. Kuka ajaa?',
     modos: { solo: ['👦 Yksin', 'perhettä vastaan'], dupla: ['👫 Kaksi yhdessä', 'samalla puhelimella'], online: ['🌐 Netissä', 'kumpikin omalla puhelimella'] },
     dicaDupla: (a, b) => `${a} ohjaa vasemmilla ◀ ▶ 🫧 ja ${b} oikeilla 🫧 ◀ ▶. Näppäimistöllä: A/D/W ja nuolet.`, piloto1: 'Kuljettaja 1 (vasemmat ◀ ▶)', piloto2: 'Kuljettaja 2 (oikeat ◀ ▶)',
@@ -477,6 +501,22 @@ const placaDe = f => salvo.lingua === 'fi' && f.placaFi || f.placa;
 // cada pessoa tem o seu carro (usado pelo segundo piloto no modo de dois)
 for (const f of FAMILIA) CARROS.push({ id: 'p_' + f.id, tipo: f.tipo, nome: f.nome, cor: f.cor, oculto: true });
 
+// dificuldade: velocidade dos rivais, força da ajudinha no volante e se os rivais jogam bolhas
+const DIFS = {
+  facil: { fator: .86, ajuda: 3.2, espera: 1500, alcanca: .86, bolhas: false },
+  medio: { fator: 1, ajuda: 2.4, espera: 2600, alcanca: .9, bolhas: false },
+  dificil: { fator: 1.09, ajuda: 1.1, espera: 4500, alcanca: .97, bolhas: true },
+};
+let DIF = DIFS.medio;
+// campeonatos: várias pistas seguidas, com pontos
+const COPAS = [
+  { id: 'br', ic: '🇧🇷', pistas: ['sertao', 'praia'] },
+  { id: 'fi', ic: '🇫🇮', pistas: ['neve', 'aurora'] },
+  { id: 'familia', ic: '🏆', pistas: ['sertao', 'neve', 'aurora', 'praia'] },
+];
+const PONTOS = [10, 8, 6, 5, 4, 3, 2];
+let copa = null; // { id, pistas, i, pontos: { pessoa: pts }, ganhou: { pessoa: pts desta corrida } }
+
 let segs = [], comprimento = 0, P = PISTAS[0], LARGADA = 8;
 function ultimoY() { return segs.length ? segs[segs.length - 1].p2.mundo.y : 0; }
 function novoSeg(curva, y) {
@@ -564,6 +604,8 @@ function novoPiloto(id, quem, carroId, remoto = false) {
 
 // config: { pista, pilotos: [{ quem, carro, remoto }] }
 function novaCorrida(cfg) {
+  DIF = DIFS[cfg.dif] || DIFS.medio;
+  if (cfg.copa !== undefined) copa = cfg.copa; // online: quem entrou recebe a copa de quem criou a sala
   criarSprites();
   montarPista(PISTAS.find(p => p.id === cfg.pista) || PISTAS[0]);
   const zLarg = LARGADA * SEG;
@@ -574,7 +616,7 @@ function novaCorrida(cfg) {
   const ordemRivais = ['gabi', 'ana', 'ilo', 'keka', 'emiel', 'vovo', 'jose'];
   rivais = ordemRivais.filter(id => !humanos.includes(id)).slice(0, 5).map(pessoa).map((r, k) => {
     const d = (grid[k][0] + 1) * 3.2 * SEG;
-    const c = { ...r, fator: r.vel, x: grid[k][1], dist: d, vel: 0, spr: desenharCarro(r.cor, r.tipo, 0, placaDe(r)), fim: 0, alvoD: d, alvoX: grid[k][1] };
+    const c = { ...r, fator: Math.min(.99, r.vel * DIF.fator), tiroT: 6 + k * 2.5, x: grid[k][1], dist: d, vel: 0, spr: desenharCarro(r.cor, r.tipo, 0, placaDe(r)), fim: 0, alvoD: d, alvoX: grid[k][1] };
     c.z = mod(zLarg + d, comprimento);
     return c;
   });
@@ -640,7 +682,7 @@ function andarJogador(dt) {
   if (rodando) J.rodar = Math.max(0, J.rodar - dt);
   if (correndo && !rodando) {
     if (teclas.esq) x -= dx; else if (teclas.dir) x += dx;
-    else { const alvo = lim(x, -.7, .7); x += (alvo - x) * Math.min(1, dt * 2.4); } // ajudinha: volta para a estrada
+    else { const alvo = lim(x, -.7, .7); x += (alvo - x) * Math.min(1, dt * DIF.ajuda); } // ajudinha: volta para a estrada
   } else x = interp(x, J.id ? -.4 : .4, dt); // depois da chegada vai sozinho
   x -= dx * pct * segJ.curva * CENTRIFUGA;
   const vmax = VMAX * (turbo > 0 ? 1.35 : 1);
@@ -698,8 +740,8 @@ function andarRivais(dt) {
   for (const c of rivais) {
     const gap = c.dist - lider;
     let alvo = VMAX * c.fator;
-    if (gap > 2600) alvo *= .86;                 // muito na frente: espera um pouco
-    else if (gap < -5000) alvo = VMAX * .9;       // muito atrás: corre para alcançar
+    if (gap > DIF.espera) alvo *= .86;                     // muito na frente: espera um pouco
+    else if (gap < -5000) alvo = VMAX * DIF.alcanca;       // muito atrás: corre para alcançar
     if (c.rodar > 0) { c.rodar = Math.max(0, c.rodar - dt); alvo = VMAX * .25; c.vel = Math.min(c.vel, VMAX * .45); } // acertado por uma bolha
     c.vel += (alvo - c.vel) * Math.min(1, dt * .9);
     // desvia dos pilotos e dos outros carros
@@ -710,6 +752,19 @@ function andarRivais(dt) {
     moverNoSeg(c, mod(LARGADA * SEG + c.dist, comprimento));
     if (!c.fim && c.dist >= VOLTAS * comprimento) { c.fim = tempo; chegada.push(c); }
   }
+  // no difícil, os rivais que estão logo atrás de um piloto jogam bolhas nele
+  if (DIF.bolhas && modo === 'corrida') rivais.forEach((c, k) => {
+    if (c.fim || c.rodar > 0 || tempo < c.tiroT) return;
+    for (const j of jogadores) {
+      const d = j.dist + JOGADOR_Z - c.dist;
+      if (!j.fim && d > SEG * 2 && d < SEG * 9 && Math.abs(j.x - c.x) < .45) {
+        c.tiroT = tempo + 7 + rnd(tempo + k) * 6;
+        novaBolha(-1 - k, c.dist + SEG * .6, c.x, c.vel);
+        rede.enviar({ t: 'tiro', r: k, d: Math.round(c.dist + SEG * .6), x: +c.x.toFixed(3), v: Math.round(c.vel) });
+        break;
+      }
+    }
+  });
   rede.rivais();
 }
 // quem entrou na sala recebe os rivais de quem criou: só anda entre uma mensagem e outra
@@ -748,14 +803,15 @@ function andarBolhas(dt) {
   for (const b of tiros) {
     b.dist += b.vel * dt; b.vida -= dt;
     moverNoSeg(b, mod(LARGADA * SEG + b.dist, comprimento));
-    const alvos = [...rivais, ...jogadores.filter(j => j.id !== b.dono).map(j => j.obj)];
+    const rival = b.dono < 0 ? rivais[-1 - b.dono] : null; // bolha jogada por um rival só acerta os pilotos
+    const alvos = rival ? jogadores.map(j => j.obj) : [...rivais, ...jogadores.filter(j => j.id !== b.dono).map(j => j.obj)];
     for (const c of alvos) {
       if (c.fim || c.rodar > 0 || Math.abs(c.dist - b.dist) > SEG * .9 || Math.abs(c.x - b.x) > .38) continue;
       b.vida = 0; som.pop();
       const atirador = jogadores[b.dono];
       if (c.humano !== undefined) { // acertou um piloto de verdade
         const j = jogadores[c.humano];
-        if (!j.remoto) { j.rodar = 1.4; j.vel *= .4; usar(j); voz('Voi ei!', 'Ah, não!', { cor: '#ff8a8a', importante: true }); tremor = .4; guardarJ(j); }
+        if (!j.remoto) { j.rodar = 1.4; j.vel *= .4; usar(j); voz('Voi ei!', rival ? T().acertado(nomeL(rival)) : 'Ah, não!', { cor: '#ff8a8a', importante: true }); tremor = .4; guardarJ(j); }
         else c.rodar = 1.4;
       } else c.rodar = 1.4;
       if (atirador && !atirador.remoto) { usar(atirador); voz('Osuma! 🫧', `Acertou ${c.pt}!`, { cor: '#9fe7ff' }); guardarJ(atirador); }
@@ -1004,10 +1060,10 @@ let hudCache = '';
 function hud() {
   const lugar = colocacao();
   const v = Math.round(vel / VMAX * 180);
-  const k = `${lugar}|${volta}|${moedas}|${v}`;
+  const k = `${lugar}|${volta}|${moedas}|${v}|${copa ? copa.i : -1}`;
   if (k === hudCache) return; hudCache = k;
   elPos.innerHTML = `${T().ord(lugar)}<small> / ${rivais.length + jogadores.length}</small>`;
-  elVolta.textContent = `${T().volta(Math.min(volta + 1, VOLTAS), VOLTAS)} · 🪙 ${moedas}`;
+  elVolta.textContent = `${copa ? `🏆 ${copa.i + 1}/${copa.pistas.length} · ` : ''}${T().volta(Math.min(volta + 1, VOLTAS), VOLTAS)} · 🪙 ${moedas}`;
   elVel.innerHTML = `${v}<small>km/h${turbo > 0 ? ' ⚡' : ''}</small>`;
   elBarra.style.width = `${lim(dist / (VOLTAS * comprimento), 0, 1) * 100}%`;
 }
@@ -1024,7 +1080,7 @@ function hudCanvas() {
     ctx.fillStyle = cor; ctx.fillText(txt, x, y);
   };
   caixa(`${nomeL(J)} ${T().ord(colocacao())}`, p * 1.5, p * 1.5, r, '#ffd23f', 'left');
-  caixa(`${T().volta(Math.min(volta + 1, VOLTAS), VOLTAS)} · 🪙 ${moedas}`, p * 1.5, p * 2.5 + r * 1.1, r * .55, '#fff', 'left');
+  caixa(`${copa ? `🏆 ${copa.i + 1}/${copa.pistas.length} · ` : ''}${T().volta(Math.min(volta + 1, VOLTAS), VOLTAS)} · 🪙 ${moedas}`, p * 1.5, p * 2.5 + r * 1.1, r * .55, '#fff', 'left');
   caixa(`${Math.round(vel / VMAX * 180)} km/h${turbo > 0 ? ' ⚡' : ''}`, W - p * 1.5, p * 1.5, r * .6, '#fff', 'right');
   ctx.textBaseline = 'alphabetic';
 }
@@ -1148,7 +1204,7 @@ function desenharFesta() {
   if (venc) {
     const r = Math.min(aw, ah) * .075, y = ay + r * 1.3;
     ctx.font = `700 ${r}px Fredoka, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    const txt = `🏆 ${tx.campeao} ${venc.nome}`, k = 1 + Math.sin(t * 5) * .04;
+    const txt = `🏆 ${festa.titulo || tx.campeao} ${venc.nome}`, k = 1 + Math.sin(t * 5) * .04;
     ctx.save(); ctx.translate(cx, y); ctx.scale(k, k);
     ctx.lineWidth = r * .16; ctx.strokeStyle = '#3a1600'; ctx.strokeText(txt, 0, 0);
     ctx.fillStyle = '#ffd23f'; ctx.fillText(txt, 0, 0); ctx.restore();
@@ -1243,8 +1299,9 @@ const rede = {
     const eu = { quem: salvo.eu, carro: salvo.carro };
     const ele = { quem: this.outro.quem === salvo.eu ? FAMILIA.find(f => f.id !== salvo.eu).id : this.outro.quem, carro: this.outro.carro };
     if (ele.carro === eu.carro) ele.carro = 'p_' + ele.quem; // carros iguais confundem: usa o carro da cor da pessoa
-    this.enviar({ t: 'inicio', cfg: { pista: salvo.pista, pilotos: [ele, { ...eu, remoto: true }] } });
-    novaCorrida({ pista: salvo.pista, pilotos: [eu, { ...ele, remoto: true }] });
+    const pista = pistaAgora();
+    this.enviar({ t: 'inicio', cfg: { pista, dif: salvo.dif, copa, pilotos: [ele, { ...eu, remoto: true }] } });
+    novaCorrida({ pista, dif: salvo.dif, pilotos: [eu, { ...ele, remoto: true }] });
   },
   estado() {
     if (!this.papel || tempo - this.te < .066) return; this.te = tempo;
@@ -1262,7 +1319,7 @@ function aoReceber(d) {
   if (d.t === 'inicio' && rede.papel === 'conv' && d.cfg && Array.isArray(d.cfg.pilotos)) { novaCorrida(d.cfg); return; }
   if (d.t === 'c') { const j = jogadores.find(j => j.remoto); if (!j || modo === 'menu') return; j.alvoD = +d.d || 0; j.alvoX = +d.x || 0; j.vel = +d.v || 0; j.sireneLigada = !!d.s; j.moedas = +d.m || 0; if (d.g && !(j.rodar > 0)) j.rodar = 1.2; return; }
   if (d.t === 'r' && rede.papel === 'conv' && Array.isArray(d.r)) { d.r.forEach((a, i) => { const c = rivais[i]; if (!c) return; c.alvoD = +a[0]; c.alvoX = +a[1]; c.vel = +a[2]; if (a[3] && !(c.rodar > 0)) c.rodar = 1.2; }); return; }
-  if (d.t === 'tiro') { const j = jogadores.find(j => j.remoto); if (j && modo === 'corrida') { novaBolha(j.id, +d.d || 0, +d.x || 0, +d.v || 0); som.bolha(); } return; }
+  if (d.t === 'tiro') { const j = jogadores.find(j => j.remoto); if (j && modo === 'corrida') { novaBolha(d.r !== undefined ? -1 - (+d.r || 0) : j.id, +d.d || 0, +d.x || 0, +d.v || 0); som.bolha(); } return; }
   if (d.t === 'fim') { const j = jogadores.find(j => j.remoto); if (j && modo !== 'menu') chegouRemoto(j); return; }
   if (d.t === 'cheia') { rede.fechar(); painelSala('erro', T().cheia); return; }
   if (d.t === 'tchau') caiu();
@@ -1286,7 +1343,7 @@ function painelSala(estado, msg, titulo) {
   const on = (id, f) => { const b = document.getElementById(id); if (b) b.onclick = f; };
   on('salaSair', () => { rede.fechar(); irMenu(); });
   on('salaVoltar', () => irMenu());
-  on('salaCorrer', () => rede.iniciar());
+  on('salaCorrer', () => { novaCopa(); rede.iniciar(); });
   on('salaIr', () => { const v = (document.getElementById('cod').value || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); if (v.length === 4) rede.entrar(v); });
   const cod = document.getElementById('cod');
   if (cod) { cod.focus(); cod.onkeydown = e => { if (e.key === 'Enter') document.getElementById('salaIr').click(); }; }
@@ -1402,11 +1459,31 @@ function mostrarFim() {
   const ordem = [...chegada, ...faltam];
   const lugarDe = j => ordem.findIndex(o => o.humano === j.id) + 1;
   const t = T(), frase = document.getElementById('frase');
+  const chave = o => o.humano !== undefined ? jogadores[o.humano].quem : o.id;
+  const elC = document.getElementById('classif'); elC.innerHTML = '';
+  let tabela = null, ultimaDaCopa = false;
+  if (copa) {
+    copa.ganhou = {};
+    ordem.forEach((o, i) => { const k = chave(o); copa.ganhou[k] = PONTOS[i] || 1; copa.pontos[k] = (copa.pontos[k] || 0) + (PONTOS[i] || 1); });
+    ultimaDaCopa = copa.i >= copa.pistas.length - 1;
+    tabela = Object.entries(copa.pontos).sort((a, b) => b[1] - a[1]);
+    const humanosIds = jogadores.map(j => j.quem);
+    elC.innerHTML = `<h3 class="copa">${t.copas[copa.id]} · ${t.classificacao} (${t.corridaN(copa.i + 1, copa.pistas.length)})</h3><div class="tabela">` +
+      tabela.map(([k, pts], i) => { const f = pessoa(k); return `<div class="linha${humanosIds.includes(k) ? ' eu' : ''}"><b>${t.ord(i + 1)}</b><span class="bola" style="background:${f.cor}"></span><span>${f.ic} ${nomeL(f)}</span><span class="pts">${pts} ${t.ptsAbrev}<span class="mais">+${copa.ganhou[k] || 0}</span></span></div>`; }).join('') + '</div>';
+  }
   // a festa: os três primeiros no pódio
   festa = { t0: tempo, estouros: {}, viva: -1, podio: ordem.slice(0, 3).map(o => {
     const h = o.humano !== undefined ? jogadores[o.humano] : null;
     return { nome: nomeL(o), cor: o.cor, ic: h ? h.ic : o.ic, spr: h ? h.spr[0] : o.spr };
   }) };
+  // última corrida da copa: o pódio é o da copa inteira
+  if (ultimaDaCopa) {
+    festa.titulo = t.copaTit;
+    festa.podio = tabela.slice(0, 3).map(([k]) => {
+      const h = jogadores.find(j => j.quem === k), r = rivais.find(c => c.id === k), f = pessoa(k);
+      return { nome: nomeL(f), cor: f.cor, ic: f.ic, spr: h ? h.spr[0] : r ? r.spr : desenharCarro(f.cor, f.tipo, 0, placaDe(f)) };
+    });
+  }
   document.getElementById('podio').innerHTML = ordem.map((c, i) =>
     `<div class="linha${c.eu ? ' eu' : ''}"><b>${t.ord(i + 1)}</b><span class="bola" style="background:${c.cor}"></span><span>${nomeL(c)}</span><span>${i < 3 ? ['🥇', '🥈', '🥉'][i] : ''}</span></div>`).join('');
   let melhor = 99;
@@ -1434,11 +1511,21 @@ function mostrarFim() {
   salvo.tacas = salvo.tacas || { ouro: 0, prata: 0, bronze: 0 };
   if (melhor <= 3) salvo.tacas[['ouro', 'prata', 'bronze'][melhor - 1]]++;
   document.getElementById('taca').textContent = melhor <= 3 ? t.taca[melhor - 1] : '';
+  if (ultimaDaCopa) {
+    const humanosIds = jogadores.filter(j => !j.remoto).map(j => j.quem);
+    const lugarCopa = Math.min(...humanosIds.map(k => tabela.findIndex(([q]) => q === k) + 1));
+    document.getElementById('lugar').textContent = `🏆 ${t.campeaoCopa(nomeL(pessoa(tabela[0][0])))}`;
+    document.getElementById('taca').textContent = lugarCopa <= 3 ? t.copaGanha[lugarCopa - 1] : '';
+    const ant = salvo.copas[copa.id];
+    if (lugarCopa <= 3 && (!ant || lugarCopa < ant.lugar || (lugarCopa === ant.lugar && ['facil', 'medio', 'dificil'].indexOf(salvo.dif) > ['facil', 'medio', 'dificil'].indexOf(ant.dif)))) salvo.copas[copa.id] = { lugar: lugarCopa, dif: salvo.dif };
+    voz(`Onneksi olkoon, ${pessoa(tabela[0][0]).nomeFi}! Olet mestari!`, '', { importante: true, mostrar: false });
+  }
   guardar();
   som.fanfarra();
   // online: só quem criou a sala escolhe a próxima corrida
   const conv = rede.papel === 'conv';
   document.getElementById('denovo').hidden = conv;
+  document.getElementById('denovo').textContent = copa ? (ultimaDaCopa ? t.novaCopa : t.proxima(copa.i + 2, copa.pistas.length)) : t.denovo;
   document.getElementById('outra').textContent = conv ? t.sairSala : t.outra;
   if (conv) frase.insertAdjacentHTML('beforeend', `<br><small>${t.aguardando(nomeOutro())}</small>`);
   mostrar('fim');
@@ -1487,6 +1574,29 @@ function montarMenu() {
     b.onclick = () => { salvo.carro = c.id; guardar(); som.iniciar(); som.buzina(); montarMenu(); };
     elC.append(b);
   }
+  const elD = document.getElementById('difs'); elD.innerHTML = '';
+  for (const d of ['facil', 'medio', 'dificil']) {
+    const [ic, nome, sub] = T().difs[d], b = document.createElement('button');
+    b.className = 'escolha'; b.setAttribute('aria-pressed', String(salvo.dif === d));
+    b.innerHTML = `<span class="ic">${ic}</span><b>${nome}</b><small>${sub}</small>`;
+    b.onclick = () => { salvo.dif = d; guardar(); montarMenu(); };
+    elD.append(b);
+  }
+  const elT = document.getElementById('tipos'); elT.innerHTML = '';
+  for (const c of [null, ...COPAS]) {
+    const id = c ? c.id : 'rapida', b = document.createElement('button');
+    b.className = 'escolha'; b.setAttribute('aria-pressed', String(salvo.tipo === id));
+    if (!c) b.innerHTML = `<span class="ic">${T().rapida[0]}</span><b>${T().rapida[1]}</b><small>${T().rapida[2]}</small>`;
+    else {
+      const g = salvo.copas[c.id], difNome = g ? T().difs[g.dif][1] : '';
+      b.innerHTML = `<span class="ic">${c.ic}</span><b>${T().copas[c.id]}</b><small>${c.pistas.map(pp => PISTAS.find(x => x.id === pp).ic).join(' ')} · ${T().corridas(c.pistas.length)}</small><small>${g ? `${['🏆', '🥈', '🥉'][g.lugar - 1]} ${difNome}` : T().semTrofeu}</small>`;
+    }
+    b.onclick = () => { salvo.tipo = id; guardar(); montarMenu(); };
+    elT.append(b);
+  }
+  const ehCopa = salvo.tipo !== 'rapida';
+  document.getElementById('tituloPista').hidden = ehCopa; document.getElementById('pistas').hidden = ehCopa;
+  document.getElementById('dicaCopa').textContent = ehCopa ? T().dicaCopa : '';
   for (const p of PISTAS) {
     const b = document.createElement('button');
     b.className = 'escolha pista'; b.setAttribute('aria-pressed', String(salvo.pista === p.id));
@@ -1509,6 +1619,7 @@ function montarMenu() {
 }
 
 function irMenu() {
+  copa = null;
   modo = 'menu'; pausado = false; som.motor(false); som.sirene(false); som.musica(false);
   if (rede.papel === 'conv') rede.fechar();   // quem entrou na sala sai dela ao voltar para o menu
   for (const s of segs) s.carros = [];
@@ -1518,19 +1629,32 @@ let ultimaCfg = null;
 function correr() {
   som.iniciar();
   if (salvo.modo === 'online') {
-    if (rede.papel === 'host' && rede.outro) rede.iniciar();
+    if (rede.papel === 'host' && rede.outro) { novaCopa(); rede.iniciar(); }
     else if (rede.papel === 'host') painelSala('codigo');
     else rede.criar();
     return;
   }
+  novaCopa();
   ultimaCfg = salvo.modo === 'dupla'
-    ? { pista: salvo.pista, pilotos: [{ quem: salvo.eu, carro: salvo.carro }, { quem: salvo.eu2, carro: 'p_' + salvo.eu2 }] }
-    : { pista: salvo.pista, pilotos: [{ quem: salvo.eu, carro: salvo.carro }] };
+    ? { pista: pistaAgora(), dif: salvo.dif, pilotos: [{ quem: salvo.eu, carro: salvo.carro }, { quem: salvo.eu2, carro: 'p_' + salvo.eu2 }] }
+    : { pista: pistaAgora(), dif: salvo.dif, pilotos: [{ quem: salvo.eu, carro: salvo.carro }] };
   novaCorrida(ultimaCfg);
+}
+function novaCopa() {
+  const c = COPAS.find(c => c.id === salvo.tipo);
+  copa = c ? { id: c.id, pistas: c.pistas, i: 0, pontos: {}, ganhou: {} } : null;
+}
+const pistaAgora = () => copa ? copa.pistas[copa.i] : salvo.pista;
+// botão do fim: próxima corrida da copa, nova copa ou correr de novo
+function seguir() {
+  if (copa) { if (copa.i >= copa.pistas.length - 1) novaCopa(); else copa.i++; }
+  if (rede.papel === 'host' && rede.outro) return rede.iniciar();
+  if (!ultimaCfg) return correr();
+  novaCorrida({ ...ultimaCfg, pista: pistaAgora(), dif: salvo.dif });
 }
 document.getElementById('correr').onclick = correr;
 document.getElementById('entrar').onclick = () => { som.iniciar(); painelSala('digitar'); };
-document.getElementById('denovo').onclick = () => { if (rede.papel === 'host' && rede.outro) rede.iniciar(); else if (ultimaCfg) novaCorrida(ultimaCfg); else correr(); };
+document.getElementById('denovo').onclick = seguir;
 document.getElementById('outra').onclick = () => { if (rede.papel === 'conv') rede.fechar(); irMenu(); };
 document.getElementById('som').onclick = () => { som.ligar(!salvo.som); montarMenu(); };
 document.getElementById('pausa').onclick = () => { pausado = true; mostrar('pausa'); som.musica(false); };
