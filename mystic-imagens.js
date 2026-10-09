@@ -40,6 +40,31 @@ const RECADO = `<text x="320" y="150" text-anchor="middle" font-family="Georgia,
     <text x="320" y="195" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="34" fill="#8a0f1a">confiado em mim.</text>
     ${[[200, 206, 30], [262, 206, 18], [345, 206, 40], [430, 206, 24]].map(([x, y, h]) => `<path d="M${x} ${y} v${h}" stroke="#8a0f1a" stroke-width="3" stroke-linecap="round"/><circle cx="${x}" cy="${y + h}" r="3" fill="#8a0f1a"/>`).join('')}`;
 
+// lua de sangue (eclipse): vermelha, com a borda escura
+const luaSangue = (x, y, r = 46) => `
+  <defs><radialGradient id="brilhoS"><stop offset="0" stop-color="#ff3a2a" stop-opacity=".5"/><stop offset="1" stop-color="#ff3a2a" stop-opacity="0"/></radialGradient>
+  <radialGradient id="luaS" cx=".4" cy=".35"><stop offset="0" stop-color="#e0573a"/><stop offset=".7" stop-color="#9a1e14"/><stop offset="1" stop-color="#4a0a08"/></radialGradient></defs>
+  <circle cx="${x}" cy="${y}" r="${r * 2.8}" fill="url(#brilhoS)"/>
+  <circle cx="${x}" cy="${y}" r="${r}" fill="url(#luaS)"/>
+  <circle cx="${x - r * .3}" cy="${y - r * .2}" r="${r * .18}" fill="#7a1810" opacity=".6"/>
+  <circle cx="${x + r * .35}" cy="${y + r * .25}" r="${r * .12}" fill="#7a1810" opacity=".6"/>`;
+
+const ceuSangue = `<defs><linearGradient id="ceuS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a0306"/><stop offset="1" stop-color="#2a0c10"/></linearGradient></defs><rect width="${W}" height="${H}" fill="url(#ceuS)"/>`;
+
+// as letras do mapa dos túneis (coluna A-E, linha 1-5); C4 P, A2 O, E5 Ç, B1 O
+const GRADE = ['TOLMS', 'OREVA', 'NIUBL', 'SEPAR', 'GDVTÇ'];
+
+// lápide com nome e, se tiver, um anjo de pedra em cima
+const lapide = (x, nome, anjo, alt = 120) => `
+  <path d="M${x - 46} 330 V${330 - alt + 30} a46 34 0 0 1 92 0 V330 Z" fill="#5a5f66" stroke="#2a2e33" stroke-width="3"/>
+  <path d="M${x - 38} 330 V${330 - alt + 34} a38 26 0 0 1 76 0" fill="none" stroke="#747a82" stroke-width="2"/>
+  <path d="M${x} ${330 - alt + 46} v26 M${x - 10} ${330 - alt + 56} h20" stroke="#3a3f45" stroke-width="4"/>
+  <text x="${x}" y="${330 - alt + 98}" text-anchor="middle" font-family="Georgia,serif" font-size="12.5" font-weight="bold" fill="#1d2024" letter-spacing="1">${nome}</text>
+  <text x="${x}" y="${330 - alt + 114}" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#2a2e33">MDCCCLXIV</text>
+  ${anjo ? `<g transform="translate(${x} ${330 - alt - 2})" fill="#8a9098" stroke="#3a3f45" stroke-width="1.5">
+    <path d="M-6 0 q-26 -10 -30 -44 q16 8 26 24 z"/><path d="M6 0 q26 -10 30 -44 q-16 8 -26 24 z"/>
+    <path d="M-10 0 q0 -30 10 -36 q10 6 10 36 z"/><circle cy="-44" r="8"/><ellipse cy="-56" rx="9" ry="3" fill="none" stroke="#c9b98a"/></g>` : ''}`;
+
 export const IMAGENS = {
   // Abertura: a floresta perto da estrada velha, lua cheia e o celular aceso no chão
   floresta: svg(`${ceuNoite}${estrelas(60)}${lua(470, 95)}
@@ -187,4 +212,103 @@ export const IMAGENS = {
 
   // a parede do final 2 sem o recado (o vídeo escreve o recado letra por letra)
   parede: svg(PAREDE),
+
+  // ================= Capítulo 2: O Eclipse de Sangue =================
+
+  // Fase 8: a cidade debaixo da lua de sangue
+  eclipse: svg(`${ceuSangue}${estrelas(40, 160)}${luaSangue(450, 100, 54)}
+    <rect x="70" y="180" width="70" height="220" fill="#12060a"/><polygon points="60,180 105,100 150,180" fill="#12060a"/>
+    <rect x="96" y="196" width="20" height="30" rx="10" fill="#ff6a4a" opacity=".55"/>
+    ${[[170, 270, 90], [270, 300, 70], [350, 260, 110], [470, 290, 150]].map(([x, y, w]) => `<rect x="${x}" y="${y}" width="${w}" height="${400 - y}" fill="#170a0e"/>${[0, 1].map(k => `<rect x="${x + 14 + k * (w / 2)}" y="${y + 20}" width="12" height="16" fill="#ff8a5a" opacity="${k ? .55 : .25}"/>`).join('')}`).join('')}
+    <rect x="0" y="360" width="${W}" height="40" fill="#0a0306"/>
+    ${neblina(350, .18)}
+    ${legenda('ECLIPSE DE SANGUE · 23:12', '#ff8a7a')}`),
+
+  // Fase 8: o mapa dos túneis com a grade de letras
+  mapa: svg(`<defs><radialGradient id="papel" cx=".5" cy=".5" r=".75"><stop offset="0" stop-color="#e6d3a8"/><stop offset=".8" stop-color="#c9ad78"/><stop offset="1" stop-color="#8a6a3a"/></radialGradient></defs>
+    <rect width="${W}" height="${H}" fill="#1a110c"/>
+    <path d="M24 22 L612 14 L624 380 L18 388 Z" fill="url(#papel)"/>
+    <path d="M24 22 L612 14 L624 380 L18 388 Z" fill="none" stroke="#6a4a24" stroke-width="2"/>
+    <text x="160" y="56" text-anchor="middle" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#4a2c12" letter-spacing="2">TÚNEIS DE</text>
+    <text x="160" y="78" text-anchor="middle" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#4a2c12" letter-spacing="2">MYSTIC FALLS</text>
+    <text x="160" y="96" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="12" fill="#6a4a24">anno 1864</text>
+    <path d="M40 150 Q90 130 120 170 T200 200 Q240 230 220 290 T285 318 M120 170 Q100 230 60 260 M200 200 Q250 170 290 190" stroke="#6a4424" stroke-width="7" fill="none" stroke-linecap="round" opacity=".55"/>
+    <path d="M40 150 Q90 130 120 170 T200 200 Q240 230 220 290 T285 318 M120 170 Q100 230 60 260 M200 200 Q250 170 290 190" stroke="#d9c39a" stroke-width="2" fill="none" stroke-dasharray="4 5"/>
+    <g transform="translate(120 170)"><rect x="-10" y="-12" width="20" height="16" fill="#4a2c12"/><polygon points="-12,-12 0,-24 12,-12" fill="#4a2c12"/></g>
+    <g transform="translate(60 262)" stroke="#4a2c12" stroke-width="2.5" fill="none"><path d="M-8 0 h16 M0 -10 v20"/></g>
+    <text x="290" y="338" text-anchor="middle" font-family="Georgia,serif" font-size="24" fill="#8a1c1c">✕</text>
+    <g transform="translate(70 330)" stroke="#4a2c12" stroke-width="1.5" fill="none"><circle r="16"/><path d="M0 -22 v44 M-22 0 h44"/><text y="-26" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#4a2c12" stroke="none">N</text></g>
+    <g font-family="Georgia,serif" text-anchor="middle">
+      ${'ABCDE'.split('').map((c, i) => `<text x="${358 + i * 50}" y="72" font-size="18" font-weight="bold" fill="#8a1c1c">${c}</text>`).join('')}
+      ${[1, 2, 3, 4, 5].map(n => `<text x="318" y="${112 + (n - 1) * 54}" font-size="18" font-weight="bold" fill="#8a1c1c">${n}</text>`).join('')}
+      ${GRADE.map((linha, r) => linha.split('').map((l, c) => `<rect x="${334 + c * 50}" y="${84 + r * 54}" width="48" height="52" fill="#f0e2c0" fill-opacity=".45" stroke="#6a4a24" stroke-width="1.5"/><text x="${358 + c * 50}" y="${119 + r * 54}" font-size="28" fill="#2a1a0a">${l}</text>`).join('')).join('')}
+    </g>
+    <circle cx="600" cy="360" r="18" fill="#8a1c1c" opacity=".55"/><circle cx="590" cy="372" r="6" fill="#8a1c1c" opacity=".45"/>
+    ${legenda('MAPA DOS TÚNEIS · COLUNA + LINHA', '#e7c36a')}`),
+
+  // Fase 9: o poço velho dos Lockwood com a cifra gravada
+  poco: svg(`${ceuSangue}${estrelas(30, 140)}${luaSangue(110, 80, 36)}
+    ${[480, 540, 600].map((x, i) => pinho(x, 260, 180 + i * 20, '#12060a')).join('')}
+    <rect x="0" y="300" width="${W}" height="100" fill="#0d0a08"/>
+    <path d="M60 360 Q200 330 270 320" stroke="#2a1e16" stroke-width="14" fill="none" stroke-linecap="round"/><path d="M70 380 Q200 350 270 335" stroke="#2a1e16" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <rect x="278" y="110" width="12" height="110" fill="#3a2414"/><rect x="470" y="110" width="12" height="110" fill="#3a2414"/>
+    <polygon points="260,112 380,62 500,112" fill="#2a1a10"/>
+    <path d="M380 112 v80" stroke="#8a7a60" stroke-width="2"/><rect x="368" y="190" width="24" height="20" fill="#4a3a2a"/>
+    <ellipse cx="380" cy="220" rx="122" ry="26" fill="#060404"/>
+    <defs><clipPath id="paredePoco"><path d="M258 220 v100 a122 26 0 0 0 244 0 v-100 z"/></clipPath></defs>
+    <path d="M258 220 v100 a122 26 0 0 0 244 0 v-100" fill="#4a4540"/>
+    <g clip-path="url(#paredePoco)">${[0, 1, 2, 3, 4].map(r => Array.from({ length: 7 }, (_, c) => `<rect x="${242 + c * 40 + (r % 2) * 20}" y="${228 + r * 24}" width="38" height="22" fill="#5a544c" stroke="#2a2622" stroke-width="2"/>`).join('')).join('')}</g>
+    <rect x="290" y="252" width="180" height="40" fill="#3a3530" stroke="#2a2622" stroke-width="2"/>
+    <text x="380" y="281" text-anchor="middle" font-family="monospace" font-size="24" font-weight="bold" fill="#e8dcc0" letter-spacing="3">FHPLWHULR</text>
+    <g transform="translate(380 308)" fill="#c9a25a">${[-18, 0, 18].map(dx => `<circle cx="${dx}" r="6"/><circle cx="${dx + 3}" cy="-2" r="5" fill="#3a3530"/>`).join('')}</g>
+    ${neblina(320, .2)}
+    ${legenda('POÇO DOS LOCKWOOD · TRÊS LUAS', '#ff8a7a')}`),
+
+  // Fase 10: cinco lápides no cemitério, debaixo da lua de sangue
+  lapides: svg(`${ceuSangue}${estrelas(40, 150)}${luaSangue(540, 70, 34)}
+    <path d="M0 200 Q160 170 320 190 T640 180 V400 H0 Z" fill="#120a0c"/>
+    ${[40, 600].map(x => `<path d="M${x} 330 V140 M${x} 180 l-30 -30 M${x} 210 l28 -36 M${x} 160 l20 -20" stroke="#0a0506" stroke-width="7" fill="none" stroke-linecap="round"/>`).join('')}
+    <path d="M0 330 H640 V400 H0 Z" fill="#0b0708"/>
+    ${lapide(84, 'LOCKWOOD', true)}${lapide(202, 'SALVATORE', false)}${lapide(320, 'GILBERT', true)}${lapide(438, 'SALVATORE', false)}${lapide(556, 'FELL', false)}
+    ${[84, 202, 320, 438, 556].map((x, i) => `<text x="${x}" y="356" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#c9a25a">${i + 1}</text>`).join('')}
+    ${neblina(330, .28)}
+    <path d="M140 120 q6 -6 12 0 q6 -6 12 0" stroke="#000" stroke-width="2.5" fill="none"/><path d="M380 100 q5 -5 10 0 q5 -5 10 0" stroke="#000" stroke-width="2" fill="none"/>
+    ${legenda('CEMITÉRIO DE MYSTIC FALLS', '#ff8a7a')}`),
+
+  // Fase 11: a estátua de pedra do Silas rachando na cripta
+  estatua: svg(`<defs><radialGradient id="luzV"><stop offset="0" stop-color="#ff2a1a" stop-opacity=".55"/><stop offset="1" stop-color="#ff2a1a" stop-opacity="0"/></radialGradient></defs>
+    <rect width="${W}" height="${H}" fill="#0b0607"/>
+    ${Array.from({ length: 5 }, (_, r) => Array.from({ length: 9 }, (_, c) => `<rect x="${c * 74 + (r % 2) * 37 - 20}" y="${r * 52}" width="70" height="48" fill="#1a1314" stroke="#0b0607" stroke-width="4"/>`).join('')).join('')}
+    <circle cx="320" cy="210" r="230" fill="url(#luzV)"/>
+    <rect x="0" y="330" width="${W}" height="70" fill="#100a0b"/>
+    <rect x="250" y="320" width="140" height="24" fill="#4a4448"/>
+    <g fill="#7a7880" stroke="#4a484e" stroke-width="2">
+      <path d="M272 320 q-4 -110 30 -130 h36 q34 20 30 130 z"/>
+      <path d="M302 190 q-34 10 -40 70 l10 4 q8 -46 34 -56 z"/><path d="M338 190 q34 10 40 70 l-10 4 q-8 -46 -34 -56 z"/>
+      <rect x="310" y="170" width="20" height="22"/><circle cx="320" cy="150" r="26"/>
+    </g>
+    <path d="M320 128 l-6 18 l10 10 l-8 22 l12 20 l-10 30 l14 26 l-8 40 l10 26" stroke="#ff4a2a" stroke-width="3" fill="none"/>
+    <path d="M290 230 l14 10 l-4 18 M350 210 l-12 16 l6 20" stroke="#ff4a2a" stroke-width="2.5" fill="none"/>
+    <path d="M320 128 l-6 18 l10 10 l-8 22 l12 20 l-10 30 l14 26 l-8 40 l10 26" stroke="#ffc0a0" stroke-width="1" fill="none"/>
+    <circle cx="311" cy="148" r="3" fill="#ff5a3a"/><circle cx="329" cy="148" r="3" fill="#ff5a3a"/>
+    ${[170, 470].map((x, i) => `<rect x="${x - 5}" y="${290 - i * 10}" width="10" height="${50 + i * 10}" fill="#efe6d0"/><path d="M${x} ${290 - i * 10} q-6 -14 0 -26 q6 12 0 26" fill="#ffcf6a"/>`).join('')}
+    ${legenda('CRIPTA DOS FELL · A ESTÁTUA DO SILAS', '#ff8a7a')}`),
+
+  // Fase 11: o espelho velho com a frase escrita ao contrário
+  espelho: svg(`<defs><radialGradient id="vidro" cx=".45" cy=".4"><stop offset="0" stop-color="#3a4448"/><stop offset="1" stop-color="#0f1416"/></radialGradient></defs>
+    <rect width="${W}" height="${H}" fill="#0b0607"/>
+    ${Array.from({ length: 8 }, (_, r) => Array.from({ length: 9 }, (_, c) => `<rect x="${c * 74 + (r % 2) * 37 - 20}" y="${r * 52}" width="70" height="48" fill="#161011" stroke="#0b0607" stroke-width="4"/>`).join('')).join('')}
+    <ellipse cx="320" cy="196" rx="214" ry="168" fill="#6a4a1a"/>
+    <ellipse cx="320" cy="196" rx="204" ry="158" fill="#b08a3e"/>
+    ${Array.from({ length: 24 }, (_, i) => { const a = i * Math.PI / 12; return `<circle cx="${(320 + Math.cos(a) * 209).toFixed(1)}" cy="${(196 + Math.sin(a) * 163).toFixed(1)}" r="5" fill="#e7c36a"/>`; }).join('')}
+    <ellipse cx="320" cy="196" rx="190" ry="144" fill="url(#vidro)"/>
+    <path d="M190 120 Q240 90 280 100" stroke="#fff" stroke-width="5" opacity=".08" fill="none"/>
+    <g transform="translate(640 0) scale(-1 1)" font-family="Georgia,serif" font-style="italic" text-anchor="middle" fill="#ffb0a0">
+      <text x="320" y="138" font-size="25">SÓ A ERVA ROXA</text>
+      <text x="320" y="178" font-size="25">QUE QUEIMA OS VAMPIROS</text>
+      <text x="320" y="218" font-size="25">APAGA O FOGO</text>
+      <text x="320" y="258" font-size="25">DA LUA DE SANGUE</text>
+    </g>
+    ${[[230, 290, 18], [420, 120, 12], [380, 300, 22], [250, 150, 10]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#000" opacity=".25"/>`).join('')}
+    ${legenda('O ESPELHO DA CRIPTA', '#ff8a7a')}`),
 };

@@ -509,4 +509,118 @@ export const VIDEOS = {
       grao(ctx, q, .1);
     },
   },
+
+  // ================= Capítulo 2 =================
+
+  // Fase 8: a praça (foto) e a lua cheia ficando vermelha no eclipse
+  eclipse: {
+    dur: 12, fundo: 'eclipse', poster: 'eclipse',
+    som: { drone: 1, vento: .2, sino: [1, 3.2], coracao: [6.5, 12], sustos: [8.6] },
+    desenhar(ctx, t, img, q) {
+      texturas();
+      const cam = fotoCam(t, 0, 8, { x: .5, y: .8, s: 1.5 }, { x: .49, y: .3, s: 1.7 });
+      const z = { ...cam, s: cam.s + entre(t, 8, 12) * .5 };
+      const k = entre(t, 3, 8.6); // quanto a lua já ficou vermelha
+      const P = foto(ctx, img.f_praca, z, `contrast(1.08) saturate(${1 - k * .4}) brightness(${1 - k * .25})`);
+      const [mx, my] = P(.491, .15), r = P(.534, .15)[0] - mx;
+      // a sombra da Terra passa pela lua e ela fica cor de sangue
+      ctx.save(); ctx.beginPath(); ctx.arc(mx, my, r * 1.02, 0, Math.PI * 2); ctx.clip();
+      ctx.globalCompositeOperation = 'multiply';
+      ctx.fillStyle = `rgba(255,${Math.round(mix(255, 60, k))},${Math.round(mix(255, 40, k))},1)`; ctx.fillRect(mx - r * 2, my - r * 2, r * 4, r * 4);
+      const sx = mix(mx - r * 2.2, mx, entre(t, 3, 7)), sa = .75 * (1 - entre(t, 7, 9));
+      ctx.fillStyle = `rgba(40,0,0,${sa})`; ctx.beginPath(); ctx.arc(sx, my, r * 1.15, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+      brilho(ctx, mx, my, r * 7, `rgba(255,${Math.round(mix(240, 50, k))},${Math.round(mix(220, 30, k))},A)`, .22 + .1 * k + .04 * Math.sin(t * 2));
+      // os lampiões tremem quando a lua fica vermelha
+      [[.267, .62], [.42, .69], [.59, .69], [.713, .68], [.825, .66], [.94, .63]].forEach(([u, v], i) => {
+        const [x, y] = P(u, v);
+        const falha = k > .6 && rnd(Math.floor(t * 9) + i * 7) > .75;
+        brilho(ctx, x, y, 80 * z.s, 'rgba(255,170,90,A)', falha ? .02 : .2 + .06 * Math.sin(t * 6 + i * 2));
+      });
+      nevoa(ctx, t, P(0, .7)[1] - H * .15, H, .32 + .1 * k, 12, 3.2, `rgba(${Math.round(mix(170, 200, k))},${Math.round(mix(180, 90, k))},${Math.round(mix(210, 90, k))},1)`);
+      particulas(ctx, t, 30, 91, [0, 0, W, H], [4, -8], 1.3, 'rgba(255,200,170,A)', 1);
+      cor(ctx, '#0a2040', '#4a3010', .25 * (1 - k));
+      cor(ctx, '#2a0006', '#6a0a0a', .55 * k);
+      vinheta(ctx, .7 + .2 * k);
+      escuro(ctx, 1 - entre(t, 0, 1.2));
+      ctx.fillStyle = `rgba(150,0,15,${.3 * entre(t, 8.5, 8.6) * (1 - entre(t, 8.6, 9.6))})`; ctx.fillRect(0, 0, W, H);
+      cartela(ctx, t, .8, 3.6, 'UMA SEMANA DEPOIS · MYSTIC FALLS', '');
+      cartela(ctx, t, 8.8, 12.2, 'CAPÍTULO 2', 'O Eclipse de Sangue', '#ff6a5a');
+      faixas(ctx, 1);
+      grao(ctx, q, .07);
+    },
+  },
+
+  // Fase 10: o cemitério (ilustração), a câmera passando pelas cinco lápides, corvos e um relâmpago
+  cemiterio: {
+    dur: 11, fundo: 'lapides', poster: 'lapides',
+    som: { drone: .9, vento: .35, sustos: [6], sussurro: [7.5], arranhar: [8.6] },
+    desenhar(ctx, t, img, q) {
+      texturas();
+      const cam = t < 6 ? camEntre(t, 0, 6, { x: 120, y: 250, s: 1.9 }, { x: 520, y: 250, s: 1.9 })
+        : camEntre(t, 6, 11, { x: 520, y: 250, s: 1.9 }, { x: 320, y: 215, s: 1.08 });
+      const raio = entre(t, 5.9, 6) * (1 - entre(t, 6, 6.5)) + .5 * entre(t, 6.6, 6.65) * (1 - entre(t, 6.65, 6.9));
+      ctx.save();
+      tremer(ctx, q, 9 * entre(t, 6, 6.1) * (1 - entre(t, 6.1, 6.8)) + 3 * entre(t, 8.6, 8.7) * (1 - entre(t, 8.7, 11)));
+      cena(ctx, img.lapides, cam, `brightness(${.9 + raio * 1.6}) contrast(1.1)`);
+      const [lx, ly] = pt(cam, 540, 70);
+      brilho(ctx, lx, ly, 260 * cam.s, 'rgba(255,50,30,A)', .22 + .06 * Math.sin(t * 1.4));
+      // corvos atravessando o céu
+      ctx.strokeStyle = '#000'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+      for (let i = 0; i < 5; i++) {
+        const x = ((t * (70 + i * 18) + i * 260) % (W + 200)) - 100, y = 90 + i * 38 + Math.sin(t * 2 + i) * 10, a = Math.sin(t * 12 + i * 2) * 8;
+        ctx.beginPath(); ctx.moveTo(x - 14, y - a); ctx.quadraticCurveTo(x - 6, y - 4, x, y); ctx.quadraticCurveTo(x + 6, y - 4, x + 14, y - a); ctx.stroke();
+      }
+      nevoa(ctx, t, H * .55, H, .42, 20, 3.2, 'rgba(200,150,150,1)');
+      nevoa(ctx, t + 4, H * .7, H, .3, -12, 2.4, 'rgba(160,110,120,1)');
+      // a última lápide (Fell) brilha um pouquinho no fim
+      const [fx, fy] = pt(cam, 556, 260);
+      brilho(ctx, fx, fy, 160 * cam.s, 'rgba(255,90,60,A)', .3 * entre(t, 8.6, 9.4) * (.7 + .3 * Math.sin(t * 6)));
+      ctx.restore();
+      ctx.fillStyle = `rgba(230,235,255,${.55 * raio})`; ctx.fillRect(0, 0, W, H);
+      cor(ctx, '#2a0006', '#4a0a0a', .45);
+      vinheta(ctx, .85);
+      escuro(ctx, 1 - entre(t, 0, 1));
+      cartela(ctx, t, .6, 3.8, 'CEMITÉRIO DE MYSTIC FALLS · 23:41', '', '#ff8a7a');
+      faixas(ctx, 1);
+      legenda(ctx, 'Uma das pedras se mexeu.', entre(t, 9, 9.4) * (1 - entre(t, 10.6, 11)), '#ff9a9a');
+      grao(ctx, q, .08);
+    },
+  },
+
+  // Final do Capítulo 2: a estátua do Silas (ilustração), as rachaduras vermelhas e o selo de luz
+  selo: {
+    dur: 11, fundo: 'estatua', poster: 'estatua',
+    som: { drone: 1, vento: .08, coracao: [0, 4.2], sustos: [4.2], brilho: [4.3, 5.5], acorde: 6.2 },
+    desenhar(ctx, t, img, q) {
+      texturas();
+      const cam = camEntre(t, 0, 4.2, { x: 320, y: 230, s: 1.1 }, { x: 320, y: 190, s: 1.7 });
+      const z = t < 4.2 ? cam : camEntre(t, 4.2, 11, { x: 320, y: 190, s: 1.7 }, { x: 320, y: 215, s: 1.15 });
+      const selado = entre(t, 4.2, 7.5);
+      ctx.save();
+      tremer(ctx, q, 6 * entre(t, 1, 4) * (1 - entre(t, 4.2, 4.6)));
+      cena(ctx, img.estatua, z, `contrast(1.1) grayscale(${selado}) brightness(${1 - selado * .15})`);
+      // as rachaduras pulsando cada vez mais forte, até o feitiço
+      const pulso = (1 - selado) * (.4 + .6 * entre(t, 0, 4)) * (.7 + .3 * Math.sin(t * (6 + t * 3)));
+      for (const [x, y] of [[320, 140], [318, 200], [326, 250], [316, 300], [296, 240], [346, 225]]) {
+        const [px, py] = pt(z, x, y);
+        brilho(ctx, px, py, 90 * z.s, 'rgba(255,60,30,A)', .45 * pulso);
+      }
+      particulas(ctx, t, 40, 55, [W * .2, H * .1, W * .8, H * .9], [0, -18], 1.5, `rgba(255,${Math.round(mix(90, 230, selado))},${Math.round(mix(60, 200, selado))},A)`, 1);
+      ctx.restore();
+      // o clarão branco do Quietus Aeternum
+      const [cx, cy] = pt(z, 320, 200);
+      const flash = entre(t, 4.1, 4.4) * (1 - entre(t, 4.6, 7));
+      brilho(ctx, cx, cy, 900 * flash + 20, 'rgba(255,245,225,A)', .95 * flash);
+      ctx.fillStyle = `rgba(255,250,240,${.7 * entre(t, 4.15, 4.3) * (1 - entre(t, 4.3, 5.2))})`; ctx.fillRect(0, 0, W, H);
+      cor(ctx, '#2a0006', '#6a0a0a', .5 * (1 - selado));
+      cor(ctx, '#0a2040', '#4a3a20', .3 * selado);
+      vinheta(ctx, .85);
+      escuro(ctx, 1 - entre(t, 0, .8));
+      cartela(ctx, t, 6.4, 11.2, 'CAPÍTULO 2 · FIM', 'A lua voltou a ser branca.');
+      faixas(ctx, 1);
+      legenda(ctx, '"Quietus Aeternum."', entre(t, 1.2, 1.6) * (1 - entre(t, 3.8, 4.1)), '#ffb0a0');
+      grao(ctx, q, .08);
+    },
+  },
 };
