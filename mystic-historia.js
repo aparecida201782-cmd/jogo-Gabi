@@ -180,7 +180,7 @@ const FASE1 = [
 ];
 
 // ---------- Fase 2: O SMS dos Salvatore ----------
-const SMS = L('LliRg CitsyM on Erucorp', 'niillirG citsyM eluT', 'llirG citsyM ta teeM');
+const SMS = L('llirG citsyM on erucorP', 'niillirG citsyM eluT', 'llirG citsyM ta teeM');
 const FASE2 = [
   m(L('✨ *Estaca de carvalho branco!* É a única arma que consegue matar um *Original*, o tipo de vampiro mais antigo e mais forte que existe.',
       '✨ *Valkoisen tammen seiväs!* Se on ainoa ase, joka voi tappaa *Alkuperäisen*, vanhimman ja vahvimman vampyyrin, joka on olemassa.',
@@ -737,7 +737,7 @@ const pistas = (fase, e) => msgsDaFase(fase, e).filter(x => x.repetir).map(({ ap
 const DICAS = {
   1: [L('Não é o feitiço nem o ingrediente. Procure uma etiqueta com a palavra *Arma*.', 'Se ei ole loitsu eikä ainesosa. Etsi kohta, jossa lukee *Ase*.', 'It\'s not the spell or the ingredient. Look for a tag with the word *Weapon*.'),
       L('Olha o feitiço de id *093*, na linha <ArmaSecreta>. Os sublinhados ( _ ) são espaços.', 'Katso loitsua, jonka id on *093*, riviltä <SalainenAse>. Alaviivat ( _ ) ovat välilyöntejä.', 'Look at the spell with id *093*, on the <SecretWeapon> line. The underscores ( _ ) are spaces.')],
-  2: [L('Leia a frase inteira começando pela última letra: o "p" de "Erucorp" é a primeira letra da resposta.', 'Lue koko lause viimeisestä kirjaimesta alkaen: "eluT"-sanan "T" on ensimmäinen kirjain.', 'Read the whole sentence starting from the last letter: the "M" at the end of "teeM" is the first letter.'),
+  2: [L('Leia a frase inteira começando pela última letra: o "P" no fim de "erucorP" é a primeira letra da resposta.', 'Lue koko lause viimeisestä kirjaimesta alkaen: "eluT"-sanan "T" on ensimmäinen kirjain.', 'Read the whole sentence starting from the last letter: the "M" at the end of "teeM" is the first letter.'),
       L('Ao contrário fica "Procure no Mystic ____". Qual é o lugar?', 'Takaperin siinä lukee "Tule Mystic ____". Mikä paikka?', 'Backwards it says "Meet at Mystic ____". What is the place?')],
   3: [L('"O mais importante está sempre no começo"... no começo de cada *linha*.', '"Tärkein on aina alussa"... jokaisen *rivin* alussa.', '"The most important thing is always at the beginning"... at the beginning of each *line*.'),
       L('Junte a primeira letra de cada uma das 5 linhas do diário: P, O, N...', 'Yhdistä päiväkirjan viiden rivin ensimmäiset kirjaimet: S, I, L...', 'Put together the first letter of each of the 6 lines of the diary: B, R, I...')],
