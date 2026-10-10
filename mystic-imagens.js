@@ -105,8 +105,8 @@ function desenhar() {
     <rect x="296" y="40" width="48" height="8" rx="4" fill="#2a2e38"/>
     <text x="320" y="86" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#8fa6b8">${L('Número oculto', 'Salainen numero', 'Hidden number')}</text>
     <rect x="254" y="104" width="132" height="58" rx="10" fill="#26384a"/>
-    <text x="264" y="128" font-family="monospace" font-size="13" fill="#e8f1f8">${L('LliRg CitsyM', 'niillirG', 'llirG citsyM')}</text>
-    <text x="264" y="148" font-family="monospace" font-size="13" fill="#e8f1f8">${L('on Erucorp', 'citsyM eluT', 'ta teeM')}</text>
+    <text x="264" y="128" font-family="monospace" font-size="13" fill="#e8f1f8">${L('llirG citsyM', 'niillirG', 'llirG citsyM')}</text>
+    <text x="264" y="148" font-family="monospace" font-size="13" fill="#e8f1f8">${L('on erucorP', 'citsyM eluT', 'ta teeM')}</text>
     <text x="378" y="176" text-anchor="end" font-family="sans-serif" font-size="9" fill="#5f7486">23:47</text>
     <path d="M150 120 q-30 80 0 160" stroke="#c8344a" stroke-width="3" fill="none" opacity=".7"/><path d="M150 280 l-6 -14 m6 14 l12 -8" stroke="#c8344a" stroke-width="3" fill="none" opacity=".7"/>
     <text x="70" y="210" font-family="Georgia,serif" font-size="15" fill="#c8344a" opacity=".8">↺ ${L('ao', 'taka-', 'back-')}</text><text x="62" y="230" font-family="Georgia,serif" font-size="15" fill="#c8344a" opacity=".8">${L('contrário?', 'perin?', 'wards?')}</text>
@@ -407,7 +407,7 @@ function esconder() {
       { x: 518, y: 130, r: 28, texto: L('🕯️ A vela não apaga nunca... alguém quer que você leia.', '🕯️ Kynttilä ei sammu koskaan... joku haluaa, että luet tämän.', '🕯️ The candle never goes out... someone wants you to read this.') },
     ],
     sms: [
-      { x: 320, y: 135, r: 50, texto: L('🔁 A última letra é "p"... e a penúltima é "r". P-R-O...', '🔁 Viimeinen kirjain on "T"... ja toiseksi viimeinen "u". T-U-L-E...', '🔁 The last letter is "M"... and the one before is "e". M-E-E-T...') },
+      { x: 320, y: 135, r: 50, texto: L('🔁 A última letra é "P"... e a penúltima é "r". P-R-O...', '🔁 Viimeinen kirjain on "T"... ja toiseksi viimeinen "u". T-U-L-E...', '🔁 The last letter is "M"... and the one before is "e". M-E-E-T...') },
       { x: 110, y: 210, r: 50, texto: L('↺ Alguém já tentou ler isso de trás para frente.', '↺ Joku on jo yrittänyt lukea tämän takaperin.', '↺ Someone already tried reading this backwards.') },
     ],
     diario: [
