@@ -681,4 +681,119 @@ export const VIDEOS = {
       grao(ctx, q, .08);
     },
   },
+
+  // ================= vídeos com as fotos realistas do Canva (fotos/) =================
+
+  // Fase 3: o Mystic Grill vazio na chuva, alguém olhando pela janela... e o diário no balcão
+  grill: {
+    dur: 12, fundo: 'diario', poster: 'diario',
+    som: { drone: .7, vento: .12, agua: true, sustos: [4.6], sussurro: [5.2], brilho: [8.5] },
+    desenhar(ctx, t, img, q) {
+      texturas();
+      const parte2 = entre(t, 6.2, 7.4); // troca do bar para o diário
+      if (parte2 < 1) {
+        const cam = fotoCam(t, 0, 7, { x: .55, y: .5, s: 1.05 }, { x: .4, y: .45, s: 1.6 });
+        ctx.save(); tremer(ctx, q, 6 * entre(t, 4.5, 4.6) * (1 - entre(t, 4.6, 5.2)));
+        const P = foto(ctx, img.f_grill, cam, 'contrast(1.08)');
+        for (const [u, v, i] of [[.6, .12, 0], [.7, .08, 1], [.52, .16, 2]]) {
+          const [x, y] = P(u, v), falha = t > 3.8 && t < 4.8 && rnd(Math.floor(t * 12) + i) > .5;
+          brilho(ctx, x, y, 120 * cam.s, 'rgba(255,170,90,A)', falha ? .02 : .22 + .05 * Math.sin(t * 7 + i));
+        }
+        const [nx, ny] = P(.04, .38);
+        brilho(ctx, nx, ny, 140 * cam.s, 'rgba(255,40,50,A)', .25 + .2 * (rnd(Math.floor(t * 6)) > .3));
+        // chuva escorrendo no vidro
+        ctx.strokeStyle = 'rgba(200,220,240,.18)'; ctx.lineWidth = 1.2;
+        for (let i = 0; i < 70; i++) { const x = rnd(i) * W, y = ((rnd(i * 3) * H + t * (300 + rnd(i) * 300)) % (H + 80)) - 40; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 3, y + 26); ctx.stroke(); }
+        // a sombra na janela some depois do susto
+        const [sx, sy] = P(.33, .45);
+        if (t > 4.6) { ctx.fillStyle = `rgba(20,30,34,${.85 * entre(t, 4.6, 5.4)})`; ctx.beginPath(); ctx.ellipse(sx, sy, 34 * cam.s, 90 * cam.s, 0, 0, 7); ctx.fill(); }
+        ctx.restore();
+        escuro(ctx, entre(t, 4.55, 4.6) * (1 - entre(t, 4.6, 4.9)) * .9);
+      }
+      if (parte2 > 0) {
+        ctx.save(); ctx.globalAlpha = parte2;
+        const cam = fotoCam(t, 6.2, 12, { x: .45, y: .5, s: 1.08 }, { x: .38, y: .55, s: 1.5 });
+        const P = foto(ctx, img.f_diario, cam, 'contrast(1.06)');
+        const [gx, gy] = P(.62, .22);
+        brilho(ctx, gx, gy, 160 * cam.s, 'rgba(255,190,110,A)', .25 + .05 * Math.sin(t * 3));
+        particulas(ctx, t, 30, 61, [0, 0, W, H], [3, -5], 1.2, 'rgba(255,230,190,A)', 1);
+        ctx.restore();
+      }
+      cor(ctx, '#0a2a30', '#4a2a10', .3);
+      vinheta(ctx, .85);
+      escuro(ctx, 1 - entre(t, 0, 1));
+      cartela(ctx, t, .6, 3.6, L('MYSTIC GRILL · 00:21', 'MYSTIC GRILL · 00.21', 'MYSTIC GRILL · 00:21'), '');
+      faixas(ctx, 1);
+      legenda(ctx, L('Tinha alguém na janela.', 'Ikkunassa oli joku.', 'Someone was at the window.'), entre(t, 5, 5.3) * (1 - entre(t, 6.2, 6.6)), '#ff9a9a');
+      legenda(ctx, L('A página com o meu nome.', 'Sivu, jossa on minun nimeni.', 'The page with my name on it.'), entre(t, 8.6, 9) * (1 - entre(t, 11.5, 12)));
+      grao(ctx, q, .08);
+    },
+  },
+
+  // Fase 14: a caixinha de música na biblioteca, uma valsa tocando sozinha
+  caixinha: {
+    dur: 10, fundo: 'caixinha', poster: 'caixinha',
+    som: { drone: .6, vento: .05, sino: [1.2, 1.8, 2.4, 3.6, 4.2, 4.8, 6, 6.6], sussurro: [7.5] },
+    desenhar(ctx, t, img, q) {
+      texturas();
+      const cam = fotoCam(t, 0, 10, { x: .5, y: .45, s: 1.05 }, { x: .47, y: .55, s: 1.7 });
+      const P = foto(ctx, img.f_caixinha, cam, 'contrast(1.08)');
+      const [vx, vy] = P(.23, .33);
+      brilho(ctx, vx, vy, 150 * cam.s, 'rgba(255,170,80,A)', .3 + .1 * Math.sin(t * 11) + .05 * rnd(Math.floor(t * 15)));
+      const [cx, cy] = P(.47, .55);
+      brilho(ctx, cx, cy - 20, 260 * cam.s, 'rgba(200,190,255,A)', .12 + .1 * Math.sin(t * 2.2));
+      particulas(ctx, t, 45, 81, [0, 0, W, H], [2, -6], 1.2, 'rgba(255,230,190,A)', 1);
+      cor(ctx, '#1a1030', '#4a2010', .35);
+      vinheta(ctx, .85);
+      escuro(ctx, 1 - entre(t, 0, 1));
+      cartela(ctx, t, .6, 3.4, L('BIBLIOTECA DOS LOCKWOOD', 'LOCKWOODIEN KIRJASTO', 'LOCKWOOD LIBRARY'), '', '#cfc3ff');
+      faixas(ctx, 1);
+      legenda(ctx, L('Ela toca sozinha.', 'Se soittaa itsestään.', 'It plays by itself.'), entre(t, 6.6, 7) * (1 - entre(t, 9.5, 10)), '#cfc3ff');
+      grao(ctx, q, .07);
+    },
+  },
+
+  // Fase 15: a luz apaga no salão e, quando volta, são duas
+  rostos: {
+    dur: 10, fundo: 'rostos', poster: 'rostos',
+    som: { drone: .9, vento: .05, sustos: [3.4], coracao: [3.6, 10], sussurro: [6.4] },
+    desenhar(ctx, t, img, q) {
+      texturas();
+      const cam = t < 3.4 ? fotoCam(t, 0, 3.4, { x: .5, y: .4, s: 1.05 }, { x: .5, y: .42, s: 1.15 }) : fotoCam(t, 3.4, 10, { x: .5, y: .42, s: 1.15 }, { x: .5, y: .4, s: 1.45 });
+      const P = foto(ctx, img.f_rostos, cam, 'contrast(1.08)');
+      for (const [u, v, i] of [[.06, .2, 0], [.94, .25, 1], [.86, .2, 2]]) {
+        const [x, y] = P(u, v);
+        brilho(ctx, x, y, 110 * cam.s, 'rgba(255,170,80,A)', .25 + .08 * Math.sin(t * 9 + i * 2));
+      }
+      nevoa(ctx, t, H * .55, H, .3, 10, 3, 'rgba(150,120,200,1)');
+      cor(ctx, '#1a1030', '#3a0a14', .35);
+      vinheta(ctx, .9);
+      // a luz apaga de repente e volta devagar
+      escuro(ctx, Math.max(1 - entre(t, 0, 1), entre(t, 2.6, 2.7) * (1 - entre(t, 3.4, 4.4))));
+      faixas(ctx, 1);
+      legenda(ctx, L('Qual delas é a Katherine?', 'Kumpi heistä on Katherine?', 'Which one is Katherine?'), entre(t, 6, 6.4) * (1 - entre(t, 9.5, 10)), '#cfc3ff');
+      grao(ctx, q, .08);
+    },
+  },
+
+  // Fase 16: a pedra da lua brilhando azul dentro da caixinha
+  pedra: {
+    dur: 9, fundo: 'caixinha', poster: 'caixinha',
+    som: { drone: .7, vento: .05, brilho: [1.5, 4.5], sino: [3] },
+    desenhar(ctx, t, img, q) {
+      texturas();
+      const cam = fotoCam(t, 0, 9, { x: .5, y: .5, s: 1.1 }, { x: .55, y: .6, s: 1.9 });
+      const P = foto(ctx, img.f_pedra, cam, 'contrast(1.08)');
+      const [px, py] = P(.55, .6);
+      brilho(ctx, px, py, 320 * cam.s, 'rgba(80,140,255,A)', .35 + .2 * Math.sin(t * 2.5));
+      raios(ctx, t, px, py, 0, Math.PI * 2, 14, 600, 'rgba(120,170,255,A)', .04, 20);
+      particulas(ctx, t, 50, 91, [W * .2, H * .2, W * .9, H * .9], [0, -10], 1.3, 'rgba(160,200,255,A)', 1);
+      cor(ctx, '#0a1840', '#2a1030', .35);
+      vinheta(ctx, .85);
+      escuro(ctx, 1 - entre(t, 0, 1));
+      faixas(ctx, 1);
+      legenda(ctx, L('A pedra da lua.', 'Kuukivi.', 'The moonstone.'), entre(t, 4.5, 4.9) * (1 - entre(t, 8.5, 9)), '#a8c4ff');
+      grao(ctx, q, .07);
+    },
+  },
 };

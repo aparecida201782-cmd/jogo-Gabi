@@ -228,7 +228,7 @@ const hora = () => new Date().toLocaleTimeString(FALA_LG[lg()], { hour: '2-digit
 const rolar = () => chat.scrollTop = chat.scrollHeight;
 const POSTER = { abertura: 'floresta', cameras: 'suspeitos', final_sombra: 'parede', cemiterio: 'lapides', selo: 'estatua', baile: 'mascaras', final_baile: 'mascaras' };
 // capas com as fotos realistas (fotos/, geradas no Canva)
-const FOTO = { abertura: 'floresta', ponte: 'ponte', porao: 'porao', cripta: 'cripta', final_aliado: 'praca' };
+const FOTO = { abertura: 'floresta', ponte: 'ponte', porao: 'porao', cripta: 'cripta', final_aliado: 'praca', grill: 'grill', baile: 'baile', caixinha: 'caixinha', rostos: 'rostos', pedra: 'pedra', final_baile: 'baile' };
 const imgURL = nome => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(imagensEm(lg())[nome] || '');
 const pistasImg = nome => pistasEm(lg())[nome] || [];
 
