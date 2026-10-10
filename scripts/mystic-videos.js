@@ -4,6 +4,11 @@
 // câmera em movimento, neblina em camadas, raios de luz, partículas, granulado de filme e faixas de cinema.
 
 export const W = 1280, H = 720, FPS = 30;
+
+// os letreiros mudam com a língua: L('português', 'suomi', 'english'); gerar-videos.mjs escolhe a língua
+let LG = 'pt';
+export const definirLingua = lg => { LG = lg; };
+const L = (pt, fi, en) => LG === 'fi' ? fi : LG === 'en' ? en : pt;
 const K = Math.max(W / 640, H / 400); // escala que faz a ilustração cobrir a tela
 
 // ---------- matemática ----------
@@ -279,9 +284,9 @@ export const VIDEOS = {
       vinheta(ctx, .8);
       escuro(ctx, 1 - entre(t, 0, 1.8));
       escuro(ctx, entre(t, 3.3, 3.45) * (1 - entre(t, 3.45, 3.9)) * .6);
-      cartela(ctx, t, 1.2, 4.6, '23:47 · MYSTIC FALLS, VIRGÍNIA', 'Operação Mystic Falls');
+      cartela(ctx, t, 1.2, 4.6, L('23:47 · MYSTIC FALLS, VIRGÍNIA', '23.47 · MYSTIC FALLS, VIRGINIA', '23:47 · MYSTIC FALLS, VIRGINIA'), L('Operação Mystic Falls', 'Operaatio Mystic Falls', 'Operation Mystic Falls'));
       faixas(ctx, 1);
-      legenda(ctx, 'Uma mensagem de um número desconhecido...', entre(t, 8.6, 9) * (1 - entre(t, 10.6, 11)));
+      legenda(ctx, L('Uma mensagem de um número desconhecido...', 'Viesti tuntemattomasta numerosta...', 'A message from an unknown number...'), entre(t, 8.6, 9) * (1 - entre(t, 10.6, 11)));
       grao(ctx, q, .07);
     },
   },
@@ -320,9 +325,9 @@ export const VIDEOS = {
       cor(ctx, '#0a3040', '#4a2a10', .3);
       vinheta(ctx, .75);
       escuro(ctx, 1 - entre(t, 0, 1.2));
-      cartela(ctx, t, .6, 3.8, 'PONTE WICKERY · 23:58', '');
+      cartela(ctx, t, .6, 3.8, L('PONTE WICKERY · 23:58', 'WICKERYN SILTA · 23.58', 'WICKERY BRIDGE · 23:58'), '');
       faixas(ctx, 1);
-      legenda(ctx, 'Tem alguma coisa presa nas pedras...', entre(t, 7.6, 8) * (1 - entre(t, 10.5, 11)));
+      legenda(ctx, L('Tem alguma coisa presa nas pedras...', 'Kivien väliin on juuttunut jotain...', 'Something is stuck in the rocks...'), entre(t, 7.6, 8) * (1 - entre(t, 10.5, 11)));
       grao(ctx, q, .07);
     },
   },
@@ -377,13 +382,13 @@ export const VIDEOS = {
       const s = 12 + Math.floor(t), fr = String(Math.floor((t % 1) * 30)).padStart(2, '0');
       ctx.textAlign = 'right'; ctx.fillText(`21:47:${String(s).padStart(2, '0')}:${fr}`, W - 40, 38);
       ctx.textAlign = 'left'; ctx.font = 'bold 22px "Courier New", monospace';
-      ctx.fillText(['JARDIM · MANSÃO LOCKWOOD', 'BAR · MANSÃO LOCKWOOD', 'SALÃO · MANSÃO LOCKWOOD'][cam], 40, H - 64);
-      ctx.textAlign = 'right'; ctx.fillText(['SUSPEITO: LIAM', 'SUSPEITO: TRISTAN', 'SUSPEITO: LUCIEN'][cam], W - 40, H - 64);
+      ctx.fillText(L(['JARDIM · MANSÃO LOCKWOOD', 'BAR · MANSÃO LOCKWOOD', 'SALÃO · MANSÃO LOCKWOOD'], ['PUUTARHA · LOCKWOODIN KARTANO', 'BAARI · LOCKWOODIN KARTANO', 'SALI · LOCKWOODIN KARTANO'], ['GARDEN · LOCKWOOD MANSION', 'BAR · LOCKWOOD MANSION', 'BALLROOM · LOCKWOOD MANSION'])[cam], 40, H - 64);
+      ctx.textAlign = 'right'; ctx.fillText(L('SUSPEITO: ', 'EPÄILTY: ', 'SUSPECT: ') + ['LIAM', 'TRISTAN', 'LUCIEN'][cam], W - 40, H - 64);
       if (cam === 2 && k > 1.6 && k < 3.8) {
         ctx.textAlign = 'center'; ctx.font = 'bold 30px "Courier New", monospace'; ctx.fillStyle = '#7dffb0';
-        ctx.fillText(`AMPLIANDO ${Math.min(400, Math.round(100 + (k - 1.6) * 140))}%`, W / 2, 96);
+        ctx.fillText(`${L('AMPLIANDO', 'ZOOMATAAN', 'ZOOMING')} ${Math.min(400, Math.round(100 + (k - 1.6) * 140))}%`, W / 2, 96);
       }
-      if (cam === 2 && k > 4) legenda(ctx, 'Anel de prata... pedra de lápis-lazúli.', entre(k, 4, 4.4), '#a8c4ff');
+      if (cam === 2 && k > 4) legenda(ctx, L('Anel de prata... pedra de lápis-lazúli.', 'Hopeasormus... lapis lazuli -kivi.', 'Silver ring... lapis lazuli stone.'), entre(k, 4, 4.4), '#a8c4ff');
     },
   },
 
@@ -412,7 +417,7 @@ export const VIDEOS = {
       escuro(ctx, 1 - entre(t, 0, 1));
       escuro(ctx, entre(t, 10.2, 10.6));
       faixas(ctx, 1);
-      legenda(ctx, '"Eu sei que você está aí, caçadora."', entre(t, 8, 8.4) * (1 - entre(t, 10, 10.3)), '#ff9a9a');
+      legenda(ctx, L('"Eu sei que você está aí, caçadora."', '"Tiedän, että olet siellä, metsästäjä."', '"I know you\'re there, hunter."'), entre(t, 8, 8.4) * (1 - entre(t, 10, 10.3)), '#ff9a9a');
       grao(ctx, q, .08);
     },
   },
@@ -440,7 +445,7 @@ export const VIDEOS = {
       vinheta(ctx, .8);
       escuro(ctx, 1 - entre(t, 0, .8));
       faixas(ctx, 1);
-      legenda(ctx, 'A estaca de carvalho branco.', entre(t, 6.8, 7.2) * (1 - entre(t, 9.5, 10)));
+      legenda(ctx, L('A estaca de carvalho branco.', 'Valkoisen tammen seiväs.', 'The white oak stake.'), entre(t, 6.8, 7.2) * (1 - entre(t, 9.5, 10)));
       grao(ctx, q, .07);
     },
   },
@@ -465,7 +470,7 @@ export const VIDEOS = {
       cor(ctx, '#0a2040', '#4a3010', .25);
       vinheta(ctx, .6);
       escuro(ctx, 1 - entre(t, 0, 1.2));
-      cartela(ctx, t, 6, 10.2, 'FINAL 1 · O ALIADO DA NEBLINA', 'Mystic Falls está a salvo.');
+      cartela(ctx, t, 6, 10.2, L('FINAL 1 · O ALIADO DA NEBLINA', 'LOPPU 1 · SUMUN LIITTOLAINEN', 'ENDING 1 · THE ALLY IN THE FOG'), L('Mystic Falls está a salvo.', 'Mystic Falls on turvassa.', 'Mystic Falls is safe.'));
       faixas(ctx, 1);
       grao(ctx, q, .06);
     },
@@ -483,7 +488,7 @@ export const VIDEOS = {
       const esc = K * cam.s;
       ctx.font = `italic ${34 * esc}px Georgia, "Times New Roman", serif`; ctx.textBaseline = 'alphabetic';
       ctx.fillStyle = '#7a0a14'; ctx.shadowColor = 'rgba(160,0,20,.6)'; ctx.shadowBlur = 8;
-      for (const [txt, y, a, b] of [['Você devia ter', 150, 1, 3.6], ['confiado em mim.', 195, 3.8, 6.8]]) {
+      for (const [txt, y, a, b] of [[L('Você devia ter', 'Sinun olisi pitänyt', 'You should have'), 150, 1, 3.6], [L('confiado em mim.', 'luottaa minuun.', 'trusted me.'), 195, 3.8, 6.8]]) {
         const w = ctx.measureText(txt).width, [x0, yy] = pt(cam, 320, y);
         const k = lim((t - a) / (b - a));
         if (k <= 0) continue;
@@ -504,7 +509,7 @@ export const VIDEOS = {
       cor(ctx, '#1a0a10', '#3a0808', .5);
       vinheta(ctx, .95);
       escuro(ctx, 1 - entre(t, 0, .8));
-      legenda(ctx, 'FINAL 2 · A SOMBRA NO PORÃO', entre(t, 8.8, 9.3), '#ff8a8a');
+      legenda(ctx, L('FINAL 2 · A SOMBRA NO PORÃO', 'LOPPU 2 · VARJO KELLARISSA', 'ENDING 2 · THE SHADOW IN THE CELLAR'), entre(t, 8.8, 9.3), '#ff8a8a');
       faixas(ctx, 1);
       grao(ctx, q, .1);
     },
@@ -544,8 +549,8 @@ export const VIDEOS = {
       vinheta(ctx, .7 + .2 * k);
       escuro(ctx, 1 - entre(t, 0, 1.2));
       ctx.fillStyle = `rgba(150,0,15,${.3 * entre(t, 8.5, 8.6) * (1 - entre(t, 8.6, 9.6))})`; ctx.fillRect(0, 0, W, H);
-      cartela(ctx, t, .8, 3.6, 'UMA SEMANA DEPOIS · MYSTIC FALLS', '');
-      cartela(ctx, t, 8.8, 12.2, 'CAPÍTULO 2', 'O Eclipse de Sangue', '#ff6a5a');
+      cartela(ctx, t, .8, 3.6, L('UMA SEMANA DEPOIS · MYSTIC FALLS', 'VIIKKOA MYÖHEMMIN · MYSTIC FALLS', 'ONE WEEK LATER · MYSTIC FALLS'), '');
+      cartela(ctx, t, 8.8, 12.2, L('CAPÍTULO 2', 'LUKU 2', 'CHAPTER 2'), L('O Eclipse de Sangue', 'Verikuun pimennys', 'The Blood Eclipse'), '#ff6a5a');
       faixas(ctx, 1);
       grao(ctx, q, .07);
     },
@@ -581,9 +586,9 @@ export const VIDEOS = {
       cor(ctx, '#2a0006', '#4a0a0a', .45);
       vinheta(ctx, .85);
       escuro(ctx, 1 - entre(t, 0, 1));
-      cartela(ctx, t, .6, 3.8, 'CEMITÉRIO DE MYSTIC FALLS · 23:41', '', '#ff8a7a');
+      cartela(ctx, t, .6, 3.8, L('CEMITÉRIO DE MYSTIC FALLS · 23:41', 'MYSTIC FALLSIN HAUTAUSMAA · 23.41', 'MYSTIC FALLS CEMETERY · 23:41'), '', '#ff8a7a');
       faixas(ctx, 1);
-      legenda(ctx, 'Uma das pedras se mexeu.', entre(t, 9, 9.4) * (1 - entre(t, 10.6, 11)), '#ff9a9a');
+      legenda(ctx, L('Uma das pedras se mexeu.', 'Yksi kivistä liikahti.', 'One of the stones moved.'), entre(t, 9, 9.4) * (1 - entre(t, 10.6, 11)), '#ff9a9a');
       grao(ctx, q, .08);
     },
   },
@@ -617,9 +622,62 @@ export const VIDEOS = {
       cor(ctx, '#0a2040', '#4a3a20', .3 * selado);
       vinheta(ctx, .85);
       escuro(ctx, 1 - entre(t, 0, .8));
-      cartela(ctx, t, 6.4, 11.2, 'CAPÍTULO 2 · FIM', 'A lua voltou a ser branca.');
+      cartela(ctx, t, 6.4, 11.2, L('CAPÍTULO 2 · FIM', 'LUKU 2 · LOPPU', 'CHAPTER 2 · THE END'), L('A lua voltou a ser branca.', 'Kuu on taas valkoinen.', 'The moon is white again.'));
       faixas(ctx, 1);
       legenda(ctx, '"Quietus Aeternum."', entre(t, 1.2, 1.6) * (1 - entre(t, 3.8, 4.1)), '#ffb0a0');
+      grao(ctx, q, .08);
+    },
+  },
+
+  // Capítulo 3: as máscaras na mesa de veludo, as velas tremendo e uma caixinha de música tocando ao longe
+  baile: {
+    dur: 11, fundo: 'mascaras', poster: 'mascaras',
+    som: { drone: .6, vento: .05, sino: [1, 2.2, 3.4, 5.8, 7], brilho: [8.4], sussurro: [6.2] },
+    desenhar(ctx, t, img, q) {
+      texturas();
+      const cam = t < 7 ? camEntre(t, 0, 7, { x: 110, y: 250, s: 2.1 }, { x: 520, y: 250, s: 2.1 })
+        : camEntre(t, 7, 11, { x: 520, y: 250, s: 2.1 }, { x: 320, y: 210, s: 1.1 });
+      cena(ctx, img.mascaras, cam, 'contrast(1.12) saturate(1.1)');
+      for (const [x, i] of [[70, 0], [570, 1]]) {
+        const [px, py] = pt(cam, x, 98);
+        brilho(ctx, px, py, 160 * cam.s, 'rgba(255,170,80,A)', .3 + .1 * Math.sin(t * 11 + i * 3) + .05 * rnd(Math.floor(t * 14) + i));
+      }
+      // a máscara de prata brilha por um instante (é ela!)
+      const [sx, sy] = pt(cam, 320, 280);
+      brilho(ctx, sx, sy, 220 * cam.s, 'rgba(210,220,255,A)', .5 * entre(t, 8.2, 8.6) * (1 - entre(t, 8.8, 10.2)));
+      particulas(ctx, t, 40, 33, [0, 0, W, H], [6, -8], 1.3, 'rgba(255,225,180,A)', 1);
+      nevoa(ctx, t, H * .6, H, .25, 10, 3, 'rgba(150,120,200,1)');
+      cor(ctx, '#1a1030', '#4a2010', .35);
+      vinheta(ctx, .85);
+      escuro(ctx, 1 - entre(t, 0, 1.2));
+      cartela(ctx, t, .8, 4.2, L('CAPÍTULO 3 · MANSÃO LOCKWOOD', 'LUKU 3 · LOCKWOODIN KARTANO', 'CHAPTER 3 · LOCKWOOD MANSION'), L('O Baile de Máscaras', 'Naamiaiset', 'The Masquerade Ball'), '#cfc3ff');
+      faixas(ctx, 1);
+      legenda(ctx, L('Uma delas é a dela.', 'Yksi niistä on hänen.', 'One of them is hers.'), entre(t, 8.8, 9.2) * (1 - entre(t, 10.5, 11)), '#cfc3ff');
+      grao(ctx, q, .07);
+    },
+  },
+
+  // Final do Capítulo 3: a máscara de prata ficou sozinha na mesa, as velas se apagam uma a uma
+  final_baile: {
+    dur: 10, fundo: 'mascaras', poster: 'mascaras',
+    som: { drone: .7, vento: .08, velas: [3.2, 4.6], sino: [6], acorde: 6.4 },
+    desenhar(ctx, t, img, q) {
+      texturas();
+      const cam = camEntre(t, 0, 10, { x: 320, y: 270, s: 2.6 }, { x: 320, y: 230, s: 1.25 });
+      cena(ctx, img.mascaras, cam, `contrast(1.1) brightness(${1 - entre(t, 3, 6) * .35})`);
+      for (const [x, i, apaga] of [[70, 0, 3.2], [570, 1, 4.6]]) {
+        const [px, py] = pt(cam, x, 98), k = 1 - entre(t, apaga, apaga + .3);
+        brilho(ctx, px, py, 160 * cam.s, 'rgba(255,170,80,A)', k * (.3 + .1 * Math.sin(t * 11 + i * 3)));
+        if (k < 1) particulas(ctx, t - apaga, 8, 70 + i, [px - 20, py - 120, px + 20, py], [0, -20], 1, `rgba(200,200,210,A)`);
+      }
+      const [sx, sy] = pt(cam, 320, 280);
+      brilho(ctx, sx, sy, 260 * cam.s, 'rgba(210,220,255,A)', .35 + .15 * Math.sin(t * 2));
+      nevoa(ctx, t, H * .55, H, .3, 8, 3, 'rgba(150,120,200,1)');
+      cor(ctx, '#1a1030', '#3a2a40', .4);
+      vinheta(ctx, .9);
+      escuro(ctx, 1 - entre(t, 0, 1));
+      cartela(ctx, t, 6, 10.2, L('CAPÍTULO 3 · FIM', 'LUKU 3 · LOPPU', 'CHAPTER 3 · THE END'), L('Mystic Falls dorme... por enquanto.', 'Mystic Falls nukkuu... toistaiseksi.', 'Mystic Falls sleeps... for now.'), '#cfc3ff');
+      faixas(ctx, 1);
       grao(ctx, q, .08);
     },
   },

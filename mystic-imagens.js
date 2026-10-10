@@ -3,6 +3,10 @@
 // (gere de novo com `node whatsapp/gerar-imagens.mjs` se mudar algum desenho).
 
 const W = 640, H = 400;
+
+// os textos desenhados mudam com a língua do jogo: L('português', 'suomi', 'english')
+let LG = 'pt';
+const L = (pt, fi, en) => LG === 'fi' ? fi : LG === 'en' ? en : pt;
 const svg = (corpo, fundo = '#0a0f14') =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="${fundo}"/>${corpo}</svg>`;
 
@@ -36,8 +40,8 @@ const PAREDE = `${Array.from({ length: 6 }, (_, r) => Array.from({ length: 9 }, 
     <path d="M160 300 l20 10 l-6 14 l20 6" stroke="#7a8288" stroke-width="5" fill="none"/><path d="M470 300 l-20 12 l8 12 l-22 4" stroke="#7a8288" stroke-width="5" fill="none"/>
     <path d="M196 330 l8 -6 m2 10 l9 -3" stroke="#aab" stroke-width="2"/><path d="M432 328 l-8 -6 m-2 10 l-9 -3" stroke="#aab" stroke-width="2"/>
     <ellipse cx="320" cy="370" rx="200" ry="14" fill="#000" opacity=".5"/>`;
-const RECADO = `<text x="320" y="150" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="34" fill="#8a0f1a">Você devia ter</text>
-    <text x="320" y="195" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="34" fill="#8a0f1a">confiado em mim.</text>
+const recado = () => `<text x="320" y="150" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="34" fill="#8a0f1a">${L('Você devia ter', 'Sinun olisi pitänyt', 'You should have')}</text>
+    <text x="320" y="195" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="34" fill="#8a0f1a">${L('confiado em mim.', 'luottaa minuun.', 'trusted me.')}</text>
     ${[[200, 206, 30], [262, 206, 18], [345, 206, 40], [430, 206, 24]].map(([x, y, h]) => `<path d="M${x} ${y} v${h}" stroke="#8a0f1a" stroke-width="3" stroke-linecap="round"/><circle cx="${x}" cy="${y + h}" r="3" fill="#8a0f1a"/>`).join('')}`;
 
 // lua de sangue (eclipse): vermelha, com a borda escura
@@ -51,8 +55,9 @@ const luaSangue = (x, y, r = 46) => `
 
 const ceuSangue = `<defs><linearGradient id="ceuS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a0306"/><stop offset="1" stop-color="#2a0c10"/></linearGradient></defs><rect width="${W}" height="${H}" fill="url(#ceuS)"/>`;
 
-// as letras do mapa dos túneis (coluna A-E, linha 1-5); C4 P, A2 O, E5 Ç, B1 O
-const GRADE = ['TOLMS', 'OREVA', 'NIUBL', 'SEPAR', 'GDVTÇ'];
+// as letras do mapa dos túneis (coluna A-E, linha 1-5), uma grade para cada língua
+// pt: C4 P, A2 O, E5 Ç, B1 O (POÇO) · fi: D2 K, A4 A, C1 I, E3 V, B5 O (KAIVO) · en: B3 W, E1 E, A5 L, D4 L (WELL)
+const grade = () => L(['TOLMS', 'OREVA', 'NIUBL', 'SEPAR', 'GDVTÇ'], ['RSIMT', 'UENKA', 'PHOJV', 'ALYTS', 'NOERM'], ['TASNE', 'ROHCD', 'MWIGA', 'SPNLK', 'LUBEY']);
 
 // lápide com nome e, se tiver, um anjo de pedra em cima
 const lapide = (x, nome, anjo, alt = 120) => `
@@ -65,7 +70,8 @@ const lapide = (x, nome, anjo, alt = 120) => `
     <path d="M-6 0 q-26 -10 -30 -44 q16 8 26 24 z"/><path d="M6 0 q26 -10 30 -44 q-16 8 -26 24 z"/>
     <path d="M-10 0 q0 -30 10 -36 q10 6 10 36 z"/><circle cy="-44" r="8"/><ellipse cy="-56" rx="9" ry="3" fill="none" stroke="#c9b98a"/></g>` : ''}`;
 
-export const IMAGENS = {
+function desenhar() {
+  return {
   // Abertura: a floresta perto da estrada velha, lua cheia e o celular aceso no chão
   floresta: svg(`${ceuNoite}${estrelas(60)}${lua(470, 95)}
     ${[30, 90, 150, 560, 615].map((x, i) => pinho(x, 330, 200 + (i % 3) * 40, '#0b151c')).join('')}
@@ -75,7 +81,7 @@ export const IMAGENS = {
     <path d="M220 400 L300 330 L360 330 L460 400 Z" fill="#141c22"/>
     <g transform="translate(300 352) rotate(-12)"><rect x="-16" y="-26" width="32" height="52" rx="5" fill="#111"/><rect x="-13" y="-22" width="26" height="42" rx="2" fill="#7fd1ff"/></g>
     <ellipse cx="300" cy="358" rx="60" ry="14" fill="#7fd1ff" opacity=".18"/>
-    ${legenda('MYSTIC FALLS · LUA CHEIA')}`),
+    ${legenda(L('MYSTIC FALLS · LUA CHEIA', 'MYSTIC FALLS · TÄYSIKUU', 'MYSTIC FALLS · FULL MOON'))}`),
 
   // Fase 1: grimório aberto com vela
   grimorio: svg(`<defs><radialGradient id="vela" cx=".5" cy=".4"><stop offset="0" stop-color="#ffb347" stop-opacity=".45"/><stop offset="1" stop-color="#ffb347" stop-opacity="0"/></radialGradient></defs>
@@ -89,7 +95,7 @@ export const IMAGENS = {
     <rect x="505" y="150" width="26" height="120" fill="#efe6d0"/><path d="M518 150 q-10 -22 0 -42 q10 20 0 42" fill="#ffcf6a"/><path d="M518 146 q-5 -12 0 -24 q5 12 0 24" fill="#fff4c2"/>
     <path d="M500 270 h36 v8 h-36z" fill="#3a2414"/>
     <text x="170" y="120" font-family="Georgia,serif" font-style="italic" font-size="34" fill="#e7c36a" opacity=".9">Phaesmatos Incendia</text>
-    ${legenda('GRIMÓRIO DO CLÃ BENNETT · INTEGRIDADE 31%')}`),
+    ${legenda(L('GRIMÓRIO DO CLÃ BENNETT · INTEGRIDADE 31%', 'BENNETTIEN LOITSUKIRJA · EHEYS 31%', 'BENNETT CLAN GRIMOIRE · INTEGRITY 31%'))}`),
 
   // Fase 2: celular com o SMS invertido
   sms: svg(`<rect width="${W}" height="${H}" fill="#0c0f18"/>
@@ -97,14 +103,14 @@ export const IMAGENS = {
     <rect x="230" y="30" width="180" height="340" rx="26" fill="#1a1d24" stroke="#3a3f4a" stroke-width="3"/>
     <rect x="242" y="58" width="156" height="290" rx="8" fill="#0f1a24"/>
     <rect x="296" y="40" width="48" height="8" rx="4" fill="#2a2e38"/>
-    <text x="320" y="86" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#8fa6b8">Número oculto</text>
+    <text x="320" y="86" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#8fa6b8">${L('Número oculto', 'Salainen numero', 'Hidden number')}</text>
     <rect x="254" y="104" width="132" height="58" rx="10" fill="#26384a"/>
-    <text x="264" y="128" font-family="monospace" font-size="13" fill="#e8f1f8">LliRg CitsyM</text>
-    <text x="264" y="148" font-family="monospace" font-size="13" fill="#e8f1f8">on Erucorp</text>
+    <text x="264" y="128" font-family="monospace" font-size="13" fill="#e8f1f8">${L('LliRg CitsyM', 'niillirG', 'llirG citsyM')}</text>
+    <text x="264" y="148" font-family="monospace" font-size="13" fill="#e8f1f8">${L('on Erucorp', 'citsyM eluT', 'ta teeM')}</text>
     <text x="378" y="176" text-anchor="end" font-family="sans-serif" font-size="9" fill="#5f7486">23:47</text>
     <path d="M150 120 q-30 80 0 160" stroke="#c8344a" stroke-width="3" fill="none" opacity=".7"/><path d="M150 280 l-6 -14 m6 14 l12 -8" stroke="#c8344a" stroke-width="3" fill="none" opacity=".7"/>
-    <text x="70" y="210" font-family="Georgia,serif" font-size="15" fill="#c8344a" opacity=".8">↺ ao</text><text x="62" y="230" font-family="Georgia,serif" font-size="15" fill="#c8344a" opacity=".8">contrário?</text>
-    ${legenda('SMS INTERCEPTADO · CELULAR DE D. SALVATORE', '#8fb4d8')}`),
+    <text x="70" y="210" font-family="Georgia,serif" font-size="15" fill="#c8344a" opacity=".8">↺ ${L('ao', 'taka-', 'back-')}</text><text x="62" y="230" font-family="Georgia,serif" font-size="15" fill="#c8344a" opacity=".8">${L('contrário?', 'perin?', 'wards?')}</text>
+    ${legenda(L('SMS INTERCEPTADO · CELULAR DE D. SALVATORE', 'SIEPATTU VIESTI · D. SALVATOREN PUHELIN', 'INTERCEPTED TEXT · D. SALVATORE\'S PHONE'), '#8fb4d8')}`),
 
   // Fase 3: o diário de couro do Stefan e uma pena
   diario: svg(`<rect width="${W}" height="${H}" fill="#1a110c"/>
@@ -120,7 +126,7 @@ export const IMAGENS = {
     <path d="M500 330 Q560 210 610 120" stroke="#e8e0d0" stroke-width="3" fill="none"/>
     <path d="M610 120 Q585 170 560 200 Q590 175 612 125 Z" fill="#e8e0d0" opacity=".85"/>
     <path d="M110 330 l50 -8 l-6 30 z" fill="#d9c9a4" opacity=".9"/>
-    ${legenda('DIÁRIO DE STEFAN SALVATORE')}`),
+    ${legenda(L('DIÁRIO DE STEFAN SALVATORE', 'STEFAN SALVATOREN PÄIVÄKIRJA', 'DIARY OF STEFAN SALVATORE'))}`),
 
   // Fase 4: a ponte coberta de madeira sobre o rio, à noite, com a caixa de ferro
   ponte: svg(`${ceuNoite}${estrelas(50, 160)}${lua(120, 80, 32)}
@@ -135,7 +141,7 @@ export const IMAGENS = {
     <text x="320" y="164" text-anchor="middle" font-family="Georgia,serif" font-size="13" fill="#c9a25a" letter-spacing="4">WICKERY</text>
     ${neblina(255, .35)}
     <g transform="translate(470 300)"><rect x="-22" y="-16" width="44" height="30" rx="3" fill="#4c5560" stroke="#8a96a3"/><rect x="-6" y="-6" width="12" height="14" rx="2" fill="#c9a25a"/></g>
-    ${legenda('PONTE WICKERY')}`),
+    ${legenda(L('PONTE WICKERY', 'WICKERYN SILTA', 'WICKERY BRIDGE'))}`),
 
   // Fase 4 (resposta): a caixa de ferro e o cadeado de 4 números
   caixa: svg(`<rect width="${W}" height="${H}" fill="#0d1216"/>
@@ -144,13 +150,13 @@ export const IMAGENS = {
     <rect x="140" y="130" width="360" height="40" rx="8" fill="#5c6670"/>
     ${[160, 480].map(x => [150, 310].map(y => `<circle cx="${x}" cy="${y}" r="6" fill="#2c3238"/>`).join('')).join('')}
     <rect x="140" y="200" width="360" height="10" fill="#3a4148"/>
-    <text x="320" y="160" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="13" fill="#20262c">o ano em que a cidade trancou seus vampiros...</text>
+    <text x="320" y="160" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="13" fill="#20262c">${L('o ano em que a cidade trancou seus vampiros...', 'se vuosi, jona kaupunki lukitsi vampyyrinsa...', 'the year the town locked away its vampires...')}</text>
     <g transform="translate(320 250)">
       <path d="M-30 -20 v-30 a30 30 0 0 1 60 0 v30" stroke="#b08a3e" stroke-width="10" fill="none"/>
       <rect x="-70" y="-22" width="140" height="80" rx="10" fill="#c9a25a"/>
       ${[0, 1, 2, 3].map(i => `<rect x="${-58 + i * 30}" y="0" width="24" height="38" rx="3" fill="#1d1d1d"/><text x="${-46 + i * 30}" y="27" text-anchor="middle" font-family="monospace" font-size="22" fill="#f4ecd2">?</text>`).join('')}
     </g>
-    ${legenda('CADEADO DE 4 NÚMEROS')}`),
+    ${legenda(L('CADEADO DE 4 NÚMEROS', '4 NUMERON LUKKO', '4-NUMBER PADLOCK'))}`),
 
   // Fase 5: três câmeras de segurança do Baile dos Fundadores
   suspeitos: svg(`<rect width="${W}" height="${H}" fill="#050807"/>
@@ -159,7 +165,7 @@ export const IMAGENS = {
       const extra = item === 'sol'
         ? `<circle cx="${x + 160}" cy="70" r="24" fill="#ffd34a"/>${[0, 1, 2, 3, 4, 5, 6, 7].map(k => `<line x1="${x + 160 + Math.cos(k * .785) * 30}" y1="${70 + Math.sin(k * .785) * 30}" x2="${x + 160 + Math.cos(k * .785) * 40}" y2="${70 + Math.sin(k * .785) * 40}" stroke="#ffd34a" stroke-width="3"/>`).join('')}`
         : item === 'cha'
-          ? `<g transform="translate(${x + 150} 250)"><path d="M-18 0 h36 l-4 26 h-28z" fill="#e8e0d0"/><path d="M18 6 q12 0 10 10 q-2 8 -12 6" stroke="#e8e0d0" stroke-width="3" fill="none"/><path d="M-6 -6 q-4 -10 2 -18 M6 -6 q-4 -10 2 -18" stroke="#9fd18f" stroke-width="2" fill="none"/></g><text x="${x + 150}" y="300" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#9fd18f">verbena</text>`
+          ? `<g transform="translate(${x + 150} 250)"><path d="M-18 0 h36 l-4 26 h-28z" fill="#e8e0d0"/><path d="M18 6 q12 0 10 10 q-2 8 -12 6" stroke="#e8e0d0" stroke-width="3" fill="none"/><path d="M-6 -6 q-4 -10 2 -18 M6 -6 q-4 -10 2 -18" stroke="#9fd18f" stroke-width="2" fill="none"/></g><text x="${x + 150}" y="300" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#9fd18f">${L('verbena', 'verbena', 'vervain')}</text>`
           : `<circle cx="${x + 60}" cy="70" r="16" fill="#e8e0d0" opacity=".7"/><g transform="translate(${x + 148} 250)"><circle r="13" fill="none" stroke="#c0c6cc" stroke-width="5"/><ellipse cx="0" cy="-14" rx="9" ry="7" fill="#2b5bd7"/><ellipse cx="-2" cy="-16" rx="3" ry="2" fill="#a8c4ff"/></g>`;
       const fundo = item === 'anel' ? '#0a1020' : item === 'sol' ? '#3a4a2a' : '#2a1e16';
       return `<rect x="${x}" y="20" width="192" height="320" fill="${fundo}"/>
@@ -171,7 +177,7 @@ export const IMAGENS = {
         <text x="${x + 96}" y="330" text-anchor="middle" font-family="monospace" font-size="16" fill="#f0f0f0" letter-spacing="3">${nome}</text>`;
     }).join('')}
     ${Array.from({ length: 40 }, (_, k) => `<rect x="0" y="${k * 10}" width="${W}" height="1" fill="#fff" opacity=".04"/>`).join('')}
-    <text x="20" y="${H - 18}" font-family="monospace" font-size="13" fill="#e33">● REC  BAILE DOS FUNDADORES · MANSÃO LOCKWOOD</text>`),
+    <text x="20" y="${H - 18}" font-family="monospace" font-size="13" fill="#e33">● REC  ${L('BAILE DOS FUNDADORES · MANSÃO LOCKWOOD', 'PERUSTAJIEN TANSSIAISET · LOCKWOODIN KARTANO', 'FOUNDERS\' BALL · LOCKWOOD MANSION')}</text>`),
 
   // Fase 6: o porão dos Salvatore com correntes de verbena
   porao: svg(`<rect width="${W}" height="${H}" fill="#0b0a09"/>
@@ -181,7 +187,7 @@ export const IMAGENS = {
     <path d="M220 330 q50 -150 100 -150 q50 0 100 150 z" fill="#050505"/><circle cx="320" cy="160" r="30" fill="#050505"/>
     ${[[140, 220], [500, 220]].map(([x, y]) => `<path d="M${x} 60 ${Array.from({ length: 8 }, (_, k) => `L${x + (k % 2 ? 8 : -8)} ${60 + k * 22}`).join(' ')} L${x < 320 ? 270 : 370} ${y}" stroke="#7a8288" stroke-width="5" fill="none"/>`).join('')}
     ${[150, 180, 210, 450, 480, 510].map((x, i) => `<path d="M${x} ${120 + i * 9} q4 8 0 14" stroke="#7fb37a" stroke-width="2" fill="none" opacity=".8"/>`).join('')}
-    ${legenda('PORÃO DA PENSÃO SALVATORE · CORRENTES DE VERBENA', '#9fd18f')}`),
+    ${legenda(L('PORÃO DA PENSÃO SALVATORE · CORRENTES DE VERBENA', 'SALVATOREN KELLARI · VERBENAKETJUT', 'SALVATORE CELLAR · VERVAIN CHAINS'), '#9fd18f')}`),
 
   // Fase 7: o túmulo embaixo da igreja, velas e a estaca
   cripta: svg(`<defs><radialGradient id="luz"><stop offset="0" stop-color="#ffb347" stop-opacity=".4"/><stop offset="1" stop-color="#ffb347" stop-opacity="0"/></radialGradient></defs>
@@ -195,7 +201,7 @@ export const IMAGENS = {
     <circle cx="320" cy="225" r="60" fill="#fff4c2" opacity=".12"/>
     ${[150, 200, 440, 490].map((x, i) => `<rect x="${x - 5}" y="${300 - (i % 2) * 20}" width="10" height="${50 + (i % 2) * 20}" fill="#efe6d0"/><path d="M${x} ${300 - (i % 2) * 20} q-6 -14 0 -26 q6 12 0 26" fill="#ffcf6a"/>`).join('')}
     <text x="320" y="325" text-anchor="middle" font-family="Georgia,serif" font-size="16" fill="#8a7a70" letter-spacing="6">MDCCCLXIV</text>
-    ${legenda('O TÚMULO EMBAIXO DA IGREJA')}`),
+    ${legenda(L('O TÚMULO EMBAIXO DA IGREJA', 'HAUTA KIRKON ALLA', 'THE TOMB UNDER THE CHURCH'))}`),
 
   // Final 1: a praça sob a lua cheia, uma figura no campanário
   final_aliado: svg(`${ceuNoite}${estrelas(70)}${lua(320, 110, 70)}
@@ -205,10 +211,10 @@ export const IMAGENS = {
     ${[[190, 260, 90], [290, 290, 70], [380, 250, 110], [500, 280, 140]].map(([x, y, w]) => `<rect x="${x}" y="${y}" width="${w}" height="${400 - y}" fill="#0e1922"/>${[0, 1].map(k => `<rect x="${x + 14 + k * (w / 2)}" y="${y + 20}" width="12" height="16" fill="#e7c36a" opacity="${k ? .7 : .35}"/>`).join('')}`).join('')}
     <rect x="0" y="360" width="${W}" height="40" fill="#071017"/>
     <g transform="translate(330 345)"><ellipse rx="40" ry="8" fill="#777" opacity=".5"/><path d="M-14 0 q0 -40 14 -46 q14 6 14 46z" fill="#8a8f94"/><circle cy="-52" r="9" fill="#8a8f94"/></g>
-    ${legenda('FINAL 1 · O ALIADO DA NEBLINA')}`),
+    ${legenda(L('FINAL 1 · O ALIADO DA NEBLINA', 'LOPPU 1 · SUMUN LIITTOLAINEN', 'ENDING 1 · THE ALLY IN THE FOG'))}`),
 
   // Final 2: o porão vazio, correntes arrebentadas e o recado na parede
-  final_sombra: svg(PAREDE + RECADO + `${legenda('FINAL 2 · A SOMBRA NO PORÃO', '#c8344a')}`),
+  final_sombra: svg(PAREDE + recado() + `${legenda(L('FINAL 2 · A SOMBRA NO PORÃO', 'LOPPU 2 · VARJO KELLARISSA', 'ENDING 2 · THE SHADOW IN THE CELLAR'), '#c8344a')}`),
 
   // a parede do final 2 sem o recado (o vídeo escreve o recado letra por letra)
   parede: svg(PAREDE),
@@ -222,15 +228,15 @@ export const IMAGENS = {
     ${[[170, 270, 90], [270, 300, 70], [350, 260, 110], [470, 290, 150]].map(([x, y, w]) => `<rect x="${x}" y="${y}" width="${w}" height="${400 - y}" fill="#170a0e"/>${[0, 1].map(k => `<rect x="${x + 14 + k * (w / 2)}" y="${y + 20}" width="12" height="16" fill="#ff8a5a" opacity="${k ? .55 : .25}"/>`).join('')}`).join('')}
     <rect x="0" y="360" width="${W}" height="40" fill="#0a0306"/>
     ${neblina(350, .18)}
-    ${legenda('ECLIPSE DE SANGUE · 23:12', '#ff8a7a')}`),
+    ${legenda(L('ECLIPSE DE SANGUE · 23:12', 'VERIKUU · 23:12', 'BLOOD ECLIPSE · 23:12'), '#ff8a7a')}`),
 
   // Fase 8: o mapa dos túneis com a grade de letras
   mapa: svg(`<defs><radialGradient id="papel" cx=".5" cy=".5" r=".75"><stop offset="0" stop-color="#e6d3a8"/><stop offset=".8" stop-color="#c9ad78"/><stop offset="1" stop-color="#8a6a3a"/></radialGradient></defs>
     <rect width="${W}" height="${H}" fill="#1a110c"/>
     <path d="M24 22 L612 14 L624 380 L18 388 Z" fill="url(#papel)"/>
     <path d="M24 22 L612 14 L624 380 L18 388 Z" fill="none" stroke="#6a4a24" stroke-width="2"/>
-    <text x="160" y="56" text-anchor="middle" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#4a2c12" letter-spacing="2">TÚNEIS DE</text>
-    <text x="160" y="78" text-anchor="middle" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#4a2c12" letter-spacing="2">MYSTIC FALLS</text>
+    <text x="160" y="56" text-anchor="middle" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#4a2c12" letter-spacing="2">${L('TÚNEIS DE', 'TUNNELIT', 'TUNNELS OF')}</text>
+    <text x="160" y="78" text-anchor="middle" font-family="Georgia,serif" font-size="18" font-weight="bold" fill="#4a2c12" letter-spacing="2">${L('MYSTIC FALLS', 'MYSTIC FALLSIN ALLA', 'MYSTIC FALLS')}</text>
     <text x="160" y="96" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="12" fill="#6a4a24">anno 1864</text>
     <path d="M40 150 Q90 130 120 170 T200 200 Q240 230 220 290 T285 318 M120 170 Q100 230 60 260 M200 200 Q250 170 290 190" stroke="#6a4424" stroke-width="7" fill="none" stroke-linecap="round" opacity=".55"/>
     <path d="M40 150 Q90 130 120 170 T200 200 Q240 230 220 290 T285 318 M120 170 Q100 230 60 260 M200 200 Q250 170 290 190" stroke="#d9c39a" stroke-width="2" fill="none" stroke-dasharray="4 5"/>
@@ -241,10 +247,10 @@ export const IMAGENS = {
     <g font-family="Georgia,serif" text-anchor="middle">
       ${'ABCDE'.split('').map((c, i) => `<text x="${358 + i * 50}" y="72" font-size="18" font-weight="bold" fill="#8a1c1c">${c}</text>`).join('')}
       ${[1, 2, 3, 4, 5].map(n => `<text x="318" y="${112 + (n - 1) * 54}" font-size="18" font-weight="bold" fill="#8a1c1c">${n}</text>`).join('')}
-      ${GRADE.map((linha, r) => linha.split('').map((l, c) => `<rect x="${334 + c * 50}" y="${84 + r * 54}" width="48" height="52" fill="#f0e2c0" fill-opacity=".45" stroke="#6a4a24" stroke-width="1.5"/><text x="${358 + c * 50}" y="${119 + r * 54}" font-size="28" fill="#2a1a0a">${l}</text>`).join('')).join('')}
+      ${grade().map((linha, r) => linha.split('').map((l, c) => `<rect x="${334 + c * 50}" y="${84 + r * 54}" width="48" height="52" fill="#f0e2c0" fill-opacity=".45" stroke="#6a4a24" stroke-width="1.5"/><text x="${358 + c * 50}" y="${119 + r * 54}" font-size="28" fill="#2a1a0a">${l}</text>`).join('')).join('')}
     </g>
     <circle cx="600" cy="360" r="18" fill="#8a1c1c" opacity=".55"/><circle cx="590" cy="372" r="6" fill="#8a1c1c" opacity=".45"/>
-    ${legenda('MAPA DOS TÚNEIS · COLUNA + LINHA', '#e7c36a')}`),
+    ${legenda(L('MAPA DOS TÚNEIS · COLUNA + LINHA', 'TUNNELIKARTTA · SARAKE + RIVI', 'TUNNEL MAP · COLUMN + ROW'), '#e7c36a')}`),
 
   // Fase 9: o poço velho dos Lockwood com a cifra gravada
   poco: svg(`${ceuSangue}${estrelas(30, 140)}${luaSangue(110, 80, 36)}
@@ -259,10 +265,10 @@ export const IMAGENS = {
     <path d="M258 220 v100 a122 26 0 0 0 244 0 v-100" fill="#4a4540"/>
     <g clip-path="url(#paredePoco)">${[0, 1, 2, 3, 4].map(r => Array.from({ length: 7 }, (_, c) => `<rect x="${242 + c * 40 + (r % 2) * 20}" y="${228 + r * 24}" width="38" height="22" fill="#5a544c" stroke="#2a2622" stroke-width="2"/>`).join('')).join('')}</g>
     <rect x="290" y="252" width="180" height="40" fill="#3a3530" stroke="#2a2622" stroke-width="2"/>
-    <text x="380" y="281" text-anchor="middle" font-family="monospace" font-size="24" font-weight="bold" fill="#e8dcc0" letter-spacing="3">FHPLWHULR</text>
+    <text x="380" y="281" text-anchor="middle" font-family="monospace" font-size="${L(24, 19, 24)}" font-weight="bold" fill="#e8dcc0" letter-spacing="3">${L('FHPLWHULR', 'KDXWDXVPDD', 'FHPHWHUB')}</text>
     <g transform="translate(380 308)" fill="#c9a25a">${[-18, 0, 18].map(dx => `<circle cx="${dx}" r="6"/><circle cx="${dx + 3}" cy="-2" r="5" fill="#3a3530"/>`).join('')}</g>
     ${neblina(320, .2)}
-    ${legenda('POÇO DOS LOCKWOOD · TRÊS LUAS', '#ff8a7a')}`),
+    ${legenda(L('POÇO DOS LOCKWOOD · TRÊS LUAS', 'LOCKWOODIN KAIVO · KOLME KUUTA', 'LOCKWOOD WELL · THREE MOONS'), '#ff8a7a')}`),
 
   // Fase 10: cinco lápides no cemitério, debaixo da lua de sangue
   lapides: svg(`${ceuSangue}${estrelas(40, 150)}${luaSangue(540, 70, 34)}
@@ -273,7 +279,7 @@ export const IMAGENS = {
     ${[84, 202, 320, 438, 556].map((x, i) => `<text x="${x}" y="356" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#c9a25a">${i + 1}</text>`).join('')}
     ${neblina(330, .28)}
     <path d="M140 120 q6 -6 12 0 q6 -6 12 0" stroke="#000" stroke-width="2.5" fill="none"/><path d="M380 100 q5 -5 10 0 q5 -5 10 0" stroke="#000" stroke-width="2" fill="none"/>
-    ${legenda('CEMITÉRIO DE MYSTIC FALLS', '#ff8a7a')}`),
+    ${legenda(L('CEMITÉRIO DE MYSTIC FALLS', 'MYSTIC FALLSIN HAUTAUSMAA', 'MYSTIC FALLS CEMETERY'), '#ff8a7a')}`),
 
   // Fase 11: a estátua de pedra do Silas rachando na cripta
   estatua: svg(`<defs><radialGradient id="luzV"><stop offset="0" stop-color="#ff2a1a" stop-opacity=".55"/><stop offset="1" stop-color="#ff2a1a" stop-opacity="0"/></radialGradient></defs>
@@ -292,7 +298,7 @@ export const IMAGENS = {
     <path d="M320 128 l-6 18 l10 10 l-8 22 l12 20 l-10 30 l14 26 l-8 40 l10 26" stroke="#ffc0a0" stroke-width="1" fill="none"/>
     <circle cx="311" cy="148" r="3" fill="#ff5a3a"/><circle cx="329" cy="148" r="3" fill="#ff5a3a"/>
     ${[170, 470].map((x, i) => `<rect x="${x - 5}" y="${290 - i * 10}" width="10" height="${50 + i * 10}" fill="#efe6d0"/><path d="M${x} ${290 - i * 10} q-6 -14 0 -26 q6 12 0 26" fill="#ffcf6a"/>`).join('')}
-    ${legenda('CRIPTA DOS FELL · A ESTÁTUA DO SILAS', '#ff8a7a')}`),
+    ${legenda(L('CRIPTA DOS FELL · A ESTÁTUA DO SILAS', 'FELLIEN KRYPTA · SILAKSEN PATSAS', 'FELL CRYPT · THE STATUE OF SILAS'), '#ff8a7a')}`),
 
   // Fase 11: o espelho velho com a frase escrita ao contrário
   espelho: svg(`<defs><radialGradient id="vidro" cx=".45" cy=".4"><stop offset="0" stop-color="#3a4448"/><stop offset="1" stop-color="#0f1416"/></radialGradient></defs>
@@ -304,11 +310,180 @@ export const IMAGENS = {
     <ellipse cx="320" cy="196" rx="190" ry="144" fill="url(#vidro)"/>
     <path d="M190 120 Q240 90 280 100" stroke="#fff" stroke-width="5" opacity=".08" fill="none"/>
     <g transform="translate(640 0) scale(-1 1)" font-family="Georgia,serif" font-style="italic" text-anchor="middle" fill="#ffb0a0">
-      <text x="320" y="138" font-size="25">SÓ A ERVA ROXA</text>
-      <text x="320" y="178" font-size="25">QUE QUEIMA OS VAMPIROS</text>
-      <text x="320" y="218" font-size="25">APAGA O FOGO</text>
-      <text x="320" y="258" font-size="25">DA LUA DE SANGUE</text>
+      <text x="320" y="138" font-size="25">${L('SÓ A ERVA ROXA', 'VAIN VIOLETTI YRTTI', 'ONLY THE PURPLE HERB')}</text>
+      <text x="320" y="178" font-size="25">${L('QUE QUEIMA OS VAMPIROS', 'JOKA POLTTAA VAMPYYREJÄ', 'THAT BURNS VAMPIRES')}</text>
+      <text x="320" y="218" font-size="25">${L('APAGA O FOGO', 'SAMMUTTAA', 'PUTS OUT THE FIRE')}</text>
+      <text x="320" y="258" font-size="25">${L('DA LUA DE SANGUE', 'VERIKUUN TULEN', 'OF THE BLOOD MOON')}</text>
     </g>
     ${[[230, 290, 18], [420, 120, 12], [380, 300, 22], [250, 150, 10]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#000" opacity=".25"/>`).join('')}
-    ${legenda('O ESPELHO DA CRIPTA', '#ff8a7a')}`),
-};
+    ${legenda(L('O ESPELHO DA CRIPTA', 'KRYPTAN PEILI', 'THE CRYPT MIRROR'), '#ff8a7a')}`),
+
+    // ================= Capítulo 3: O Baile de Máscaras =================
+
+    // Fase 13: cinco máscaras numa mesa de veludo, à luz de velas
+    mascaras: svg(`<defs><radialGradient id="luzM" cx=".5" cy=".3"><stop offset="0" stop-color="#ffb35a" stop-opacity=".35"/><stop offset="1" stop-color="#ffb35a" stop-opacity="0"/></radialGradient>
+      <linearGradient id="veludo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a0d14"/><stop offset="1" stop-color="#1c0306"/></linearGradient></defs>
+      <rect width="${W}" height="${H}" fill="#0b0708"/>
+      ${[0, 1, 2, 3, 4, 5, 6].map(i => `<rect x="${i * 96 - 10}" y="0" width="6" height="190" fill="#1c1418"/>`).join('')}
+      <circle cx="320" cy="120" r="320" fill="url(#luzM)"/>
+      ${[70, 570].map(x => `<rect x="${x - 5}" y="110" width="10" height="70" fill="#efe6d0"/><path d="M${x} 110 q-6 -14 0 -26 q6 12 0 26" fill="#ffcf6a"/><circle cx="${x}" cy="100" r="30" fill="#ffb347" opacity=".18"/>`).join('')}
+      <path d="M0 190 L640 190 L640 400 L0 400 Z" fill="url(#veludo)"/>
+      ${Array.from({ length: 9 }, (_, i) => `<path d="M${i * 80 - 20} 190 q30 110 10 210" stroke="#2a0509" stroke-width="10" fill="none" opacity=".5"/>`).join('')}
+      ${[['#2b5bd7', '#7fa8ff', 1], ['#b3121e', '#ff6a6a', 0], ['#c9ced6', '#ffffff', 0], ['#d4a62a', '#ffe08a', 1], ['#17171b', '#55555f', 1]].map(([cor, brilho, penas], i) => {
+        const x = 70 + i * 125, y = 280;
+        return `<g transform="translate(${x} ${y}) scale(.8)">
+          ${penas ? [-1, 0, 1].map(k => `<path d="M${-30 + k * 7} -8 q${-18 + k * 8} -60 ${-4 + k * 14} -110 q${8 + k * 4} 50 ${10 + k * 6} 110 z" fill="${cor}" stroke="${brilho}" stroke-width="1" opacity=".95"/><path d="M${-30 + k * 7} -10 q${-10 + k * 6} -55 ${-2 + k * 14} -100" stroke="${brilho}" stroke-width="1.5" fill="none"/>`).join('') : ''}
+          <path d="M-52 -6 q10 -26 52 -22 q42 -4 52 22 q4 22 -16 30 q-20 6 -36 -10 q-8 6 -16 0 q-16 16 -36 10 q-20 -8 -16 -30 z" fill="${cor}" stroke="${brilho}" stroke-width="1.5"/>
+          <ellipse cx="-24" cy="2" rx="14" ry="8" fill="#0b0708"/><ellipse cx="24" cy="2" rx="14" ry="8" fill="#0b0708"/>
+          <path d="M-46 -8 q20 -16 46 -14 q26 -2 46 14" stroke="${brilho}" stroke-width="2" fill="none" opacity=".6"/>
+          <path d="M52 2 q24 10 30 40" stroke="#c9a25a" stroke-width="1.5" fill="none"/>
+          <text y="62" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#e7c36a">${i + 1}</text>
+        </g>`;
+      }).join('')}
+      ${legenda(L('O BAILE DE MÁSCARAS · MANSÃO LOCKWOOD', 'NAAMIAISET · LOCKWOODIN KARTANO', 'THE MASQUERADE BALL · LOCKWOOD MANSION'), '#cfc3ff')}`),
+
+    // Fase 14: a tampa da caixinha de música com as luas e o lugar vazio
+    caixinha: svg(`<defs><radialGradient id="luzC" cx=".2" cy=".2"><stop offset="0" stop-color="#ffb347" stop-opacity=".35"/><stop offset="1" stop-color="#ffb347" stop-opacity="0"/></radialGradient>
+      <linearGradient id="madeira" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a2e16"/><stop offset="1" stop-color="#2a140a"/></linearGradient>
+      <clipPath id="disco"><circle r="26"/></clipPath></defs>
+      <rect width="${W}" height="${H}" fill="#0c0806"/><circle cx="90" cy="70" r="320" fill="url(#luzC)"/>
+      <rect x="55" y="40" width="10" height="70" fill="#efe6d0"/><path d="M60 40 q-6 -14 0 -26 q6 12 0 26" fill="#ffcf6a"/>
+      <rect x="40" y="80" width="560" height="260" rx="14" fill="url(#madeira)" stroke="#1a0c05" stroke-width="4"/>
+      <rect x="58" y="98" width="524" height="224" rx="8" fill="none" stroke="#c9a25a" stroke-width="3"/>
+      ${[[58, 98], [582, 98], [58, 322], [582, 322]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="9" fill="#c9a25a"/>`).join('')}
+      <path d="M90 300 q230 -40 460 0" stroke="#c9a25a" stroke-width="1.5" fill="none" opacity=".6"/>
+      ${['cheia', 'minguante', 'nova', 'crescente', 'cheia', 'minguante', '?'].map((fase, i) => {
+        const x = 110 + i * 70, y = 200;
+        const corpo = fase === '?' ? `<circle r="26" fill="#120a06" stroke="#c9a25a" stroke-width="2" stroke-dasharray="4 4"/><text y="12" text-anchor="middle" font-family="Georgia,serif" font-size="34" fill="#e7c36a">?</text>`
+          : `<g clip-path="url(#disco)"><circle r="26" fill="#1c1a22"/>${fase === 'cheia' ? '<circle r="26" fill="#efe8cf"/>' : fase === 'minguante' ? '<rect x="-26" y="-26" width="26" height="52" fill="#efe8cf"/>' : fase === 'crescente' ? '<rect x="0" y="-26" width="26" height="52" fill="#efe8cf"/>' : ''}</g><circle r="26" fill="none" stroke="#c9a25a" stroke-width="2"/>`;
+        return `<g transform="translate(${x} ${y})">${corpo}</g>`;
+      }).join('')}
+      <rect x="290" y="120" width="60" height="24" rx="4" fill="#2a140a" stroke="#c9a25a"/><path d="M308 132 h24" stroke="#c9a25a" stroke-width="3"/>
+      ${legenda(L('A CAIXINHA DE MÚSICA · BIBLIOTECA DOS LOCKWOOD', 'SOITTORASIA · LOCKWOODIEN KIRJASTO', 'THE MUSIC BOX · LOCKWOOD LIBRARY'), '#cfc3ff')}`),
+
+    // Fase 15: as duas moças iguais; a número 1 está de luvas
+    rostos: svg(`<defs><radialGradient id="luzR" cx=".5" cy=".2"><stop offset="0" stop-color="#b9a6ff" stop-opacity=".25"/><stop offset="1" stop-color="#b9a6ff" stop-opacity="0"/></radialGradient>
+      <linearGradient id="vestido" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6a0f22"/><stop offset="1" stop-color="#2a0510"/></linearGradient></defs>
+      <rect width="${W}" height="${H}" fill="#0b0810"/><circle cx="320" cy="80" r="360" fill="url(#luzR)"/>
+      ${[40, 600].map(x => [0, 1, 2].map(k => `<rect x="${x - 3 + k * 10 - 10}" y="${120 - k * 8}" width="6" height="40" fill="#efe6d0"/><path d="M${x + k * 10 - 10} ${120 - k * 8} q-4 -10 0 -18 q4 8 0 18" fill="#ffcf6a"/>`).join('')).join('')}
+      ${[[200, true], [440, false]].map(([x, luvas], i) => `<g transform="translate(${x} 22)">
+        <path d="M-40 70 q-34 30 -30 120 q-2 30 -14 60 l30 4 q2 -60 8 -80 z" fill="#2a160e"/><path d="M40 70 q34 30 30 120 q2 30 14 60 l-30 4 q-2 -60 -8 -80 z" fill="#2a160e"/>
+        <rect x="-9" y="112" width="18" height="24" fill="#e8c8a8"/>
+        <ellipse cx="0" cy="88" rx="30" ry="36" fill="#e8c8a8"/>
+        <path d="M-40 70 q4 -40 40 -42 q36 2 40 42 q-20 -20 -40 -18 q-20 -2 -40 18" fill="#2a160e"/>
+        <path d="M-34 80 q10 -10 34 -6 q24 -4 34 6 q2 12 -10 16 q-12 4 -24 -4 q-12 8 -24 4 q-12 -4 -10 -16 z" fill="#111" stroke="#555" stroke-width="1"/>
+        <path d="M-6 112 q6 4 12 0" stroke="#7a2a2a" stroke-width="2" fill="none"/>
+        <path d="M-56 140 q56 -14 112 0 l18 240 h-148 z" fill="url(#vestido)"/>
+        <path d="M-18 136 q18 22 36 0" stroke="#c0c6cc" stroke-width="2" fill="none"/><circle cx="0" cy="${158}" r="7" fill="#c0c6cc" stroke="#8a9098"/><circle cx="0" cy="158" r="3" fill="#7fb37a"/>
+        ${luvas
+          ? `<path d="M-56 146 q-22 40 -14 110" stroke="#0a0a0c" stroke-width="16" stroke-linecap="round" fill="none"/><path d="M56 146 q22 40 14 110" stroke="#0a0a0c" stroke-width="16" stroke-linecap="round" fill="none"/>`
+          : `<path d="M-56 146 q-22 40 -14 110" stroke="#e8c8a8" stroke-width="14" stroke-linecap="round" fill="none"/><path d="M56 146 q14 10 -20 4 q-20 0 -30 8" stroke="#e8c8a8" stroke-width="13" stroke-linecap="round" fill="none"/><circle cx="-4" cy="158" r="8" fill="#e8c8a8"/>`}
+        <circle cx="0" cy="-2" r="14" fill="#0b0810" stroke="#cfc3ff" stroke-width="2"/><text y="5" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#cfc3ff">${i + 1}</text>
+      </g>`).join('')}
+      ${neblina(360, .2)}
+      ${legenda(L('QUAL DAS DUAS É A KATHERINE?', 'KUMPI ON KATHERINE?', 'WHICH ONE IS KATHERINE?'), '#cfc3ff')}`),
+  };
+}
+
+// os desenhos em cada língua (português, finlandês ou inglês)
+const cache = {};
+export function imagensEm(lg = 'pt') {
+  if (!cache[lg]) { LG = lg; try { cache[lg] = desenhar(); } finally { LG = 'pt'; } }
+  return cache[lg];
+}
+export const IMAGENS = imagensEm('pt');
+
+// Pistas escondidas nas imagens: no navegador, ao ampliar a imagem (lupa), tocar nestes pontos mostra a pista.
+// x, y = centro do ponto no desenho (640x400); r = raio da área de toque.
+function esconder() {
+  return {
+    floresta: [
+      { x: 300, y: 352, r: 34, texto: L('📱 A tela diz: "1 mensagem não lida"... mandada às 23:47.', '📱 Näytöllä lukee: "1 lukematon viesti"... lähetetty klo 23.47.', '📱 The screen says: "1 unread message"... sent at 23:47.') },
+      { x: 470, y: 95, r: 50, texto: L('🌕 Lua cheia. É hoje à noite que tudo acontece.', '🌕 Täysikuu. Kaikki tapahtuu tänä yönä.', '🌕 Full moon. Tonight is when everything happens.') },
+    ],
+    grimorio: [
+      { x: 210, y: 282, r: 40, texto: L('✍️ Escrito na margem, bem pequeno: "a ARMA está no feitiço 093".', '✍️ Marginaaliin on kirjoitettu pienellä: "ASE on loitsussa 093".', '✍️ Written very small in the margin: "the WEAPON is in spell 093".') },
+      { x: 430, y: 270, r: 32, texto: L('⭐ O símbolo de proteção do clã Bennett.', '⭐ Bennettien suvun suojamerkki.', '⭐ The Bennett clan\'s protection symbol.') },
+      { x: 518, y: 130, r: 28, texto: L('🕯️ A vela não apaga nunca... alguém quer que você leia.', '🕯️ Kynttilä ei sammu koskaan... joku haluaa, että luet tämän.', '🕯️ The candle never goes out... someone wants you to read this.') },
+    ],
+    sms: [
+      { x: 320, y: 135, r: 50, texto: L('🔁 A última letra é "p"... e a penúltima é "r". P-R-O...', '🔁 Viimeinen kirjain on "T"... ja toiseksi viimeinen "u". T-U-L-E...', '🔁 The last letter is "M"... and the one before is "e". M-E-E-T...') },
+      { x: 110, y: 210, r: 50, texto: L('↺ Alguém já tentou ler isso de trás para frente.', '↺ Joku on jo yrittänyt lukea tämän takaperin.', '↺ Someone already tried reading this backwards.') },
+    ],
+    diario: [
+      { x: 590, y: 160, r: 40, texto: L('🪶 A pena sublinhou só a *primeira letra* de cada linha.', '🪶 Sulkakynä on alleviivannut vain jokaisen rivin *ensimmäisen kirjaimen*.', '🪶 The quill underlined only the *first letter* of each line.') },
+      { x: 322, y: 200, r: 50, texto: L('📖 S. S. = Stefan Salvatore. Ele escreve diários desde 1864.', '📖 S. S. = Stefan Salvatore. Hän on kirjoittanut päiväkirjaa vuodesta 1864.', '📖 S. S. = Stefan Salvatore. He has kept diaries since 1864.') },
+    ],
+    ponte: [
+      { x: 470, y: 300, r: 30, texto: L('📦 Uma caixa de ferro presa nas pedras, embaixo da ponte!', '📦 Rautalaatikko juuttuneena kiviin sillan alla!', '📦 An iron box stuck in the rocks under the bridge!') },
+      { x: 320, y: 164, r: 40, texto: L('🌉 WICKERY. Onde a água passa por baixo da madeira.', '🌉 WICKERY. Siellä, missä vesi virtaa puun alla.', '🌉 WICKERY. Where the water runs under the wood.') },
+    ],
+    caixa: [
+      { x: 320, y: 262, r: 60, texto: L('🔢 Alguém arranhou dois números no cadeado: 1 e 8...', '🔢 Joku on raapinut lukkoon kaksi numeroa: 1 ja 8...', '🔢 Someone scratched two numbers on the padlock: 1 and 8...') },
+      { x: 320, y: 160, r: 50, texto: L('⛪ "...embaixo da igreja." Faça a conta: 2009 − 145.', '⛪ "...kirkon alle." Laske: 2009 − 145.', '⛪ "...under the church." Do the math: 2009 − 145.') },
+    ],
+    suspeitos: [
+      { x: 176, y: 70, r: 40, texto: L('☀️ Sol forte e nenhum anel. Um vampiro viraria cinza!', '☀️ Kirkas aurinko eikä sormusta. Vampyyri muuttuisi tuhkaksi!', '☀️ Bright sun and no ring. A vampire would turn to ash!') },
+      { x: 366, y: 255, r: 36, texto: L('🍵 Verbena queima vampiros... e ele nem fez careta.', '🍵 Verbena polttaa vampyyreja... eikä hän edes irvistänyt.', '🍵 Vervain burns vampires... and he didn\'t even make a face.') },
+      { x: 564, y: 240, r: 30, texto: L('💍 Lápis-lazúli! O anel que deixa vampiro andar no sol.', '💍 Lapis lazuli! Sormus, jonka avulla vampyyri voi kulkea auringossa.', '💍 Lapis lazuli! The ring that lets a vampire walk in the sun.') },
+    ],
+    porao: [
+      { x: 140, y: 150, r: 36, texto: L('⛓️ As correntes estão molhadas de verbena. Queimam vampiros.', '⛓️ Ketjut on kasteltu verbenalla. Ne polttavat vampyyreja.', '⛓️ The chains are soaked in vervain. They burn vampires.') },
+      { x: 320, y: 160, r: 40, texto: L('👁️ Ele está olhando para você.', '👁️ Hän katsoo sinua.', '👁️ He is looking at you.') },
+    ],
+    cripta: [
+      { x: 320, y: 325, r: 50, texto: L('🏛️ MDCCCLXIV em números romanos é 1864.', '🏛️ MDCCCLXIV roomalaisin numeroin on 1864.', '🏛️ MDCCCLXIV in Roman numerals is 1864.') },
+      { x: 320, y: 220, r: 40, texto: L('🪵 A estaca de carvalho branco. Ainda está quente.', '🪵 Valkoisen tammen seiväs. Se on yhä lämmin.', '🪵 The white oak stake. It\'s still warm.') },
+    ],
+    final_aliado: [{ x: 120, y: 160, r: 30, texto: L('🔔 Tem alguém no campanário...', '🔔 Kellotornissa on joku...', '🔔 Someone is in the bell tower...') }],
+    final_sombra: [{ x: 320, y: 175, r: 60, texto: L('🩸 Essa letra... é a letra do Lucien.', '🩸 Tämä käsiala... se on Lucienin.', '🩸 That handwriting... it\'s Lucien\'s.') }],
+    eclipse: [
+      { x: 106, y: 210, r: 30, texto: L('🕰️ O relógio da torre parou às 23:12, quando a lua ficou vermelha.', '🕰️ Tornikello pysähtyi klo 23.12, kun kuu muuttui punaiseksi.', '🕰️ The tower clock stopped at 23:12, when the moon turned red.') },
+      { x: 450, y: 100, r: 50, texto: L('🔴 No eclipse, feitiço velho fica fraco.', '🔴 Pimennyksen aikana vanhat loitsut heikkenevät.', '🔴 During an eclipse, old spells grow weak.') },
+    ],
+    mapa: [
+      { x: L(458, 508, 408), y: 110, r: 26, texto: L('👉 Coluna C, linha 1 é o "L". Então C4 é 3 quadrados mais para baixo!', '👉 Sarake D, rivi 1 on "M". Joten D2 on yksi ruutu alempana!', '👉 Column B, row 1 is "A". So B3 is 2 squares further down!') },
+      { x: 290, y: 332, r: 26, texto: L('❌ O X marca onde a estátua entrou nos túneis. Mas para onde ela foi?', '❌ X merkitsee, mistä patsas vietiin tunneleihin. Mutta minne se meni?', '❌ The X marks where the statue went into the tunnels. But where did it go?') },
+      { x: 600, y: 360, r: 22, texto: L('🩸 Uma mancha de sangue... ainda fresca.', '🩸 Veritahra... vielä tuore.', '🩸 A bloodstain... still fresh.') },
+    ],
+    poco: [
+      { x: 380, y: 308, r: 30, texto: L('🌙🌙🌙 Três luas: cada letra anda 3 casas para trás.', '🌙🌙🌙 Kolme kuuta: jokainen kirjain siirtyy 3 askelta taaksepäin.', '🌙🌙🌙 Three moons: each letter moves 3 steps back.') },
+      { x: 320, y: 272, r: 24, texto: L('🔤 F → E → D → C. A primeira letra é C!', '🔤 K → J → I → H. Ensimmäinen kirjain on H!', '🔤 F → E → D → C. The first letter is C!') },
+      { x: 150, y: 352, r: 50, texto: L('👣 Marcas de arrastar uma coisa muito pesada.', '👣 Jäljet jostain tosi painavasta, jota on raahattu.', '👣 Marks from dragging something very heavy.') },
+    ],
+    lapides: [
+      { x: 556, y: 300, r: 40, texto: L('🪦 A terra na frente desta lápide está remexida...', '🪦 Maa tämän hautakiven edessä on kaivettu auki...', '🪦 The earth in front of this gravestone has been dug up...') },
+      { x: 202, y: 270, r: 40, texto: L('🚫 O bilhete disse: ele NÃO é um Salvatore.', '🚫 Lapussa luki: hän EI ole Salvatore.', '🚫 The note said: he is NOT a Salvatore.') },
+      { x: 84, y: 180, r: 36, texto: L('👼 Um anjo de pedra. O bilhete disse: a pedra dele não tem anjo.', '👼 Kivienkeli. Lapussa luki: hänen kivessään ei ole enkeliä.', '👼 A stone angel. The note said: his stone has no angel.') },
+    ],
+    estatua: [
+      { x: 320, y: 148, r: 28, texto: L('👀 Os olhos dele... brilharam?!', '👀 Hänen silmänsä... välähtivätkö ne?!', '👀 His eyes... did they just glow?!') },
+      { x: 320, y: 260, r: 40, texto: L('🔴 A luz das rachaduras é da mesma cor da lua lá fora.', '🔴 Halkeamien valo on samanväristä kuin kuu ulkona.', '🔴 The light in the cracks is the same color as the moon outside.') },
+    ],
+    espelho: [
+      { x: 230, y: 290, r: 26, texto: L('🪞 Vire o celular para um espelho de verdade e leia!', '🪞 Pidä puhelinta oikean peilin edessä ja lue!', '🪞 Hold your phone up to a real mirror and read it!') },
+      { x: 400, y: 138, r: 30, texto: L('🔤 A primeira palavra é "SÓ".', '🔤 Ensimmäinen sana on "VAIN".', '🔤 The first word is "ONLY".') },
+    ],
+    mascaras: [
+      { x: 445, y: 280, r: 40, texto: L('👑 A dourada é a número 4. Tudo à esquerda dela: 1, 2 e 3.', '👑 Kultainen on numero 4. Sen vasemmalla: 1, 2 ja 3.', '👑 The gold one is number 4. Everything to its left: 1, 2 and 3.') },
+      { x: 70, y: 220, r: 40, texto: L('🪶 Penas azuis... A Katherine disse: sem penas.', '🪶 Sinisiä sulkia... Katherine sanoi: ei sulkia.', '🪶 Blue feathers... Katherine said: no feathers.') },
+      { x: 570, y: 100, r: 30, texto: L('🕯️ Alguém apagou uma vela de propósito. Ela está aqui.', '🕯️ Joku sammutti kynttilän tahallaan. Hän on täällä.', '🕯️ Someone blew out a candle on purpose. She\'s here.') },
+    ],
+    caixinha: [
+      { x: 180, y: 200, r: 30, texto: L('🌗 Esta é a lua *minguante*: metade, ficando menor.', '🌗 Tämä on *vähenevä* kuu: puolikas, joka pienenee.', '🌗 This is the *waning* moon: half, getting smaller.') },
+      { x: 250, y: 200, r: 30, texto: L('🌑 Depois da minguante veio esta: a lua toda escura.', '🌑 Vähenevän jälkeen tuli tämä: ihan pimeä kuu.', '🌑 After the waning moon came this one: the completely dark moon.') },
+      { x: 320, y: 132, r: 30, texto: L('🗝️ Não tem buraco de chave. Só as luas abrem.', '🗝️ Avaimenreikää ei ole. Vain kuut avaavat sen.', '🗝️ There\'s no keyhole. Only the moons open it.') },
+    ],
+    rostos: [
+      { x: 200, y: 222, r: 34, texto: L('🧤 Luvas pretas até o cotovelo... numa noite quente?', '🧤 Mustat hansikkaat kyynärpäihin asti... lämpimänä iltana?', '🧤 Black gloves up to the elbow... on a warm night?') },
+      { x: 410, y: 190, r: 30, texto: L('✋ Ela segura o colar de verbena com a mão nua. E não se queima.', '✋ Hän pitää verbenakorua paljaalla kädellä. Eikä pala.', '✋ She\'s holding the vervain necklace with her bare hand. And she isn\'t burned.') },
+      { x: 200, y: 180, r: 16, texto: L('🌿 Os dois colares têm verbena dentro.', '🌿 Molemmissa koruissa on verbenaa.', '🌿 Both necklaces have vervain inside.') },
+    ],
+  };
+}
+const cachePistas = {};
+export function pistasEm(lg = 'pt') {
+  if (!cachePistas[lg]) { LG = lg; try { cachePistas[lg] = esconder(); } finally { LG = 'pt'; } }
+  return cachePistas[lg];
+}
+export const PISTAS_ESCONDIDAS = pistasEm('pt');

@@ -1,6 +1,7 @@
 // Gera os vídeos MP4 de videos/ a partir de scripts/mystic-videos.js (quadros) e de um som feito pelo ffmpeg.
 // Precisa do Playwright (npm i -D playwright && npx playwright install chromium) e do ffmpeg instalado.
-// Uso: node scripts/gerar-videos.mjs [nome...]
+// Uso: node scripts/gerar-videos.mjs [--lingua fi|en] [nome...]
+// Em finlandês e inglês os vídeos saem como videos/nome_fi.mp4 e videos/nome_en.mp4.
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -10,7 +11,9 @@ import { VIDEOS, FPS, W, H } from './mystic-videos.js';
 
 const raiz = new URL('..', import.meta.url).pathname;
 mkdirSync(join(raiz, 'videos'), { recursive: true });
-const nomes = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(VIDEOS);
+const args = process.argv.slice(2);
+const iL = args.indexOf('--lingua'), LINGUA = iL >= 0 ? args.splice(iL, 2)[1] : 'pt';
+const nomes = args.length ? args : Object.keys(VIDEOS);
 
 // expressão do ffmpeg (aevalsrc) com os sons de cada vídeo
 function trilha(som, dur) {
@@ -48,9 +51,10 @@ await pagina.route('http://jogo.local/**', rota => {
   rota.fulfill({ contentType: caminho.endsWith('.jpg') ? 'image/jpeg' : 'text/javascript', body: readFileSync(join(raiz, decodeURIComponent(caminho))) });
 });
 await pagina.goto('http://jogo.local/');
-await pagina.evaluate(async () => {
-  const { IMAGENS } = await import('/mystic-imagens.js');
-  const { VIDEOS } = await import('/scripts/mystic-videos.js');
+await pagina.evaluate(async lingua => {
+  const IMAGENS = (await import('/mystic-imagens.js')).imagensEm(lingua);
+  const { VIDEOS, definirLingua } = await import('/scripts/mystic-videos.js');
+  definirLingua(lingua);
   const imgs = {};
   await Promise.all(Object.entries(IMAGENS).map(([k, svg]) => new Promise(ok => {
     // sem os letreiros do canto (o vídeo põe os dele)
@@ -68,7 +72,7 @@ await pagina.evaluate(async () => {
     VIDEOS[nome].desenhar(ctx, n / fps, imgs, n);
     return c.toDataURL('image/jpeg', 0.93);
   };
-});
+}, LINGUA);
 
 for (const nome of nomes) {
   const v = VIDEOS[nome];
@@ -78,7 +82,7 @@ for (const nome of nomes) {
     const url = await pagina.evaluate(([a, b, c]) => window.quadro(a, b, c), [nome, n, FPS]);
     writeFileSync(join(pasta, String(n).padStart(4, '0') + '.jpg'), Buffer.from(url.split(',')[1], 'base64'));
   }
-  const saida = join(raiz, 'videos', nome + '.mp4');
+  const saida = join(raiz, 'videos', nome + (LINGUA === 'pt' ? '' : '_' + LINGUA) + '.mp4');
   execFileSync('ffmpeg', ['-y', '-loglevel', 'error',
     '-framerate', String(FPS), '-i', join(pasta, '%04d.jpg'),
     '-f', 'lavfi', '-i', `anoisesrc=color=brown:amplitude=${v.som.vento ?? .1}:d=${v.dur}`,
