@@ -628,4 +628,57 @@ export const VIDEOS = {
       grao(ctx, q, .08);
     },
   },
+
+  // Capítulo 3: as máscaras na mesa de veludo, as velas tremendo e uma caixinha de música tocando ao longe
+  baile: {
+    dur: 11, fundo: 'mascaras', poster: 'mascaras',
+    som: { drone: .6, vento: .05, sino: [1, 2.2, 3.4, 5.8, 7], brilho: [8.4], sussurro: [6.2] },
+    desenhar(ctx, t, img, q) {
+      texturas();
+      const cam = t < 7 ? camEntre(t, 0, 7, { x: 110, y: 250, s: 2.1 }, { x: 520, y: 250, s: 2.1 })
+        : camEntre(t, 7, 11, { x: 520, y: 250, s: 2.1 }, { x: 320, y: 210, s: 1.1 });
+      cena(ctx, img.mascaras, cam, 'contrast(1.12) saturate(1.1)');
+      for (const [x, i] of [[70, 0], [570, 1]]) {
+        const [px, py] = pt(cam, x, 98);
+        brilho(ctx, px, py, 160 * cam.s, 'rgba(255,170,80,A)', .3 + .1 * Math.sin(t * 11 + i * 3) + .05 * rnd(Math.floor(t * 14) + i));
+      }
+      // a máscara de prata brilha por um instante (é ela!)
+      const [sx, sy] = pt(cam, 320, 280);
+      brilho(ctx, sx, sy, 220 * cam.s, 'rgba(210,220,255,A)', .5 * entre(t, 8.2, 8.6) * (1 - entre(t, 8.8, 10.2)));
+      particulas(ctx, t, 40, 33, [0, 0, W, H], [6, -8], 1.3, 'rgba(255,225,180,A)', 1);
+      nevoa(ctx, t, H * .6, H, .25, 10, 3, 'rgba(150,120,200,1)');
+      cor(ctx, '#1a1030', '#4a2010', .35);
+      vinheta(ctx, .85);
+      escuro(ctx, 1 - entre(t, 0, 1.2));
+      cartela(ctx, t, .8, 4.2, L('CAPÍTULO 3 · MANSÃO LOCKWOOD', 'LUKU 3 · LOCKWOODIN KARTANO', 'CHAPTER 3 · LOCKWOOD MANSION'), L('O Baile de Máscaras', 'Naamiaiset', 'The Masquerade Ball'), '#cfc3ff');
+      faixas(ctx, 1);
+      legenda(ctx, L('Uma delas é a dela.', 'Yksi niistä on hänen.', 'One of them is hers.'), entre(t, 8.8, 9.2) * (1 - entre(t, 10.5, 11)), '#cfc3ff');
+      grao(ctx, q, .07);
+    },
+  },
+
+  // Final do Capítulo 3: a máscara de prata ficou sozinha na mesa, as velas se apagam uma a uma
+  final_baile: {
+    dur: 10, fundo: 'mascaras', poster: 'mascaras',
+    som: { drone: .7, vento: .08, velas: [3.2, 4.6], sino: [6], acorde: 6.4 },
+    desenhar(ctx, t, img, q) {
+      texturas();
+      const cam = camEntre(t, 0, 10, { x: 320, y: 270, s: 2.6 }, { x: 320, y: 230, s: 1.25 });
+      cena(ctx, img.mascaras, cam, `contrast(1.1) brightness(${1 - entre(t, 3, 6) * .35})`);
+      for (const [x, i, apaga] of [[70, 0, 3.2], [570, 1, 4.6]]) {
+        const [px, py] = pt(cam, x, 98), k = 1 - entre(t, apaga, apaga + .3);
+        brilho(ctx, px, py, 160 * cam.s, 'rgba(255,170,80,A)', k * (.3 + .1 * Math.sin(t * 11 + i * 3)));
+        if (k < 1) particulas(ctx, t - apaga, 8, 70 + i, [px - 20, py - 120, px + 20, py], [0, -20], 1, `rgba(200,200,210,A)`);
+      }
+      const [sx, sy] = pt(cam, 320, 280);
+      brilho(ctx, sx, sy, 260 * cam.s, 'rgba(210,220,255,A)', .35 + .15 * Math.sin(t * 2));
+      nevoa(ctx, t, H * .55, H, .3, 8, 3, 'rgba(150,120,200,1)');
+      cor(ctx, '#1a1030', '#3a2a40', .4);
+      vinheta(ctx, .9);
+      escuro(ctx, 1 - entre(t, 0, 1));
+      cartela(ctx, t, 6, 10.2, L('CAPÍTULO 3 · FIM', 'LUKU 3 · LOPPU', 'CHAPTER 3 · THE END'), L('Mystic Falls dorme... por enquanto.', 'Mystic Falls nukkuu... toistaiseksi.', 'Mystic Falls sleeps... for now.'), '#cfc3ff');
+      faixas(ctx, 1);
+      grao(ctx, q, .08);
+    },
+  },
 };

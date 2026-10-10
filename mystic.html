@@ -101,6 +101,11 @@
   #cad[open]{display:flex;flex-direction:column}
   #cad ol{flex:1;min-height:0;margin:0;padding:12px 16px 16px 40px;overflow:auto;line-height:1.5}
   #cad .fin{flex:none;border-top:1px solid var(--line);padding-top:10px!important}
+  /* Capítulo 3: o baile de máscaras, em roxo e prata */
+  body.cap3{--gold:#cfc3ff;--acc:#6a3fb5;--top:#17131f;--eles:#221c2e;--eu:#43246e}
+  body.cap3 .av{background:radial-gradient(circle at 35% 30%,#f2f0ff,#a9a4c8 45%,#2c2840 72%);box-shadow:0 0 16px rgba(170,150,255,.5)}
+  body.cap3 main{background:radial-gradient(120% 60% at 50% 0%,rgba(120,80,220,.18),transparent 60%),repeating-linear-gradient(45deg,rgba(255,255,255,.012) 0 12px,transparent 12px 24px)}
+  body.cap3 #capa .lua{background:radial-gradient(circle at 35% 30%,#ffffff,#c9c3ea 55%,#5a5480);box-shadow:0 0 70px rgba(170,150,255,.5)}
   body.cap2 #capa .lua{background:radial-gradient(circle at 35% 30%,#ff8a6a,#b0281c 55%,#5a0a08);box-shadow:0 0 70px rgba(255,50,40,.5)}
   #cad li{padding:5px 0;border-bottom:1px solid var(--line)}
   #cad li small{display:block;color:var(--muted)}
@@ -169,8 +174,8 @@ const U = {
   tocar: ['toque para abrir a conversa · use fones 🎧', 'napauta avataksesi keskustelun · käytä kuulokkeita 🎧', 'tap to open the chat · use headphones 🎧'],
   notif: ['1 chamada perdida · 1 nova mensagem', '1 vastaamaton puhelu · 1 uusi viesti', '1 missed call · 1 new message'],
   continuar: ['Toque para continuar a conversa', 'Napauta jatkaaksesi keskustelua', 'Tap to continue the chat'],
-  info: ['2 capítulos · 12 fases · 4 finais', '2 lukua · 12 tasoa · 4 loppua', '2 chapters · 12 levels · 4 endings'],
-  infoCurta: ['2 capítulos · 12 fases', '2 lukua · 12 tasoa', '2 chapters · 12 levels'],
+  info: ['3 capítulos · 16 fases · 6 finais', '3 lukua · 16 tasoa · 6 loppua', '3 chapters · 16 levels · 6 endings'],
+  infoCurta: ['3 capítulos · 16 fases', '3 lukua · 16 tasoa', '3 chapters · 16 levels'],
   finais: ['🏆 Finais descobertos', '🏆 Löydetyt loput', '🏆 Endings found'],
   mensagem: ['Mensagem', 'Viesti', 'Message'],
   online: ['online', 'paikalla', 'online'],
@@ -179,10 +184,12 @@ const U = {
   apagada: ['🚫 Esta mensagem foi apagada', '🚫 Tämä viesti poistettiin', '🚫 This message was deleted'],
   abrir: ['toque para abrir', 'avaa napauttamalla', 'tap to open'],
   cap1: ['Capítulo 1 ✓', 'Luku 1 ✓', 'Chapter 1 ✓'],
+  cap2fim: ['Capítulo 2 ✓', 'Luku 2 ✓', 'Chapter 2 ✓'],
   concluido: ['🏆 concluído', '🏆 valmis', '🏆 finished'],
   faseCurta: ['Cap. {c} · Fase {f}/{t}', 'Luku {c} · Taso {f}/{t}', 'Ch. {c} · Level {f}/{t}'],
   capitulo1: ['CAPÍTULO 1 · A BRUXA SEM MEMÓRIA', 'LUKU 1 · NOITA ILMAN MUISTIA', 'CHAPTER 1 · THE WITCH WITHOUT A MEMORY'],
   capitulo2: ['CAPÍTULO 2 · O ECLIPSE DE SANGUE', 'LUKU 2 · VERIKUUN PIMENNYS', 'CHAPTER 2 · THE BLOOD ECLIPSE'],
+  capitulo3: ['CAPÍTULO 3 · O BAILE DE MÁSCARAS', 'LUKU 3 · NAAMIAISET', 'CHAPTER 3 · THE MASQUERADE BALL'],
   investigando: ['🔎 investigando agora...', '🔎 tutkitaan nyt...', '🔎 investigating now...'],
   naoDescoberta: ['ainda não descoberta', 'ei vielä löydetty', 'not found yet'],
   lupaSem: ['Toque na imagem para aproximar e procurar pistas.', 'Napauta kuvaa lähentääksesi ja etsiäksesi vihjeitä.', 'Tap the picture to zoom in and look for clues.'],
@@ -203,7 +210,7 @@ function aplicarLingua() {
   document.getElementById('nome').textContent = em(CONTATO, lg());
   document.getElementById('capanome').textContent = '📵 ' + em(CONTATO, lg());
   document.getElementById('capanotif').textContent = u(salvo.estado.fase !== 0 ? 'continuar' : 'notif');
-  document.getElementById('capainfo').innerHTML = finais.length ? `${u('infoCurta')}<br>${u('finais')}: <b>${finais.length}/4</b>` : u('info');
+  document.getElementById('capainfo').innerHTML = finais.length ? `${u('infoCurta')}<br>${u('finais')}: <b>${finais.length}/6</b>` : u('info');
   document.getElementById('lgbt').textContent = '🌐 ' + lg().toUpperCase();
   document.querySelectorAll('#linguas button').forEach(b => b.classList.toggle('on', b.dataset.lg === lg()));
   txt.placeholder = u('mensagem');
@@ -219,25 +226,28 @@ const fmt = s => esc(s)
   .replace(/(^|[\s"(])_([^_\n]+)_(?=$|[\s.,!?:)"])/gm, '$1<i>$2</i>');
 const hora = () => new Date().toLocaleTimeString(FALA_LG[lg()], { hour: '2-digit', minute: '2-digit' });
 const rolar = () => chat.scrollTop = chat.scrollHeight;
-const POSTER = { abertura: 'floresta', cameras: 'suspeitos', final_sombra: 'parede', cemiterio: 'lapides', selo: 'estatua' };
+const POSTER = { abertura: 'floresta', cameras: 'suspeitos', final_sombra: 'parede', cemiterio: 'lapides', selo: 'estatua', baile: 'mascaras', final_baile: 'mascaras' };
 // capas com as fotos realistas (fotos/, geradas no Canva)
 const FOTO = { abertura: 'floresta', ponte: 'ponte', porao: 'porao', cripta: 'cripta', final_aliado: 'praca' };
 const imgURL = nome => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(imagensEm(lg())[nome] || '');
 const pistasImg = nome => pistasEm(lg())[nome] || [];
 
 function mostrarFase() {
-  const { fase: f, cap2 } = salvo.estado;
-  fs.textContent = f === 8 && !cap2 ? u('cap1') : f >= 1 && f <= TOTAL_FASES ? u('faseCurta', { c: f <= 7 ? 1 : 2, f, t: TOTAL_FASES }) : f >= FIM ? u('concluido') : '';
-  document.body.classList.toggle('cap2', !!cap2);
+  const { fase: f, cap2, cap3 } = salvo.estado;
+  fs.textContent = f === 8 && !cap2 ? u('cap1') : f === 13 && !cap3 ? u('cap2fim') : f >= 1 && f <= TOTAL_FASES ? u('faseCurta', { c: f <= 7 ? 1 : f <= 12 ? 2 : 3, f, t: TOTAL_FASES }) : f >= FIM ? u('concluido') : '';
+  document.body.classList.toggle('cap2', !!cap2 && !cap3);
+  document.body.classList.toggle('cap3', !!cap3);
 }
 
 // ---------- finais descobertos (ficam guardados mesmo depois de reiniciar) ----------
 let finais = [];
 try { finais = JSON.parse(localStorage.getItem(CHAVE + 'Finais')) || []; } catch {}
 function marcarFinal(e) {
-  const id = e.fase >= FIM ? 'cap2-' + e.final : e.fase === 8 && e.final ? 'cap1-' + e.final : null;
-  if (!id || finais.includes(id)) return;
-  finais.push(id);
+  // cada capítulo terminado guarda o seu final (quem já tinha jogado versões antigas também ganha os dela)
+  const ids = [e.fase >= 8 && e.final && 'cap1-' + e.final, e.fase >= 13 && e.final && 'cap2-' + e.final, e.fase >= FIM && e.fim3 && 'cap3-' + e.fim3];
+  const novos = ids.filter(id => id && !finais.includes(id));
+  if (!novos.length) return;
+  finais.push(...novos);
   try { localStorage.setItem(CHAVE + 'Finais', JSON.stringify(finais)); } catch {}
 }
 marcarFinal(salvo.estado); // quem já tinha terminado a versão antiga
@@ -247,12 +257,12 @@ const cad = document.getElementById('cad');
 document.getElementById('cadbt').onclick = () => {
   const e = salvo.estado;
   document.getElementById('cadlista').innerHTML = CADERNO.map(([titulo, resp], i) => {
-    const n = i + 1, ok = e.fase > n, atual = e.fase === n && (n !== 8 || e.cap2);
+    const n = i + 1, ok = e.fase > n, atual = e.fase === n && (n !== 8 || e.cap2) && (n !== 13 || e.cap3);
     const r = em(typeof resp === 'function' ? resp(e) : resp, lg());
-    const cap = n === 1 ? `<li class="cap">${u('capitulo1')}</li>` : n === 8 ? `<li class="cap">${u('capitulo2')}</li>` : '';
+    const cap = n === 1 ? `<li class="cap">${u('capitulo1')}</li>` : n === 8 ? `<li class="cap">${u('capitulo2')}</li>` : n === 13 ? `<li class="cap">${u('capitulo3')}</li>` : '';
     return cap + `<li class="${ok ? 'ok' : ''}" value="${n}">${ok || atual ? esc(em(titulo, lg())) : '🔒 ???'}<small>${ok ? '✓ ' + esc(r) : atual ? u('investigando') : u('naoDescoberta')}</small></li>`;
   }).join('');
-  document.getElementById('cadfin').innerHTML = `${u('finais')}: <b>${finais.length}/4</b>` + (finais.length ? '<br>' + finais.map(f => '• ' + esc(em(FINAIS[f], lg()))).join('<br>') : '');
+  document.getElementById('cadfin').innerHTML = `${u('finais')}: <b>${finais.length}/6</b>` + (finais.length ? '<br>' + finais.map(f => '• ' + esc(em(FINAIS[f], lg()))).join('<br>') : '');
   cad.showModal();
 };
 

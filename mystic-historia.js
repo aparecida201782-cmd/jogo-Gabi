@@ -21,14 +21,16 @@
 //   opcoes   botões de resposta rápida (no WhatsApp vira uma lista no fim da mensagem)
 //   repetir  true se a mensagem volta quando a jogadora pede "repetir"
 //
-// O estado da jogadora é { fase, erros, final, cap2, lingua }:
-//   fase 0 = não começou, 1 a 7 = Capítulo 1, 8 a 12 = Capítulo 2, 13 = terminou.
-//   final = a escolha da fase 7 ('aliado' ou 'sombra'); ela muda o Capítulo 2.
-//   cap2 = true quando o Capítulo 2 já começou (depois do final do Capítulo 1 a fase fica 8 sem cap2).
+// O estado da jogadora é { fase, erros, final, cap2, cap3, fim3, lingua }:
+//   fase 0 = não começou, 1 a 7 = Capítulo 1, 8 a 12 = Capítulo 2, 13 a 16 = Capítulo 3, 17 = terminou.
+//   final = a escolha da fase 7 ('aliado' ou 'sombra'); ela muda o Capítulo 2 e um pouco do 3.
+//   cap2 / cap3 = true quando o capítulo já começou (no fim de um capítulo a fase fica no começo do
+//   próximo, sem a marca, até a jogadora mandar qualquer mensagem).
+//   fim3 = a escolha da fase 16 ('pedra' ou 'trato').
 //   lingua = 'pt', 'fi' ou 'en' (mande "suomi", "english" ou "português" a qualquer momento para trocar).
 
 export const LINGUAS = ['pt', 'fi', 'en'];
-export const TOTAL_FASES = 12;
+export const TOTAL_FASES = 16;
 export const FIM = TOTAL_FASES + 1;
 
 // texto nas três línguas
@@ -55,6 +57,10 @@ export const CADERNO = [
   [L('As Lápides', 'Hautakivet', 'The Gravestones'), 'Fell'],
   [L('O Espelho da Cripta', 'Kryptan peili', 'The Crypt Mirror'), L('Verbena', 'Verbena', 'Vervain')],
   [L('O Feitiço do Eclipse', 'Pimennyksen loitsu', 'The Eclipse Spell'), 'Quietus Aeternum'],
+  [L('O Convite', 'Kutsu', 'The Invitation'), L('A máscara de prata', 'Hopeinen naamio', 'The silver mask')],
+  [L('A Caixinha de Música', 'Soittorasia', 'The Music Box'), L('Lua nova 🌑', 'Uusikuu 🌑', 'New moon 🌑')],
+  [L('Os Dois Rostos', 'Kaksi kasvoa', 'Two Faces'), L('A número 1, de luvas', 'Numero 1, hansikkaissa', 'Number 1, in gloves')],
+  [L('A Pedra da Lua', 'Kuukivi', 'The Moonstone'), e => e.fim3 === 'trato' ? L('Entregar a pedra à Katherine', 'Antaa kivi Katherinelle', 'Give the stone to Katherine') : L('Destruir a pedra', 'Tuhota kivi', 'Destroy the stone')],
 ];
 
 // nomes dos finais (o navegador guarda os que a jogadora já descobriu)
@@ -63,6 +69,8 @@ export const FINAIS = {
   'cap1-sombra': L('Cap. 1 · A Sombra no Porão', 'Luku 1 · Varjo kellarissa', 'Ch. 1 · The Shadow in the Cellar'),
   'cap2-aliado': L('Final A · Amigos de Sangue', 'Loppu A · Veriystävät', 'Ending A · Blood Friends'),
   'cap2-sombra': L('Final B · A Lua Branca', 'Loppu B · Valkoinen kuu', 'Ending B · The White Moon'),
+  'cap3-pedra': L('Final C · A Pedra Partida', 'Loppu C · Särkynyt kivi', 'Ending C · The Broken Stone'),
+  'cap3-trato': L('Final D · O Trato com Katherine', 'Loppu D · Sopimus Katherinen kanssa', 'Ending D · The Deal with Katherine'),
 };
 
 export const GRIMORIO = L(`<?xml version="1.0" encoding="UTF-8"?>
@@ -143,7 +151,7 @@ const m = (texto, espera = D, extra) => ({ texto, espera, ...extra });
 const img = (imagem, texto, extra) => ({ imagem, texto, espera: 2000, ...extra });
 const vid = (video, texto, extra) => ({ video, texto, espera: 2500, ...extra });
 const R = { repetir: true };
-const fase = (n, nome) => junta(L(`🔎 *Fase ${n} de 12: `, `🔎 *Taso ${n}/12: `, `🔎 *Level ${n} of 12: `), nome, '*\n');
+const fase = (n, nome) => junta(L(`🔎 *Fase ${n} de ${TOTAL_FASES}: `, `🔎 *Taso ${n}/${TOTAL_FASES}: `, `🔎 *Level ${n} of ${TOTAL_FASES}: `), nome, '*\n');
 const nomeFase = n => CADERNO[n - 1][0];
 
 export function estadoInicial(lingua = 'pt') {
@@ -579,6 +587,9 @@ const FASE12 = e => [
   m(junta(fase(12, nomeFase(12)), L('Qual feitiço eu falo? Mande o nome dele.', 'Minkä loitsun lausun? Lähetä sen nimi.', 'Which spell do I say? Send its name.')), D, R),
 ];
 
+const CAPITULO3 = L('Capítulo 3 ▶', 'Luku 3 ▶', 'Chapter 3 ▶');
+const CHAMADO3 = m(L('📩 Chegou um envelope preto por baixo da minha porta... com a letra *K*.', '📩 Oveni alta työnnettiin musta kirjekuori... jossa on kirjain *K*.', '📩 A black envelope just slid under my door... marked with the letter *K*.'), 2500, { efeito: 'glitch', opcoes: [CAPITULO3] });
+
 const OBRIGADA = m(L('Obrigada, caçadora. Sem você eu ainda estaria acordando no chão da floresta sem lembrar meu próprio nome. 💜\n\n— Bonnie Bennett',
   'Kiitos, metsästäjä. Ilman sinua heräisin yhä metsän maasta muistamatta omaa nimeäni. 💜\n\n— Bonnie Bennett',
   'Thank you, hunter. Without you I\'d still be waking up on the forest floor, unable to remember my own name. 💜\n\n— Bonnie Bennett'));
@@ -595,9 +606,11 @@ const FIM_ALIADO = [
       'Ulkona kuu on taas valkoinen. 🌕 Lucien antoi minulle lahjaksi lapis lazuli -sormuksen: _"Metsästäjälle. Jos hän joskus tarvitsee kulkea vampyyrien kanssa auringossa."_',
       'Outside, the moon is white again. 🌕 Lucien gave me a lapis lazuli ring as a gift: _"For the hunter. In case she ever needs to walk with vampires in the sun."_')),
   OBRIGADA,
-  m(L('🏆 *FINAL A: Amigos de Sangue*\nVocê terminou os 2 capítulos da Operação Mystic Falls! Confiou no Lucien e ganhou um aliado para sempre.\n\nMande *reiniciar* e escolha *preso* na fase 7 para ver o outro capítulo 2.',
-      '🏆 *LOPPU A: Veriystävät*\nPelasit Operaatio Mystic Fallsin molemmat luvut! Luotit Lucieniin ja sait liittolaisen ikuisiksi ajoiksi.\n\nKirjoita *aloita alusta* ja valitse tasolla 7 *pidä vankina* nähdäksesi toisenlaisen luvun 2.',
-      '🏆 *ENDING A: Blood Friends*\nYou finished both chapters of Operation Mystic Falls! You trusted Lucien and gained an ally forever.\n\nSend *restart* and choose *keep locked* in level 7 to see the other chapter 2.'), 1500, { opcoes: [REINICIAR] }),
+  m(L('🏆 *FIM DO CAPÍTULO 2: Amigos de Sangue*\nVocê confiou no Lucien e ganhou um aliado para sempre.\n\n_...mas alguém estava olhando o cemitério de longe._',
+      '🏆 *LUKU 2 PÄÄTTYI: Veriystävät*\nLuotit Lucieniin ja sait liittolaisen ikuisiksi ajoiksi.\n\n_...mutta joku katseli hautausmaata kaukaa._',
+      '🏆 *END OF CHAPTER 2: Blood Friends*\nYou trusted Lucien and gained an ally forever.\n\n_...but someone was watching the cemetery from afar._'), 1500),
+  { fantasma: true, espera: 2500 },
+  CHAMADO3,
 ];
 
 const FIM_SOMBRA = [
@@ -612,12 +625,111 @@ const FIM_SOMBRA = [
       'Lucien stared at me for a long time. Then he said: _"Maybe you were right not to trust me."_ And he walked up the stairs, slowly. Without a single threat.'), D, { apagar: 9000 }),
   m(L('Lá fora, a lua voltou a ser branca. 🌕 Acho que ele não volta. Acho.', 'Ulkona kuu on taas valkoinen. 🌕 Luulen, ettei hän palaa. Luulen.', 'Outside, the moon is white again. 🌕 I don\'t think he\'ll come back. I think.')),
   OBRIGADA,
-  m(L('🏆 *FINAL B: A Lua Branca*\nVocê terminou os 2 capítulos da Operação Mystic Falls! Selou o Silas sozinha, mesmo com um inimigo no escuro.\n\nMande *reiniciar* e escolha *soltar* na fase 7 para ver o outro capítulo 2.',
-      '🏆 *LOPPU B: Valkoinen kuu*\nPelasit Operaatio Mystic Fallsin molemmat luvut! Sinetöit Silaksen yksin, vaikka vihollinen odotti pimeässä.\n\nKirjoita *aloita alusta* ja valitse tasolla 7 *vapauta* nähdäksesi toisenlaisen luvun 2.',
-      '🏆 *ENDING B: The White Moon*\nYou finished both chapters of Operation Mystic Falls! You sealed Silas on your own, even with an enemy in the dark.\n\nSend *restart* and choose *release* in level 7 to see the other chapter 2.'), 1500, { opcoes: [REINICIAR] }),
+  m(L('🏆 *FIM DO CAPÍTULO 2: A Lua Branca*\nVocê selou o Silas sozinha, mesmo com um inimigo no escuro.\n\n_...mas alguém estava olhando o cemitério de longe._',
+      '🏆 *LUKU 2 PÄÄTTYI: Valkoinen kuu*\nSinetöit Silaksen yksin, vaikka vihollinen odotti pimeässä.\n\n_...mutta joku katseli hautausmaata kaukaa._',
+      '🏆 *END OF CHAPTER 2: The White Moon*\nYou sealed Silas on your own, even with an enemy in the dark.\n\n_...but someone was watching the cemetery from afar._'), 1500),
+  { fantasma: true, espera: 2500 },
+  CHAMADO3,
 ];
 
-const FASES = { 1: FASE1, 2: FASE2, 3: FASE3, 4: FASE4, 5: FASE5, 6: FASE6, 7: FASE7, 8: FASE8, 9: FASE9, 10: FASE10, 11: FASE11, 12: FASE12 };
+// ================= CAPÍTULO 3: O Baile de Máscaras =================
+// A Katherine Pierce (a sósia da Elena) voltou e quer a pedra da lua. A escolha da fase 16 dá dois finais.
+const DESTRUIR = L('Destruir a pedra', 'Tuhoa kivi', 'Destroy the stone'), ENTREGAR = L('Entregar à Katherine', 'Anna Katherinelle', 'Give it to Katherine');
+
+// ---------- Fase 13: O Convite ----------
+const FASE13 = e => [
+  { capitulo: L('CAPÍTULO 3', 'LUKU 3', 'CHAPTER 3'), titulo: L('O Baile de Máscaras', 'Naamiaiset', 'The Masquerade Ball'), texto: L('🎭 *CAPÍTULO 3*\n_O Baile de Máscaras_', '🎭 *LUKU 3*\n_Naamiaiset_', '🎭 *CHAPTER 3*\n_The Masquerade Ball_'), espera: 800 },
+  m(L('Caçadora, sou eu, a Bonnie. Abri o envelope preto. É um *convite* para o baile de máscaras na mansão Lockwood, hoje à noite.',
+      'Metsästäjä, Bonnie täällä. Avasin mustan kirjekuoren. Se on *kutsu* naamiaisiin Lockwoodin kartanossa tänä iltana.',
+      'Hunter, it\'s Bonnie. I opened the black envelope. It\'s an *invitation* to the masquerade ball at the Lockwood mansion, tonight.')),
+  m(L('Só tem uma pessoa nesta cidade que assina só com a letra *K*: a *Katherine Pierce*. Ela é igualzinha à Elena, mas é uma vampira de 500 anos. E ela nunca aparece por acaso. 😰',
+      'Tässä kaupungissa vain yksi allekirjoittaa pelkällä *K*-kirjaimella: *Katherine Pierce*. Hän näyttää täsmälleen Elenalta, mutta on 500-vuotias vampyyri. Eikä hän koskaan ilmesty sattumalta. 😰',
+      'Only one person in this town signs with just the letter *K*: *Katherine Pierce*. She looks exactly like Elena, but she\'s a 500-year-old vampire. And she never shows up by accident. 😰')),
+  aliado(e)
+    ? m(L('O Lucien vai comigo, disfarçado de garçom. Ele disse que conhece a Katherine "de outros séculos".', 'Lucien tulee mukaani tarjoilijaksi naamioituneena. Hän sanoo tuntevansa Katherinen "muilta vuosisadoilta".', 'Lucien is coming with me, disguised as a waiter. He says he knows Katherine "from other centuries".'))
+    : m(L('O Damon vai comigo. Ele não quis dizer como, mas ele conhece a Katherine muito bem. Bem demais.', 'Damon tulee mukaani. Hän ei halunnut kertoa miten, mutta hän tuntee Katherinen tosi hyvin. Liiankin hyvin.', 'Damon is coming with me. He wouldn\'t say how, but he knows Katherine very well. Too well.')),
+  vid('baile', L('Cheguei. Todo mundo de máscara. 🎭', 'Olen perillä. Kaikilla on naamiot. 🎭', 'I\'m here. Everyone is wearing a mask. 🎭')),
+  m(L('No verso do convite tem um recado:\n\n_"Me encontre no salão. Eu estarei com a máscara que fica *à esquerda da dourada*, que *não é vermelha* e que *não tem penas*. — K."_',
+      'Kutsun takana on viesti:\n\n_"Tapaa minut salissa. Minulla on naamio, joka on *kultaisen vasemmalla puolella*, joka *ei ole punainen* ja jossa *ei ole sulkia*. — K."_',
+      'On the back of the invitation there\'s a note:\n\n_"Meet me in the ballroom. I\'ll be wearing the mask that is *to the left of the gold one*, that is *not red* and that has *no feathers*. — K."_'), D, R),
+  img('mascaras', L('As cinco máscaras perto da escada. Toque para ampliar.', 'Viisi naamiota portaiden luona. Napauta suurentaaksesi.', 'The five masks by the staircase. Tap to zoom in.'), R),
+  m(junta(fase(13, nomeFase(13)), L('Qual é a máscara da Katherine? Mande a *cor* dela.', 'Mikä on Katherinen naamio? Lähetä sen *väri*.', 'Which mask is Katherine\'s? Send its *color*.')), D, R),
+];
+
+// ---------- Fase 14: A Caixinha de Música ----------
+const FASE14 = () => [
+  m(L('🩶 *PRATA!* Fui até a mulher de máscara prateada. Ela tirou a máscara devagar e sorriu. Era a Katherine.', '🩶 *HOPEA!* Menin hopeanaamioisen naisen luo. Hän otti naamion hitaasti pois ja hymyili. Se oli Katherine.', '🩶 *SILVER!* I walked up to the woman in the silver mask. She slowly took it off and smiled. It was Katherine.')),
+  { audio: L('Olá, bruxinha. Eu não vim brigar. Eu vim buscar uma coisa que é minha: a pedra da lua. Ela está escondida nesta casa, numa caixinha de música. Você abre a caixinha, e eu te conto onde está o Stefan.',
+      'Hei, pikku noita. En tullut tappelemaan. Tulin hakemaan jotain, mikä kuuluu minulle: kuukiven. Se on piilotettu tähän taloon, soittorasiaan. Sinä avaat rasian, ja minä kerron, missä Stefan on.',
+      'Hello, little witch. I didn\'t come to fight. I came for something that belongs to me: the moonstone. It\'s hidden in this house, in a music box. You open the box, and I\'ll tell you where Stefan is.'), espera: 4500, repetir: true },
+  m(L('O Stefan! Ele está sumido desde o capítulo 1... 😨 A caixinha estava na biblioteca dos Lockwood. Ela não tem chave: tem um cadeado com desenhos da lua.',
+      'Stefan! Hän on ollut kateissa luvusta 1 asti... 😨 Soittorasia oli Lockwoodien kirjastossa. Siinä ei ole avainta: siinä on lukko, jossa on kuun kuvia.',
+      'Stefan! He\'s been missing since chapter 1... 😨 The music box was in the Lockwood library. It has no key: it has a lock with pictures of the moon.'), D, { efeito: 'glitch' }),
+  img('caixinha', L('A tampa da caixinha. Falta a última lua.', 'Rasian kansi. Viimeinen kuu puuttuu.', 'The lid of the box. The last moon is missing.'), R),
+  m(L('Gravado embaixo: _"A lua sempre volta pelo mesmo caminho."_', 'Alle on kaiverrettu: _"Kuu palaa aina samaa tietä."_', 'Engraved underneath: _"The moon always comes back the same way."_'), D, R),
+  m(junta(fase(14, nomeFase(14)), L('Que lua falta no lugar do *?* Mande o nome dela (ou o desenho 🌑🌒🌓🌔🌕🌖🌗🌘).', 'Mikä kuu puuttuu *?*-kohdasta? Lähetä sen nimi (tai kuva 🌑🌒🌓🌔🌕🌖🌗🌘).', 'Which moon goes where the *?* is? Send its name (or the picture 🌑🌒🌓🌔🌕🌖🌗🌘).')), D, R),
+];
+
+// ---------- Fase 15: Os Dois Rostos ----------
+const FASE15 = () => [
+  m(L('🌑 *LUA NOVA!* A caixinha tocou uma valsa e abriu. Lá dentro: a *pedra da lua*, brilhando azul. Eu guardei no bolso antes que a Katherine visse.', '🌑 *UUSIKUU!* Soittorasia soitti valssin ja aukesi. Sisällä oli *kuukivi*, joka hehkui sinisenä. Pistin sen taskuuni ennen kuin Katherine näki.', '🌑 *NEW MOON!* The music box played a waltz and opened. Inside: the *moonstone*, glowing blue. I slipped it into my pocket before Katherine could see.')),
+  m(L('Voltei para o salão... e a luz apagou. Quando acendeu, tinha *duas* moças iguais no meio da pista. Mesmo vestido, mesmo cabelo liso, mesmo colar. Uma é a Elena. A outra é a Katherine.',
+      'Palasin saliin... ja valot sammuivat. Kun ne syttyivät, tanssilattian keskellä oli *kaksi* samannäköistä tyttöä. Sama mekko, samat suorat hiukset, sama kaulakoru. Toinen on Elena. Toinen on Katherine.',
+      'I went back to the ballroom... and the lights went out. When they came back on, there were *two* identical girls in the middle of the dance floor. Same dress, same straight hair, same necklace. One is Elena. The other is Katherine.'), D, { efeito: 'tremor' }),
+  m(L('As duas disseram ao mesmo tempo: _"Bonnie, sou eu, a Elena! Me dá a pedra, rápido!"_', 'Molemmat sanoivat yhtä aikaa: _"Bonnie, minä olen Elena! Anna kivi minulle, nopeasti!"_', 'They both said at the same time: _"Bonnie, it\'s me, Elena! Give me the stone, quick!"_'), 2000, { efeito: 'glitch' }),
+  img('rostos', L('Olha bem as duas. Toque para ampliar.', 'Katso molempia tarkkaan. Napauta suurentaaksesi.', 'Look closely at both. Tap to zoom in.'), R),
+  m(L('Lembra: o colar da Elena tem *verbena* dentro. A Katherine pode copiar o cabelo, o vestido e o colar... mas verbena *queima a pele* dela.',
+      'Muista: Elenan kaulakorussa on *verbenaa*. Katherine voi kopioida hiukset, mekon ja korun... mutta verbena *polttaa hänen ihoaan*.',
+      'Remember: Elena\'s necklace has *vervain* inside. Katherine can copy the hair, the dress and the necklace... but vervain *burns her skin*.'), D, R),
+  m(junta(fase(15, nomeFase(15)), L('Qual é a Katherine: a número *1* ou a número *2*?', 'Kumpi on Katherine: numero *1* vai numero *2*?', 'Which one is Katherine: number *1* or number *2*?')), D, { repetir: true, opcoes: ['1', '2'] }),
+];
+
+// ---------- Fase 16: A Pedra da Lua ----------
+const FASE16 = e => [
+  m(L('🧤 *A NÚMERO 1!* Ela estava de *luvas* para conseguir tocar no colar de verbena sem se queimar. A número 2 segurava o colar com a mão nua: essa é a Elena de verdade.',
+      '🧤 *NUMERO 1!* Hänellä oli *hansikkaat*, jotta hän voisi koskea verbenakorua palamatta. Numero 2 piti korua paljaalla kädellä: hän on oikea Elena.',
+      '🧤 *NUMBER 1!* She was wearing *gloves* so she could touch the vervain necklace without getting burned. Number 2 held the necklace with her bare hand: she\'s the real Elena.')),
+  m(aliado(e)
+    ? L('O Lucien segurou a Katherine pelo braço antes que ela fugisse. Ela riu: _"Tudo bem, vocês ganharam. Vamos negociar."_', 'Lucien tarttui Katherinea käsivarresta ennen kuin hän ehti paeta. Hän nauroi: _"Hyvä on, voititte. Neuvotellaan."_', 'Lucien grabbed Katherine by the arm before she could run. She laughed: _"Fine, you win. Let\'s make a deal."_')
+    : L('O Damon se colocou na frente da porta. A Katherine riu: _"Damon, sempre tão previsível. Tudo bem, vamos negociar."_', 'Damon asettui oven eteen. Katherine nauroi: _"Damon, aina niin ennalta-arvattava. Hyvä on, neuvotellaan."_', 'Damon stepped in front of the door. Katherine laughed: _"Damon, always so predictable. Fine, let\'s make a deal."_'), D, { efeito: 'glitch' }),
+  { audio: L('A pedra da lua pode quebrar uma maldição muito antiga. Se você me der a pedra, eu te digo onde o Stefan está preso, e vocês salvam ele hoje. Se você destruir a pedra... boa sorte procurando ele sozinha.',
+      'Kuukivi voi murtaa ikivanhan kirouksen. Jos annat kiven minulle, kerron missä Stefan on vangittuna, ja voitte pelastaa hänet tänään. Jos tuhoat kiven... onnea, kun etsit häntä yksin.',
+      'The moonstone can break a very old curse. If you give me the stone, I\'ll tell you where Stefan is trapped, and you can save him tonight. If you destroy the stone... good luck finding him on your own.'), espera: 4500, repetir: true },
+  m(L('Eu posso destruir a pedra com um feitiço agora mesmo. Ninguém nunca mais usa ela para o mal. Mas aí a gente fica sem saber onde o Stefan está...\n\nOu eu entrego a pedra, e a gente salva o Stefan hoje. Mas a Katherine fica com um poder que ninguém sabe qual é.',
+      'Voin tuhota kiven loitsulla heti. Kukaan ei voi enää koskaan käyttää sitä pahaan. Mutta silloin emme tiedä, missä Stefan on...\n\nTai annan kiven, ja pelastamme Stefanin tänään. Mutta Katherine saa voiman, josta kukaan ei tiedä mitään.',
+      'I can destroy the stone with a spell right now. Nobody could ever use it for evil again. But then we won\'t know where Stefan is...\n\nOr I give her the stone, and we save Stefan tonight. But Katherine gets a power nobody knows anything about.'), D, R),
+  m(junta(fase(16, nomeFase(16)), L('A decisão é sua, caçadora. *Destruir* a pedra ou *entregar* à Katherine?', 'Sinä päätät, metsästäjä. *Tuhotaanko* kivi vai *annetaanko* se Katherinelle?', 'It\'s your call, hunter. *Destroy* the stone or *give* it to Katherine?')), D, { repetir: true, opcoes: [DESTRUIR, ENTREGAR] }),
+];
+
+const FIM_PEDRA = e => [
+  m(L('💥 Eu *destruí* a pedra.', '💥 Minä *tuhosin* kiven.', '💥 I *destroyed* the stone.'), 2000, { efeito: 'tremor' }),
+  m(L('Segurei a pedra com as duas mãos e falei o feitiço da minha avó. Ela rachou, brilhou azul uma última vez... e virou pó prateado no chão do salão.', 'Pidin kiveä molemmin käsin ja lausuin isoäitini loitsun. Se halkesi, hehkui sinisenä viimeisen kerran... ja muuttui hopeiseksi pölyksi salin lattialle.', 'I held the stone with both hands and said my grandma\'s spell. It cracked, glowed blue one last time... and turned into silver dust on the ballroom floor.')),
+  m(L('A Katherine gritou e sumiu pela janela em meio segundo. Mas ela deixou cair uma coisa: o *celular* dela. E a última mensagem dizia: _"Stefan — porão da velha igreja."_ 😮',
+      'Katherine huusi ja katosi ikkunasta puolessa sekunnissa. Mutta häneltä putosi jotain: hänen *puhelimensa*. Ja viimeisessä viestissä luki: _"Stefan — vanhan kirkon kellari."_ 😮',
+      'Katherine screamed and vanished through the window in half a second. But she dropped something: her *phone*. And the last message said: _"Stefan — old church cellar."_ 😮')),
+  m(aliado(e)
+    ? L('Eu, o Lucien e o Damon corremos até lá e tiramos o Stefan das correntes antes do sol nascer. Ele está fraco, mas está vivo. 🙏', 'Minä, Lucien ja Damon juoksimme sinne ja vapautimme Stefanin kahleista ennen auringonnousua. Hän on heikko, mutta elossa. 🙏', 'Lucien, Damon and I ran there and freed Stefan from the chains before sunrise. He\'s weak, but he\'s alive. 🙏')
+    : L('Eu e o Damon corremos até lá e tiramos o Stefan das correntes antes do sol nascer. Ele está fraco, mas está vivo. 🙏', 'Damon ja minä juoksimme sinne ja vapautimme Stefanin kahleista ennen auringonnousua. Hän on heikko, mutta elossa. 🙏', 'Damon and I ran there and freed Stefan from the chains before sunrise. He\'s weak, but he\'s alive. 🙏')),
+  vid('final_baile', ''),
+  OBRIGADA,
+  m(L('🏆 *FINAL C: A Pedra Partida*\nVocê terminou os 3 capítulos da Operação Mystic Falls! Não fez trato com a Katherine e mesmo assim salvou o Stefan.\n\nMande *reiniciar* para jogar de novo: escolhas diferentes nas fases 7 e 16 mudam a história.',
+      '🏆 *LOPPU C: Särkynyt kivi*\nPelasit Operaatio Mystic Fallsin kaikki 3 lukua! Et tehnyt sopimusta Katherinen kanssa ja pelastit silti Stefanin.\n\nKirjoita *aloita alusta* pelataksesi uudelleen: eri valinnat tasoilla 7 ja 16 muuttavat tarinaa.',
+      '🏆 *ENDING C: The Broken Stone*\nYou finished all 3 chapters of Operation Mystic Falls! You made no deal with Katherine and still saved Stefan.\n\nSend *restart* to play again: different choices in levels 7 and 16 change the story.'), 1500, { opcoes: [REINICIAR] }),
+];
+
+const FIM_TRATO = () => [
+  m(L('🤝 Eu *entreguei* a pedra para a Katherine.', '🤝 Minä *annoin* kiven Katherinelle.', '🤝 I *gave* the stone to Katherine.'), 2000),
+  m(L('Ela segurou a pedra, fechou os olhos e sorriu como quem esperou 500 anos por isso. Depois cochichou no meu ouvido: _"Porão da velha igreja. Corram."_', 'Hän piti kiveä, sulki silmänsä ja hymyili kuin olisi odottanut tätä 500 vuotta. Sitten hän kuiskasi korvaani: _"Vanhan kirkon kellari. Juoskaa."_', 'She held the stone, closed her eyes and smiled like someone who had waited 500 years for this. Then she whispered in my ear: _"The old church cellar. Run."_')),
+  m(L('Ela cumpriu a promessa! O Stefan estava lá, acorrentado. A gente salvou ele antes do sol nascer. 🙏', 'Hän piti lupauksensa! Stefan oli siellä kahleissa. Pelastimme hänet ennen auringonnousua. 🙏', 'She kept her promise! Stefan was there, in chains. We saved him before sunrise. 🙏')),
+  m(L('Mas quando o sol nasceu... eu vi a Katherine andando na praça, *em pleno sol*, sem anel nenhum. A maldição dela quebrou. Agora ela é mais forte do que nunca. 😶', 'Mutta kun aurinko nousi... näin Katherinen kävelevän aukiolla *keskellä auringonpaistetta* ilman sormusta. Hänen kirouksensa murtui. Nyt hän on vahvempi kuin koskaan. 😶', 'But when the sun came up... I saw Katherine walking across the square *in broad daylight*, without any ring. Her curse is broken. Now she\'s stronger than ever. 😶'), D, { efeito: 'glitch' }),
+  vid('final_baile', ''),
+  OBRIGADA,
+  m(L('🏆 *FINAL D: O Trato com Katherine*\nVocê terminou os 3 capítulos da Operação Mystic Falls! Salvou o Stefan, mas deu poder a quem não devia.\n\nMande *reiniciar* para jogar de novo: escolhas diferentes nas fases 7 e 16 mudam a história.',
+      '🏆 *LOPPU D: Sopimus Katherinen kanssa*\nPelasit Operaatio Mystic Fallsin kaikki 3 lukua! Pelastit Stefanin, mutta annoit voimaa väärälle henkilölle.\n\nKirjoita *aloita alusta* pelataksesi uudelleen: eri valinnat tasoilla 7 ja 16 muuttavat tarinaa.',
+      '🏆 *ENDING D: The Deal with Katherine*\nYou finished all 3 chapters of Operation Mystic Falls! You saved Stefan, but gave power to the wrong person.\n\nSend *restart* to play again: different choices in levels 7 and 16 change the story.'), 1500, { opcoes: [REINICIAR] }),
+];
+
+const FASES = { 1: FASE1, 2: FASE2, 3: FASE3, 4: FASE4, 5: FASE5, 6: FASE6, 7: FASE7, 8: FASE8, 9: FASE9, 10: FASE10, 11: FASE11, 12: FASE12, 13: FASE13, 14: FASE14, 15: FASE15, 16: FASE16 };
 const msgsDaFase = (fase, e) => typeof FASES[fase] === 'function' ? FASES[fase](e) : FASES[fase];
 // o que é reenviado quando a jogadora pede "repetir"
 const pistas = (fase, e) => msgsDaFase(fase, e).filter(x => x.repetir).map(({ apagar, efeito, ...x }) => ({ ...x, espera: 1200 }));
@@ -647,6 +759,14 @@ const DICAS = {
        L('É "a erva roxa que queima os vampiros". Lembra o que o Tristan bebeu no chá?', 'Se on "violetti yrtti, joka polttaa vampyyreja". Muistatko, mitä Tristan joi teessään?', 'It\'s "the purple herb that burns vampires". Remember what Tristan drank in his tea?')],
   12: [L('Risque os feitiços da lua *cheia*. Depois risque os que não usam *verbena*.', 'Yliviivaa *täysikuun* loitsut. Sitten yliviivaa ne, joissa ei ole *verbenaa*.', 'Cross out the *full* moon spells. Then cross out the ones that don\'t use *vervain*.'),
        L('Sobram dois feitiços: um *desperta* e o outro *sela*. Qual sela?', 'Jäljelle jää kaksi loitsua: toinen *herättää* ja toinen *sinetöi*. Kumpi sinetöi?', 'Two spells are left: one *awakens* and the other *seals*. Which one seals?')],
+  13: [L('A dourada é a número 4. Então só valem as máscaras 1, 2 e 3. Agora risque a vermelha.', 'Kultainen on numero 4. Vain naamiot 1, 2 ja 3 käyvät. Yliviivaa nyt punainen.', 'The gold one is number 4. So only masks 1, 2 and 3 count. Now cross out the red one.'),
+       L('Entre a 1 e a 3, só uma não tem penas. Qual é a cor dela?', 'Naamioista 1 ja 3 vain toisessa ei ole sulkia. Minkä värinen se on?', 'Between masks 1 and 3, only one has no feathers. What color is it?')],
+  14: [L('Olhe o desenho: cheia, metade, vazia, metade, cheia, metade... e depois?', 'Katso kuvaa: täysi, puolikas, tyhjä, puolikas, täysi, puolikas... ja sitten?', 'Look at the picture: full, half, empty, half, full, half... and then?'),
+       L('Depois da metade que está diminuindo vem a lua *vazia*, toda escura: a lua ____.', 'Pienenevän puolikkaan jälkeen tulee *tyhjä*, ihan pimeä kuu: ____kuu.', 'After the shrinking half comes the *empty* moon, all dark: the ____ moon.')],
+  15: [L('Olhe as *mãos* das duas na imagem.', 'Katso kuvasta molempien *käsiä*.', 'Look at both girls\' *hands* in the picture.'),
+       L('Quem precisa de luvas para segurar um colar de verbena?', 'Kuka tarvitsee hansikkaat pitääkseen verbenakorua?', 'Who needs gloves to hold a vervain necklace?')],
+  16: [L('Não tem resposta errada. Escreva *destruir* ou *entregar*.', 'Väärää vastausta ei ole. Kirjoita *tuhoa* tai *anna*.', 'There\'s no wrong answer. Write *destroy* or *give*.'),
+       L('Escreva *destruir* ou *entregar*.', 'Kirjoita *tuhoa* tai *anna*.', 'Write *destroy* or *give*.')],
 };
 
 // nomes da série que a jogadora pode mandar a qualquer momento (não contam como erro)
@@ -654,7 +774,7 @@ const SEGREDOS = {
   damon: () => [m(L('O Damon? Ele está me ajudando... eu acho. Com o Damon nunca dá para ter certeza. 😏', 'Damon? Hän auttaa minua... luulisin. Damonin kanssa ei voi koskaan olla varma. 😏', 'Damon? He\'s helping me... I think. With Damon you can never be sure. 😏'), 1800)],
   stefan: () => [m(L('O Stefan sumiu desde ontem. A última coisa que ele deixou foi aquele diário.', 'Stefan on ollut kateissa eilisestä asti. Viimeinen asia, jonka hän jätti, oli se päiväkirja.', 'Stefan has been missing since yesterday. The last thing he left was that diary.'), 1800)],
   elena: () => [m(L('A Elena está segura em casa. Pelo menos foi o que ela disse.', 'Elena on turvassa kotona. Ainakin niin hän sanoi.', 'Elena is safe at home. At least that\'s what she said.'), 1800, { apagar: 4000 })],
-  katherine: () => [m(L('Katherine?? Se ela estiver na cidade, estamos todas perdidas.', 'Katherine?? Jos hän on kaupungissa, olemme kaikki hukassa.', 'Katherine?? If she\'s in town, we\'re all doomed.'), 1500, { efeito: 'glitch' })],
+  katherine: (e) => [m(e.fase >= 13 && e.cap3 ? L('A Katherine sempre tem um plano. E sempre tem um plano B. 💋', 'Katherinella on aina suunnitelma. Ja aina myös varasuunnitelma. 💋', 'Katherine always has a plan. And always a plan B. 💋') : L('Katherine?? Se ela estiver na cidade, estamos todas perdidas.', 'Katherine?? Jos hän on kaupungissa, olemme kaikki hukassa.', 'Katherine?? If she\'s in town, we\'re all doomed.'), 1500, { efeito: 'glitch' })],
   klaus: () => [m(L('Não. Diga. Esse. Nome. 🩸', 'Älä. Sano. Sitä. Nimeä. 🩸', 'Do. Not. Say. That. Name. 🩸'), 1500, { efeito: 'sangue' })],
   caroline: () => [m(L('A Caroline está organizando o Baile dos Fundadores, claro. Ela organiza tudo nesta cidade. ✨', 'Caroline järjestää tietysti Perustajien tanssiaiset. Hän järjestää kaiken tässä kaupungissa. ✨', 'Caroline is organizing the Founders\' Ball, of course. She organizes everything in this town. ✨'), 1800)],
   matt: () => [m(L('O Matt é o único humano normal desta cidade. Ele merece férias. 🍔', 'Matt on tämän kaupungin ainoa tavallinen ihminen. Hän ansaitsee lomaa. 🍔', 'Matt is the only normal human in this town. He deserves a vacation. 🍔'), 1800)],
@@ -699,6 +819,7 @@ function avancar(fase, e = {}) {
   const estado = { fase, erros: 0 };
   if (e.final) estado.final = e.final;
   if (fase >= 8) estado.cap2 = true;
+  if (fase >= 13) estado.cap3 = true;
   return { estado, msgs: msgsDaFase(fase, estado) };
 }
 
@@ -717,7 +838,7 @@ export function localizar(msgs, lg) {
 // Recebe o estado e o que a jogadora escreveu; devolve o novo estado e as mensagens de resposta, já na língua dela.
 export function responder(estado, mensagem) {
   const lg = LINGUAS.includes(estado?.lingua) ? estado.lingua : 'pt';
-  const t = normalizar(mensagem);
+  const t = normalizar(String(mensagem || '').replace(/🌑/g, ' lua nova '));
   // trocar de língua não muda o jogo
   if (LINGUA_CMD[t]) {
     const novo = LINGUA_CMD[t];
@@ -733,9 +854,10 @@ function jogar(e, t) {
   if (cmd('reiniciar') || e.fase === 0) return avancar(1);
   // terminou o Capítulo 1: qualquer mensagem abre o Capítulo 2 (vale também para quem terminou a versão antiga do jogo)
   if (e.fase === 8 && !e.cap2) return avancar(8, e);
-  if (e.fase >= FIM) return { estado: e, msgs: [m(aliado(e)
-    ? L('Você já terminou a Operação Mystic Falls com o *Final A: Amigos de Sangue*. 🤝\nMande *reiniciar* para jogar de novo e escolher diferente na fase 7: o Capítulo 2 muda!', 'Olet jo pelannut Operaatio Mystic Fallsin loppuun *Loppu A: Veriystävät* -lopulla. 🤝\nKirjoita *aloita alusta* pelataksesi uudelleen ja valitse tasolla 7 toisin: luku 2 muuttuu!', 'You already finished Operation Mystic Falls with *Ending A: Blood Friends*. 🤝\nSend *restart* to play again and choose differently in level 7: chapter 2 changes!')
-    : L('Você já terminou a Operação Mystic Falls com o *Final B: A Lua Branca*. 🌕\nMande *reiniciar* para jogar de novo e escolher diferente na fase 7: o Capítulo 2 muda!', 'Olet jo pelannut Operaatio Mystic Fallsin loppuun *Loppu B: Valkoinen kuu* -lopulla. 🌕\nKirjoita *aloita alusta* pelataksesi uudelleen ja valitse tasolla 7 toisin: luku 2 muuttuu!', 'You already finished Operation Mystic Falls with *Ending B: The White Moon*. 🌕\nSend *restart* to play again and choose differently in level 7: chapter 2 changes!'), 1200, { opcoes: [REINICIAR] })] };
+  // terminou o Capítulo 2 (ou a versão de 2 capítulos): qualquer mensagem abre o Capítulo 3
+  if (e.fase === 13 && !e.cap3) return avancar(13, e);
+  if (e.fase >= FIM) return { estado: e, msgs: [m(junta(L('Você já terminou a Operação Mystic Falls com o *', 'Olet jo pelannut Operaatio Mystic Fallsin loppuun: *', 'You already finished Operation Mystic Falls with *'), FINAIS['cap3-' + (e.fim3 === 'trato' ? 'trato' : 'pedra')],
+    L('*. 🏆\nMande *reiniciar* para jogar de novo: escolhas diferentes nas fases 7 e 16 mudam a história!', '*. 🏆\nKirjoita *aloita alusta* pelataksesi uudelleen: eri valinnat tasoilla 7 ja 16 muuttavat tarinaa!', '*. 🏆\nSend *restart* to play again: different choices in levels 7 and 16 change the story!')), 1200, { opcoes: [REINICIAR] })] };
   if (cmd('ajuda')) return { estado: e, msgs: AJUDA };
   const segredo = SEGREDOS[t] || SEGREDOS[t.replace(/^(e |o |a |cade |e o |e a |and |where is |enta |missa on )+/, '')];
   const msgsSegredo = segredo && segredo(e);
@@ -821,12 +943,36 @@ function jogar(e, t) {
       return errou(L('A pedra rachou mais um pouco! 😱 Leia a frase do espelho de trás para frente.', 'Kivi halkesi vähän lisää! 😱 Lue peilin lause takaperin.', 'The stone cracked a little more! 😱 Read the mirror sentence backwards.'), { efeito: 'tremor' });
 
     case 12:
-      if (tem(t, 'quietus', 'aeternum') || /\b108\b/.test(t)) return { estado: { fase: FIM, erros: 0, final: e.final, cap2: true }, msgs: aliado(e) ? FIM_ALIADO : FIM_SOMBRA };
+      if (tem(t, 'quietus', 'aeternum') || /\b108\b/.test(t)) return { estado: { fase: 13, erros: 0, final: e.final, cap2: true }, msgs: aliado(e) ? FIM_ALIADO : FIM_SOMBRA };
       if (tem(t, 'sanguinem', 'lunae') || /\b101\b/.test(t)) return errou(L('NÃO!! Esse *desperta*! A pedra começou a tremer! 😱 Leia o <Efeito>.', 'EI!! Tuo *herättää*! Kivi alkoi täristä! 😱 Lue <Vaikutus>.', 'NO!! That one *awakens*! The stone started shaking! 😱 Read the <Effect>.'), { efeito: 'sangue' });
       if (tem(t, 'silentium', 'petra') || /\b105\b/.test(t)) return errou(L('Esse sela, mas só funciona na lua *cheia*. A lua lá fora está *de sangue*!', 'Tuo sinetöi, mutta toimii vain *täysikuulla*. Ulkona on *verikuu*!', 'That one seals, but it only works on a *full* moon. The moon outside is a *blood* moon!'));
       if (tem(t, 'motus', 'obscura') || /\b112\b/.test(t)) return errou(L('Esse usa *sal*, e eu só tenho verbena aqui.', 'Siinä käytetään *suolaa*, ja minulla on vain verbenaa.', 'That one uses *salt*, and I only have vervain here.'));
       if (tem(t, 'ascendo', 'phaesmatos', 'incendia') || /\b(091|093|91|93)\b/.test(t)) return errou(L('Esse é da lua *cheia*. Hoje a lua está vermelha!', 'Tuo on *täysikuun* loitsu. Tänään kuu on punainen!', 'That one is for a *full* moon. Tonight the moon is red!'));
       return errou(L('Não sei esse feitiço... ⏳ Procure no grimório o nome que está em <Incantamentum>.', 'En tunne tuota loitsua... ⏳ Etsi loitsukirjasta nimi kohdasta <Incantamentum>.', 'I don\'t know that spell... ⏳ Look in the grimoire for the name in <Incantamentum>.'));
+
+    case 13:
+      if (tem(t, 'prata', 'prateada', 'hopea', 'silver') || /^(3|tres|terceira|kolme|kolmas|three|third)$/.test(t)) return avancar(14, e);
+      if (tem(t, 'vermelh', 'punai', 'red')) return errou(L('O recado diz: *não é vermelha*. 😉', 'Viestissä lukee: *ei ole punainen*. 😉', 'The note says: *not red*. 😉'));
+      if (tem(t, 'dourad', 'ouro', 'kulta', 'kultai', 'gold')) return errou(L('A dourada é a referência: a máscara dela fica *à esquerda* da dourada.', 'Kultainen on vain vertailukohta: hänen naamionsa on kultaisen *vasemmalla puolella*.', 'The gold one is just the reference: her mask is *to the left of* the gold one.'));
+      if (tem(t, 'azul', 'sini', 'blue')) return errou(L('A azul tem *penas*. Olha de novo!', 'Sinisessä on *sulkia*. Katso uudelleen!', 'The blue one has *feathers*. Look again!'));
+      if (tem(t, 'pret', 'musta', 'black')) return errou(L('A preta fica à *direita* da dourada.', 'Musta on kultaisen *oikealla* puolella.', 'The black one is to the *right* of the gold one.'));
+      return errou(L('Hmm, não vejo essa máscara. Mande a *cor*: azul, vermelha, prata, dourada ou preta?', 'Hmm, en näe tuollaista naamiota. Lähetä *väri*: sininen, punainen, hopea, kulta vai musta?', 'Hmm, I don\'t see that mask. Send the *color*: blue, red, silver, gold or black?'));
+
+    case 14:
+      if (tem(t, 'lua nova', 'uusikuu', 'uusi kuu', 'new moon', 'nova', 'uusi', 'vazia', 'escura', 'tyhja', 'pimea', 'empty', 'dark')) return avancar(15, e);
+      if (tem(t, 'cheia', 'taysi', 'full')) return errou(L('A cheia já apareceu duas vezes. Depois da metade que diminui vem outra coisa...', 'Täysikuu on jo kuvassa kahdesti. Pienenevän puolikkaan jälkeen tulee jotain muuta...', 'The full moon already appeared twice. After the shrinking half comes something else...'));
+      if (tem(t, 'quarto', 'metade', 'minguante', 'crescente', 'puoli', 'half', 'quarter', 'crescent')) return errou(L('Quase! Mas depois da metade vem a lua *vazia*. 🌑', 'Melkein! Mutta puolikkaan jälkeen tulee *tyhjä* kuu. 🌑', 'Almost! But after the half moon comes the *empty* one. 🌑'));
+      return errou(L('*Clic.* A caixinha não abriu. 🎵 Siga o caminho da lua no desenho.', '*Naks.* Rasia ei auennut. 🎵 Seuraa kuun polkua kuvassa.', '*Click.* The box didn\'t open. 🎵 Follow the moon\'s path in the picture.'));
+
+    case 15:
+      if (/^(a )?(n(umero)? ?)?(1|um|uma|primeira|yksi|ykkonen|ensimmainen|one|first)$/.test(t) || tem(t, 'numero 1', 'number 1', 'luva', 'hansik', 'glove')) return avancar(16, e);
+      if (/\b(2|dois|duas|segunda|kaksi|kakkonen|toinen|two|second)\b/.test(t)) return errou(L('A número 2 está segurando o colar de verbena com a *mão nua*... e não se queimou. Pensa!', 'Numero 2 pitää verbenakorua *paljaalla kädellä*... eikä palanut. Mieti!', 'Number 2 is holding the vervain necklace with her *bare hand*... and didn\'t get burned. Think!'));
+      return { estado: e, msgs: [m(L('Me diga só o número: *1* ou *2*?', 'Kerro vain numero: *1* vai *2*?', 'Just tell me the number: *1* or *2*?'), 1200, { opcoes: ['1', '2'] })] };
+
+    case 16:
+      if (tem(t, 'destru', 'quebr', 'tuho', 'riko', 'destroy', 'break', 'smash')) return { estado: { ...e, fase: FIM, erros: 0, fim3: 'pedra' }, msgs: FIM_PEDRA(e) };
+      if (tem(t, 'entreg', 'dar', 'anna', 'luovuta', 'give', 'hand', 'trade', 'deal', 'trato')) return { estado: { ...e, fase: FIM, erros: 0, fim3: 'trato' }, msgs: FIM_TRATO(e) };
+      return { estado: e, msgs: [m(L('A Katherine está esperando! *Destruir* ou *entregar*?', 'Katherine odottaa! *Tuhoa* vai *anna*?', 'Katherine is waiting! *Destroy* or *give*?'), 1200, { opcoes: [DESTRUIR, ENTREGAR] })] };
   }
   return { estado: e, msgs: AJUDA };
 }
