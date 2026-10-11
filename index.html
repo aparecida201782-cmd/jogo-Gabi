@@ -6,6 +6,13 @@
 <meta name="theme-color" content="#03040f">
 <meta name="description" content="Os jogos da Gabi, feitos com carinho pela Madrinha Ana. Gabin pelit, kummitäti Anan tekemät.">
 <title>Galáxia da Gabi</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="Galáxia da Gabi">
+<meta property="og:description" content="Seis jogos feitos com carinho pela Madrinha Ana, em português e finlandês.">
+<meta property="og:url" content="https://jogodamadrinhaana.dynosai.cloud/">
+<meta property="og:image" content="https://jogodamadrinhaana.dynosai.cloud/assets/icon-only.png">
+<meta name="twitter:card" content="summary">
+<link rel="apple-touch-icon" href="assets/icon-only.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='18' fill='%23ffc93c'/%3E%3Cellipse cx='32' cy='32' rx='30' ry='9' fill='none' stroke='%2338e8ff' stroke-width='4' transform='rotate(-20 32 32)'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -55,6 +62,10 @@
   .jogo:nth-child(even) .orbe::after{display:none}
   .nome{grid-area:nome;align-self:end;font-family:var(--titulo);font-weight:700;font-size:clamp(.86rem,2.1vmin,1.02rem);letter-spacing:.04em;line-height:1.2}
   .desc{grid-area:desc;align-self:start;color:var(--suave);font-size:clamp(.8rem,1.9vmin,.92rem);line-height:1.35}
+  /* progresso salvo de cada jogo (só aparece depois de jogar) */
+  .prog{grid-column:1/-1;margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;justify-content:inherit}
+  .prog:empty{display:none}
+  .prog span{font-size:.74rem;font-weight:700;padding:3px 9px;border-radius:99px;color:var(--tinta);background:color-mix(in srgb,var(--c) 22%,transparent);border:1px solid color-mix(in srgb,var(--c) 55%,transparent)}
   .tag{position:absolute;top:-9px;right:14px;font-family:var(--titulo);font-size:.62rem;letter-spacing:.14em;padding:3px 9px;border-radius:99px;background:var(--c);color:#14040a;font-weight:900}
 
   footer{display:flex;justify-content:center;align-items:center;gap:8px 18px;flex-wrap:wrap;color:var(--suave);font-size:.8rem;text-align:center}
@@ -68,6 +79,7 @@
   @media (min-width:900px){
     .jogos{grid-template-columns:repeat(3,1fr)}
     .jogo a{grid-template-columns:1fr;grid-template-areas:"orbe" "nome" "desc";justify-items:center;text-align:center;row-gap:6px;padding:14px 14px 14px}
+    .prog{justify-content:center}
     .orbe{width:clamp(56px,6vw,80px);font-size:clamp(1.7rem,2.5vw,2.2rem);margin-bottom:2px}
     header{padding-top:clamp(4px,2vh,24px)}
     h1{font-size:clamp(2.6rem,10vmin,7rem)}
@@ -80,7 +92,7 @@
     .sub,.h1-fi,#ouvir{display:none}
     .jogos{grid-template-columns:repeat(6,1fr)}
     .jogo a{grid-template-columns:1fr;grid-template-areas:"orbe" "nome" "desc";justify-items:center;text-align:center;row-gap:6px}
-    .desc{display:none}
+    .desc,.prog{display:none}
   }
   /* finlandês embaixo do português, para o José ler */
   .fi{display:block;margin-top:3px;color:#a9e6ff;font-weight:600}
@@ -149,16 +161,17 @@
     <p class="h1-fi" lang="fi">Gabin galaksi</p>
     <p class="sub">Seis jogos feitos com carinho pela <b>Madrinha Ana</b>. Escolha um planeta para começar.<span class="fi" lang="fi">Kuusi peliä, jotka <b>kummitäti Ana</b> teki rakkaudella. Valitse planeetta ja aloita!</span></p>
     <button id="ouvir" type="button" lang="fi" hidden>🔊 Kuuntele suomeksi</button>
+    <p class="festa" id="falta" hidden></p>
     <p class="festa" id="festa" hidden>🎂 Hoje é aniversário da Madrinha Ana e Dia das Crianças!<span class="fi" lang="fi">Tänään on kummitäti Anan syntymäpäivä ja lasten päivä!</span></p>
   </header>
 
   <ul class="jogos">
-    <li class="jogo" style="--c:#ffc93c;--i:0"><a href="madrinha.html"><span class="orbe" aria-hidden="true">✈️</span><span class="nome">Madrinha Ana ao Resgate<span class="fi" lang="fi">Kummitäti Ana apuun</span></span><span class="desc">Aventura de pular e correr, do sertão do Ceará até a neve da Finlândia.<span class="fi" lang="fi">Hyppy- ja juoksuseikkailu Brasilian Cearásta Suomen lumeen asti.</span></span></a></li>
-    <li class="jogo" style="--c:#e0384f;--i:1"><a href="mystic.html"><span class="orbe" aria-hidden="true">🌕</span><span class="nome">Operação Mystic Falls<span class="fi" lang="fi">Operaatio Mystic Falls</span></span><span class="desc">Mistério de vampiros por mensagens. 3 capítulos, 16 fases e 6 finais: decifre as pistas e salve a cidade.<span class="fi" lang="fi">Vampyyrimysteeri viesteinä. 3 lukua, 16 tasoa ja 6 loppua: ratkaise vihjeet ja pelasta kaupunki.</span></span></a></li>
-    <li class="jogo" style="--c:#38e8ff;--i:2"><a href="neon.html"><span class="orbe" aria-hidden="true">🚀</span><span class="nome">Esquadrão Neon<span class="fi" lang="fi">Neonlaivue</span></span><span class="desc">Nave espacial contra chefões. Jogue sozinha ou em dupla, até online.<span class="fi" lang="fi">Avaruusalus isoja pomoja vastaan. Pelaa yksin tai kaksin, myös netissä.</span></span></a></li>
-    <li class="jogo" style="--c:#ff4fa3;--i:3"><a href="corrida.html"><span class="orbe" aria-hidden="true">🏃</span><span class="nome">Corrida Neon<span class="fi" lang="fi">Neonjuoksu</span></span><span class="desc">Corrida sem fim com a família. Desvie, pule e bata o recorde.<span class="fi" lang="fi">Loputon juoksu koko perheen kanssa. Väistä, hyppää ja tee ennätys.</span></span></a></li>
-    <li class="jogo" style="--c:#ff8a1f;--i:5"><a href="turbo.html"><span class="tag">NOVO · UUSI</span><span class="orbe" aria-hidden="true">🏎️</span><span class="nome">Turbo do José<span class="fi" lang="fi">Josén Turbo</span></span><span class="desc">Corrida de carrinho para o José, contra a família toda. Em português e finlandês!<span class="fi" lang="fi">Autokisa Josélle koko perhettä vastaan. Portugaliksi ja suomeksi!</span></span></a></li>
-    <li class="jogo" style="--c:#3dffb4;--i:4"><a href="historia.html"><span class="orbe" aria-hidden="true">📖</span><span class="nome">A Viagem da Madrinha<span class="fi" lang="fi">Kummitädin matka</span></span><span class="desc">História de escolhas: você decide o caminho até Helsinque.<span class="fi" lang="fi">Valintatarina: sinä päätät reitin Helsinkiin.</span></span></a></li>
+    <li class="jogo" style="--c:#ffc93c;--i:0"><a href="madrinha.html" data-jogo="madrinha"><span class="orbe" aria-hidden="true">✈️</span><span class="nome">Madrinha Ana ao Resgate<span class="fi" lang="fi">Kummitäti Ana apuun</span></span><span class="desc">Aventura de pular e correr, do sertão do Ceará até a neve da Finlândia.<span class="fi" lang="fi">Hyppy- ja juoksuseikkailu Brasilian Cearásta Suomen lumeen asti.</span></span></a></li>
+    <li class="jogo" style="--c:#e0384f;--i:1"><a href="mystic.html" data-jogo="mystic"><span class="orbe" aria-hidden="true">🌕</span><span class="nome">Operação Mystic Falls<span class="fi" lang="fi">Operaatio Mystic Falls</span></span><span class="desc">Mistério de vampiros por mensagens. 3 capítulos, 16 fases e 6 finais: decifre as pistas e salve a cidade.<span class="fi" lang="fi">Vampyyrimysteeri viesteinä. 3 lukua, 16 tasoa ja 6 loppua: ratkaise vihjeet ja pelasta kaupunki.</span></span></a></li>
+    <li class="jogo" style="--c:#38e8ff;--i:2"><a href="neon.html" data-jogo="neon"><span class="orbe" aria-hidden="true">🚀</span><span class="nome">Esquadrão Neon<span class="fi" lang="fi">Neonlaivue</span></span><span class="desc">Nave espacial contra chefões. Jogue sozinha ou em dupla, até online.<span class="fi" lang="fi">Avaruusalus isoja pomoja vastaan. Pelaa yksin tai kaksin, myös netissä.</span></span></a></li>
+    <li class="jogo" style="--c:#ff4fa3;--i:3"><a href="corrida.html" data-jogo="corrida"><span class="orbe" aria-hidden="true">🏃</span><span class="nome">Corrida Neon<span class="fi" lang="fi">Neonjuoksu</span></span><span class="desc">Corrida sem fim com a família. Desvie, pule e bata o recorde.<span class="fi" lang="fi">Loputon juoksu koko perheen kanssa. Väistä, hyppää ja tee ennätys.</span></span></a></li>
+    <li class="jogo" style="--c:#ff8a1f;--i:4"><a href="turbo.html" data-jogo="turbo"><span class="tag">NOVO · UUSI</span><span class="orbe" aria-hidden="true">🏎️</span><span class="nome">Turbo do José<span class="fi" lang="fi">Josén Turbo</span></span><span class="desc">Corrida de carrinho para o José, contra a família toda. Em português e finlandês!<span class="fi" lang="fi">Autokisa Josélle koko perhettä vastaan. Portugaliksi ja suomeksi!</span></span></a></li>
+    <li class="jogo" style="--c:#3dffb4;--i:5"><a href="historia.html" data-jogo="historia"><span class="orbe" aria-hidden="true">📖</span><span class="nome">A Viagem da Madrinha<span class="fi" lang="fi">Kummitädin matka</span></span><span class="desc">História de escolhas: você decide o caminho até Helsinque.<span class="fi" lang="fi">Valintatarina: sinä päätät reitin Helsinkiin.</span></span></a></li>
   </ul>
 
   <section class="gatos" aria-labelledby="gatos-titulo">
@@ -288,9 +301,58 @@ if ('speechSynthesis' in window) {
   };
 }
 
-// 12 de outubro: aniversário da Madrinha e Dia das Crianças
+// 12 de outubro: aniversário da Madrinha e Dia das Crianças (e, nos dias antes, a contagem)
 const hoje = new Date();
 if (hoje.getMonth() === 9 && hoje.getDate() === 12) document.getElementById('festa').hidden = false;
+else if (hoje.getMonth() === 9 && hoje.getDate() < 12) {
+  const n = 12 - hoje.getDate(), falta = document.getElementById('falta');
+  falta.innerHTML = n === 1
+    ? '🎈 Amanhã é aniversário da Madrinha Ana e Dia das Crianças!<span class="fi" lang="fi">Huomenna on kummitäti Anan syntymäpäivä ja lasten päivä!</span>'
+    : `🎈 Faltam ${n} dias para o aniversário da Madrinha Ana!<span class="fi" lang="fi">${n} päivää kummitäti Anan syntymäpäivään!</span>`;
+  falta.hidden = false;
+}
+
+// Progresso de cada jogo, lido do que os próprios jogos guardam no aparelho.
+// Só números e emojis, para servir em português e em finlandês.
+const ler = k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } };
+const PROGRESSO = {
+  madrinha() {
+    const s = ler('anaPlat'); if (!s || !s.lvl) return [];
+    const est = Object.values(s.stars || {}).reduce((a, b) => a + b, 0);
+    return [s.done7 ? '🏁 21/21' : `🗺️ ${Math.min(s.lvl, 21)}/21`, est && `⭐ ${est}/63`];
+  },
+  mystic() {
+    const s = ler('mysticFalls'), finais = ler('mysticFallsFinais') || [];
+    const f = s?.estado?.fase || 0; if (!f && !finais.length) return [];
+    return [f && (f > 16 ? '✅ 16/16' : `🔎 ${f}/16`), finais.length && `🎭 ${finais.length}/6`];
+  },
+  neon() {
+    const b = Object.values(ler('neonSave')?.best || {}).filter(Boolean);
+    return b.length ? [`🏅 ${Math.max(...b)}`] : [];
+  },
+  corrida() {
+    const s = ler('corridaSave'); if (!s) return [];
+    return [s.best && `🏅 ${s.best}`, s.coins && `🪙 ${s.coins}`];
+  },
+  turbo() {
+    const t = ler('turboJose')?.tacas || {};
+    return [t.ouro && `🏆 ${t.ouro}`, t.prata && `🥈 ${t.prata}`, t.bronze && `🥉 ${t.bronze}`];
+  },
+  historia() {
+    const c = ler('madrinha-conq') || [];
+    return c.length ? [`🎖️ ${c.length}`] : [];
+  },
+};
+document.querySelectorAll('[data-jogo]').forEach(a => {
+  let itens = [];
+  try { itens = PROGRESSO[a.dataset.jogo]().filter(Boolean); } catch {}
+  if (!itens.length) return;
+  const p = document.createElement('span');
+  p.className = 'prog';
+  p.setAttribute('aria-label', 'Seu progresso');
+  for (const t of itens) { const b = document.createElement('span'); b.textContent = t; p.append(b); }
+  a.append(p);
+});
 </script>
 <script src="abertura.js"></script>
 </body>
