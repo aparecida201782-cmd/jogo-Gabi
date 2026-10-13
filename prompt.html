@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#03040f">
+<meta name="description" content="Gerador de prompts: preencha alguns campos e receba um prompt completo e organizado para usar em qualquer IA.">
+<title>Gerador de Prompt</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 4l7 21 21 7-21 7-7 21-7-21-21-7 21-7z' fill='%23ffc93c'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@500;700;800&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  /* Formulário à esquerda, prompt pronto à direita. No celular fica um embaixo do outro. */
+  :root{
+    --ceu:#03040f; --painel:rgba(14,20,44,.82); --campo:#0b1230; --tinta:#eaf6ff; --suave:#9fb6d8; --linha:rgba(120,220,255,.22);
+    --neon:#38e8ff; --roxo:#b06bff; --rosa:#ff4fa3; --sol:#ffc93c; --aurora:#3dffb4; --erro:#ff6b6b;
+    --titulo:Orbitron,"Exo 2","Trebuchet MS",sans-serif; --texto:"Exo 2","Trebuchet MS",system-ui,sans-serif;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--ceu);color:var(--tinta);font-family:var(--texto)}
+  body{min-height:100dvh;overflow-x:hidden;
+    background:radial-gradient(1200px 600px at 10% -10%,rgba(176,107,255,.22),transparent 60%),
+               radial-gradient(900px 500px at 110% 10%,rgba(56,232,255,.16),transparent 60%),var(--ceu)}
+  .tela{width:min(1280px,100%);margin:0 auto;padding:calc(env(safe-area-inset-top) + 20px) 16px calc(env(safe-area-inset-bottom) + 28px)}
+  header{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px;margin-bottom:18px}
+  .voltar{color:var(--suave);text-decoration:none;font-size:.9rem}
+  .voltar:hover{color:var(--neon)}
+  h1{margin:4px 0 0;font-family:var(--titulo);font-weight:900;font-size:clamp(1.6rem,5vw,2.6rem);letter-spacing:.03em;
+    background:linear-gradient(100deg,var(--sol),var(--rosa) 45%,var(--roxo) 70%,var(--neon));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{margin:4px 0 0;color:var(--suave);max-width:60ch;line-height:1.45}
+
+  .grade{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:18px;align-items:start}
+  @media (max-width:900px){.grade{grid-template-columns:1fr}}
+  .painel{background:var(--painel);border:1px solid var(--linha);border-radius:18px;padding:18px;backdrop-filter:blur(6px)}
+  .saida{position:sticky;top:16px}
+  @media (max-width:900px){.saida{position:static}}
+  h2{font-family:var(--titulo);font-size:.82rem;letter-spacing:.2em;text-transform:uppercase;color:var(--aurora);margin:0 0 12px}
+
+  .tipos{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .tipo{border:1px solid var(--linha);background:transparent;color:var(--tinta);font:inherit;font-size:.9rem;padding:8px 12px;border-radius:99px;cursor:pointer}
+  .tipo:hover{border-color:var(--neon)}
+  .tipo[aria-pressed="true"]{background:linear-gradient(100deg,rgba(176,107,255,.35),rgba(56,232,255,.28));border-color:var(--neon);font-weight:700}
+
+  .campo{display:grid;gap:6px;margin-bottom:14px}
+  .campo label{font-weight:700;font-size:.95rem}
+  .campo .dica{color:var(--suave);font-size:.8rem;line-height:1.35}
+  .campo .obrig{color:var(--rosa)}
+  input[type=text],textarea,select{width:100%;font:inherit;font-size:.95rem;color:var(--tinta);background:var(--campo);border:1px solid var(--linha);border-radius:10px;padding:10px 12px}
+  textarea{resize:vertical;min-height:70px;line-height:1.4}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--neon);box-shadow:0 0 0 3px rgba(56,232,255,.18)}
+  .duas{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:520px){.duas{grid-template-columns:1fr}}
+  details{border-top:1px solid var(--linha);padding-top:12px;margin-top:4px}
+  summary{cursor:pointer;font-weight:700;color:var(--neon);margin-bottom:12px}
+  .checks{display:grid;gap:8px;margin-bottom:14px}
+  .checks label{display:flex;gap:10px;align-items:flex-start;font-size:.92rem;line-height:1.35;cursor:pointer}
+  .checks input{margin-top:3px;accent-color:var(--neon);width:16px;height:16px;flex:none}
+  [hidden]{display:none!important}
+
+  .medidor{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+  .barra{flex:1;height:10px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+  .barra i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--rosa),var(--sol),var(--aurora));transition:width .3s}
+  .nota{font-family:var(--titulo);font-size:1.1rem;min-width:4.5ch;text-align:right}
+  .rotulo{font-size:.85rem;color:var(--suave);margin:0 0 10px}
+  .dicas{margin:0 0 14px;padding-left:18px;color:var(--suave);font-size:.85rem;line-height:1.45}
+  .dicas li::marker{color:var(--sol)}
+  pre{margin:0;white-space:pre-wrap;word-break:break-word;background:#060a1f;border:1px solid var(--linha);border-radius:12px;padding:14px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.86rem;line-height:1.5;max-height:60vh;overflow:auto;min-height:160px}
+  .vazio{color:var(--suave);font-style:italic}
+  .acoes{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .botao{font:inherit;font-weight:700;font-size:.92rem;padding:10px 14px;border-radius:10px;border:1px solid var(--linha);background:transparent;color:var(--tinta);cursor:pointer}
+  .botao:hover{border-color:var(--neon)}
+  .botao.forte{background:linear-gradient(100deg,var(--roxo),var(--neon));border:0;color:#04061a}
+  .botao:disabled{opacity:.45;cursor:not-allowed}
+  .contagem{margin-top:8px;color:var(--suave);font-size:.8rem}
+  .aviso{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 20px);transform:translate(-50%,40px);opacity:0;transition:.25s;
+    background:var(--aurora);color:#03140c;font-weight:800;padding:10px 16px;border-radius:99px;pointer-events:none;z-index:9}
+  .aviso.ver{transform:translate(-50%,0);opacity:1}
+</style>
+</head>
+<body>
+<div class="tela">
+  <header>
+    <div>
+      <a class="voltar" href="index.html">← Galáxia da Gabi</a>
+      <h1>Gerador de Prompt</h1>
+      <p class="sub">Preencha o que souber. O prompt fica pronto ao lado, organizado do jeito que as IAs entendem melhor. Só a tarefa é obrigatória.</p>
+    </div>
+  </header>
+
+  <div class="grade">
+    <form class="painel" id="form" autocomplete="off" onsubmit="return false">
+      <h2>1 · Que tipo de pedido?</h2>
+      <div class="tipos" id="tipos" role="group" aria-label="Tipo de pedido"></div>
+
+      <h2>2 · O pedido</h2>
+      <div class="campo">
+        <label for="tarefa">O que você quer? <span class="obrig">*</span></label>
+        <textarea id="tarefa" rows="3"></textarea>
+        <span class="dica" id="dica-tarefa"></span>
+      </div>
+
+      <!-- Campos de texto (todos os tipos menos imagem) -->
+      <div id="bloco-texto">
+        <div class="campo">
+          <label for="papel">Quem a IA deve ser?</label>
+          <input type="text" id="papel">
+          <span class="dica">Um especialista dá respostas mais precisas. Ex.: "professora de matemática do 5º ano".</span>
+        </div>
+        <div class="campo">
+          <label for="contexto">Contexto</label>
+          <textarea id="contexto" rows="3" placeholder="Para que é, o que já foi feito, o que você já tem, qual o problema…"></textarea>
+          <span class="dica">É o campo que mais melhora a resposta: diga o porquê e a situação.</span>
+        </div>
+        <div class="duas">
+          <div class="campo">
+            <label for="publico">Para quem é?</label>
+            <input type="text" id="publico" placeholder="Ex.: crianças de 10 anos">
+          </div>
+          <div class="campo">
+            <label for="tom">Tom</label>
+            <select id="tom">
+              <option value="">Tanto faz</option>
+              <option>simples e direto</option>
+              <option>amigável e caloroso</option>
+              <option>profissional e formal</option>
+              <option>divertido e criativo</option>
+              <option>didático, explicando cada passo</option>
+              <option>persuasivo</option>
+              <option>técnico e detalhado</option>
+            </select>
+          </div>
+        </div>
+        <div class="duas">
+          <div class="campo">
+            <label for="formato">Formato da resposta</label>
+            <select id="formato">
+              <option value="">Tanto faz</option>
+              <option>texto corrido em parágrafos</option>
+              <option>lista com tópicos</option>
+              <option>passo a passo numerado</option>
+              <option>tabela</option>
+              <option>código com explicação curta</option>
+              <option>roteiro com cenas</option>
+              <option>e-mail pronto para enviar</option>
+              <option>post para redes sociais</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="tamanho">Tamanho</label>
+            <select id="tamanho">
+              <option value="">Tanto faz</option>
+              <option>bem curto (até 3 frases)</option>
+              <option>curto (1 parágrafo)</option>
+              <option>médio (3 a 5 parágrafos)</option>
+              <option>longo e completo</option>
+            </select>
+          </div>
+        </div>
+        <div class="campo">
+          <label for="regras">Regras e limites</label>
+          <textarea id="regras" rows="3" placeholder="Uma por linha. Ex.:&#10;não usar palavras difíceis&#10;citar fontes&#10;no máximo 200 palavras"></textarea>
+        </div>
+        <div class="campo">
+          <label for="exemplo">Exemplo do que você quer</label>
+          <textarea id="exemplo" rows="3" placeholder="Cole aqui um exemplo de resultado bom (opcional)."></textarea>
+          <span class="dica">Um exemplo vale mais que mil instruções.</span>
+        </div>
+
+        <details>
+          <summary>Turbinar o prompt</summary>
+          <div class="checks" id="tecnicas">
+            <label><input type="checkbox" value="perguntas"> Fazer perguntas antes se faltar informação</label>
+            <label><input type="checkbox" value="passos"> Pensar passo a passo antes de responder</label>
+            <label><input type="checkbox" value="revisar"> Revisar a própria resposta e corrigir erros</label>
+            <label><input type="checkbox" value="opcoes"> Dar 3 opções diferentes</label>
+            <label><input type="checkbox" value="honesto"> Dizer quando não souber, sem inventar</label>
+            <label><input type="checkbox" value="proximos"> Sugerir próximos passos no final</label>
+          </div>
+          <div class="campo">
+            <label for="idioma">Idioma da resposta</label>
+            <select id="idioma">
+              <option>português do Brasil</option>
+              <option>inglês</option>
+              <option>espanhol</option>
+              <option>finlandês</option>
+              <option>português e finlandês</option>
+            </select>
+          </div>
+        </details>
+      </div>
+
+      <!-- Campos de imagem -->
+      <div id="bloco-imagem" hidden>
+        <div class="duas">
+          <div class="campo">
+            <label for="estilo">Estilo</label>
+            <select id="estilo">
+              <option value="">Tanto faz</option>
+              <option>fotografia realista</option>
+              <option>ilustração infantil</option>
+              <option>desenho animado 3D, tipo Pixar</option>
+              <option>anime</option>
+              <option>aquarela</option>
+              <option>pixel art</option>
+              <option>arte digital cinematográfica</option>
+              <option>pintura a óleo</option>
+              <option>ícone minimalista</option>
+            </select>
+          </div>
+          <div class="campo">
+            <label for="proporcao">Formato da imagem</label>
+            <select id="proporcao">
+              <option value="">Tanto faz</option>
+              <option value="1:1">Quadrada (1:1)</option>
+              <option value="9:16">Celular / stories (9:16)</option>
+              <option value="16:9">Tela larga (16:9)</option>
+              <option value="4:5">Post de feed (4:5)</option>
+              <option value="3:2">Foto (3:2)</option>
+            </select>
+          </div>
+        </div>
+        <div class="campo">
+          <label for="cenario">Cenário e detalhes</label>
+          <textarea id="cenario" rows="2" placeholder="Onde está, o que tem em volta, roupas, expressão…"></textarea>
+        </div>
+        <div class="duas">
+          <div class="campo">
+            <label for="luz">Luz e clima</label>
+            <input type="text" id="luz" placeholder="Ex.: pôr do sol dourado, neon à noite">
+          </div>
+          <div class="campo">
+            <label for="cores">Cores</label>
+            <input type="text" id="cores" placeholder="Ex.: rosa, roxo e azul-turquesa">
+          </div>
+        </div>
+        <div class="campo">
+          <label for="camera">Enquadramento</label>
+          <select id="camera">
+            <option value="">Tanto faz</option>
+            <option>retrato de perto</option>
+            <option>corpo inteiro</option>
+            <option>paisagem ampla</option>
+            <option>vista de cima</option>
+            <option>ângulo de baixo, heroico</option>
+            <option>close em detalhe</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label for="evitar">O que evitar</label>
+          <input type="text" id="evitar" placeholder="Ex.: texto na imagem, dedos deformados, fundo poluído">
+        </div>
+      </div>
+
+      <div class="acoes">
+        <button type="button" class="botao" id="exemploBtn">Ver um exemplo</button>
+        <button type="button" class="botao" id="limpar">Limpar tudo</button>
+      </div>
+    </form>
+
+    <section class="painel saida" aria-labelledby="t-saida">
+      <h2 id="t-saida">3 · Seu prompt</h2>
+      <div class="medidor">
+        <div class="barra" aria-hidden="true"><i id="barra"></i></div>
+        <span class="nota" id="nota">0%</span>
+      </div>
+      <p class="rotulo" id="rotulo">Comece escrevendo a tarefa.</p>
+      <ul class="dicas" id="dicas"></ul>
+      <pre id="saida" aria-live="polite"></pre>
+      <div class="contagem" id="contagem"></div>
+      <div class="acoes">
+        <button type="button" class="botao forte" id="copiar">Copiar prompt</button>
+        <button type="button" class="botao" id="baixar">Baixar .txt</button>
+      </div>
+    </section>
+  </div>
+</div>
+<div class="aviso" id="aviso" role="status"></div>
+
+<script>
+// Cada tipo traz um papel, formato e técnicas que costumam funcionar bem para ele.
+const TIPOS = {
+  texto:    {nome:'✍️ Texto',      papel:'um escritor experiente e cuidadoso', formato:'', tecnicas:['revisar'],
+             dica:'Ex.: "Escreva um texto de aniversário para a minha afilhada Gabi, que vai fazer 11 anos."'},
+  estudo:   {nome:'📚 Estudo',     papel:'um professor paciente que explica com exemplos do dia a dia', formato:'passo a passo numerado', tecnicas:['passos','honesto'],
+             dica:'Ex.: "Explique frações e me dê 5 exercícios com as respostas no final."'},
+  codigo:   {nome:'💻 Código',     papel:'um programador sênior que escreve código limpo e testado', formato:'código com explicação curta', tecnicas:['perguntas','passos','revisar'],
+             dica:'Ex.: "Crie um jogo da memória em HTML e JavaScript num arquivo só."'},
+  negocio:  {nome:'📈 Negócio',    papel:'um especialista em marketing e vendas', formato:'', tecnicas:['opcoes','proximos'],
+             dica:'Ex.: "Crie 3 legendas de Instagram para divulgar bolos caseiros."'},
+  ideias:   {nome:'💡 Ideias',     papel:'um parceiro criativo cheio de ideias originais', formato:'lista com tópicos', tecnicas:['opcoes'],
+             dica:'Ex.: "Me dê ideias de festa de aniversário com tema de galáxia."'},
+  analise:  {nome:'🔍 Análise',    papel:'um analista crítico e imparcial', formato:'', tecnicas:['passos','honesto'],
+             dica:'Ex.: "Compare estes dois planos de celular e diga qual vale mais a pena."'},
+  imagem:   {nome:'🎨 Imagem',     imagem:true,
+             dica:'Descreva o que aparece: quem, fazendo o quê. Ex.: "uma menina astronauta flutuando entre planetas coloridos".'}
+};
+
+const $ = id => document.getElementById(id);
+const CAMPOS = ['tarefa','papel','contexto','publico','tom','formato','tamanho','regras','exemplo','idioma',
+                'estilo','proporcao','cenario','luz','cores','camera','evitar'];
+let tipo = 'texto';
+
+const TECNICAS = {
+  perguntas:'Se faltar alguma informação essencial, faça até 3 perguntas curtas antes de começar.',
+  passos:'Pense passo a passo antes de dar a resposta final.',
+  revisar:'Antes de entregar, revise a resposta, corrija erros e confira se cumpriu todos os requisitos.',
+  opcoes:'Apresente 3 opções diferentes entre si e diga qual você recomenda e por quê.',
+  honesto:'Se não tiver certeza de algo, diga claramente em vez de inventar.',
+  proximos:'Termine com uma lista curta de próximos passos práticos.'
+};
+
+function val(id){ return $(id).value.trim(); }
+function linhas(txt){ return txt.split('\n').map(l=>l.replace(/^[-•*\s]+/,'').trim()).filter(Boolean); }
+function tecnicasMarcadas(){ return [...document.querySelectorAll('#tecnicas input:checked')].map(i=>i.value); }
+
+function montarTexto(){
+  const p = [];
+  if (val('papel')) p.push(`# Papel\nVocê é ${val('papel')}.`);
+  p.push(`# Tarefa\n${val('tarefa')}`);
+  if (val('contexto')) p.push(`# Contexto\n${val('contexto')}`);
+  if (val('publico')) p.push(`# Público\nA resposta é para: ${val('publico')}. Adapte a linguagem e os exemplos para esse público.`);
+
+  const req = [];
+  if (val('tom')) req.push(`Tom: ${val('tom')}.`);
+  if (val('formato')) req.push(`Formato: ${val('formato')}.`);
+  if (val('tamanho')) req.push(`Tamanho: ${val('tamanho')}.`);
+  req.push(`Idioma: ${val('idioma')}.`);
+  req.push(...linhas(val('regras')).map(r => r[0].toUpperCase() + r.slice(1).replace(/[.;]?$/, '.')));
+  p.push(`# Requisitos\n${req.map(r=>'- '+r).join('\n')}`);
+
+  if (val('exemplo')) p.push(`# Exemplo de referência\nUse o exemplo abaixo como referência de estilo e qualidade, sem copiar o conteúdo:\n"""\n${val('exemplo')}\n"""`);
+
+  const t = tecnicasMarcadas();
+  if (t.length) p.push(`# Como trabalhar\n${t.map(k=>'- '+TECNICAS[k]).join('\n')}`);
+  return p.join('\n\n');
+}
+
+function montarImagem(){
+  const partes = [val('tarefa')];
+  if (val('cenario')) partes.push(val('cenario'));
+  if (val('estilo')) partes.push(`estilo ${val('estilo')}`);
+  if (val('camera')) partes.push(val('camera'));
+  if (val('luz')) partes.push(`iluminação: ${val('luz')}`);
+  if (val('cores')) partes.push(`paleta de cores: ${val('cores')}`);
+  partes.push('alta qualidade, muitos detalhes, composição equilibrada');
+  let s = partes.map(x => x.replace(/[.\s]+$/,'')).join(', ') + '.';
+  if (val('proporcao')) s += `\n\nProporção: ${val('proporcao')} (no Midjourney: --ar ${val('proporcao')})`;
+  if (val('evitar')) s += `\n\nEvitar: ${val('evitar')}.`;
+  return s;
+}
+
+// Nota de 0 a 100: quanto mais do que importa estiver preenchido, melhor a resposta da IA.
+function avaliar(){
+  const dicas = []; let n = 0;
+  const tarefa = val('tarefa');
+  if (!tarefa) return {n:0, dicas:[]};
+  n += 25;
+  if (tarefa.split(/\s+/).length >= 8) n += 10; else dicas.push('Detalhe mais a tarefa: use pelo menos uma frase completa dizendo exatamente o que quer.');
+  if (TIPOS[tipo].imagem){
+    const itens = [['estilo',15,'Escolha um estilo: muda completamente o resultado.'],['cenario',15,'Descreva o cenário e os detalhes da cena.'],
+                   ['luz',10,'Diga como é a luz (dia, noite, neon, pôr do sol).'],['cores',8,'Escolha as cores principais.'],
+                   ['camera',7,'Defina o enquadramento.'],['proporcao',5,'Escolha o formato da imagem.'],['evitar',5,'Diga o que não quer ver na imagem.']];
+    for (const [c,pts,d] of itens){ if (val(c)) n += pts; else dicas.push(d); }
+  } else {
+    const itens = [['contexto',18,'Adicione contexto: para que serve e qual a situação. É o que mais melhora a resposta.'],
+                   ['papel',8,'Diga quem a IA deve ser (um especialista).'],['publico',8,'Diga para quem é a resposta.'],
+                   ['formato',8,'Escolha o formato da resposta.'],['tom',5,'Escolha o tom.'],['tamanho',4,'Defina o tamanho.'],
+                   ['regras',7,'Coloque regras ou limites (o que fazer e o que evitar).'],['exemplo',7,'Cole um exemplo do resultado que você quer.']];
+    for (const [c,pts,d] of itens){ if (val(c)) n += pts; else dicas.push(d); }
+    if (!tecnicasMarcadas().length) dicas.push('Abra "Turbinar o prompt" e marque pelo menos uma técnica.');
+  }
+  return {n:Math.min(100,n), dicas:dicas.slice(0,3)};
+}
+
+function atualizar(){
+  const tarefa = val('tarefa');
+  const saida = $('saida');
+  const texto = tarefa ? (TIPOS[tipo].imagem ? montarImagem() : montarTexto()) : '';
+  if (texto){ saida.textContent = texto; saida.classList.remove('vazio'); }
+  else { saida.textContent = 'O prompt aparece aqui assim que você escrever a tarefa.'; saida.classList.add('vazio'); }
+  $('copiar').disabled = $('baixar').disabled = !texto;
+  $('contagem').textContent = texto ? `${texto.split(/\s+/).length} palavras · ${texto.length} caracteres` : '';
+
+  const {n, dicas} = avaliar();
+  $('barra').style.width = n + '%';
+  $('nota').textContent = n + '%';
+  $('rotulo').textContent = !tarefa ? 'Comece escrevendo a tarefa.' : n >= 85 ? 'Excelente! Prompt pronto para usar.' :
+                           n >= 60 ? 'Bom prompt. Dá para ficar ainda melhor:' : 'Funciona, mas falta informação importante:';
+  $('dicas').innerHTML = '';
+  for (const d of dicas){ const li = document.createElement('li'); li.textContent = d; $('dicas').append(li); }
+  salvar();
+}
+
+function escolherTipo(novo, aplicarPadroes){
+  const antigo = TIPOS[tipo];
+  tipo = novo;
+  const t = TIPOS[novo];
+  for (const b of document.querySelectorAll('.tipo')) b.setAttribute('aria-pressed', b.dataset.tipo === novo);
+  $('bloco-texto').hidden = !!t.imagem;
+  $('bloco-imagem').hidden = !t.imagem;
+  $('dica-tarefa').textContent = t.dica;
+  $('tarefa').placeholder = t.imagem ? 'Ex.: uma menina astronauta flutuando entre planetas coloridos' : 'Diga exatamente o que você quer que a IA faça.';
+  // Só troca o papel/formato se a pessoa não tiver mudado o sugerido pelo tipo anterior.
+  if (aplicarPadroes && !t.imagem){
+    if (!val('papel') || val('papel') === antigo.papel) $('papel').value = t.papel;
+    if (!val('formato') || val('formato') === antigo.formato) $('formato').value = t.formato;
+    for (const i of document.querySelectorAll('#tecnicas input')) i.checked = t.tecnicas.includes(i.value);
+  }
+  atualizar();
+}
+
+function salvar(){
+  try {
+    const dados = {tipo, tecnicas:tecnicasMarcadas()};
+    for (const c of CAMPOS) dados[c] = $(c).value;
+    localStorage.setItem('gerador-prompt', JSON.stringify(dados));
+  } catch(e){}
+}
+function carregar(){
+  try {
+    const dados = JSON.parse(localStorage.getItem('gerador-prompt') || 'null');
+    if (!dados) return false;
+    for (const c of CAMPOS) if (typeof dados[c] === 'string') $(c).value = dados[c];
+    for (const i of document.querySelectorAll('#tecnicas input')) i.checked = (dados.tecnicas||[]).includes(i.value);
+    escolherTipo(TIPOS[dados.tipo] ? dados.tipo : 'texto', false);
+    return true;
+  } catch(e){ return false; }
+}
+
+function avisar(msg){
+  const a = $('aviso'); a.textContent = msg; a.classList.add('ver');
+  clearTimeout(avisar.t); avisar.t = setTimeout(()=>a.classList.remove('ver'), 1800);
+}
+
+async function copiar(){
+  const txt = $('saida').textContent;
+  try { await navigator.clipboard.writeText(txt); }
+  catch(e){
+    const ta = document.createElement('textarea'); ta.value = txt; document.body.append(ta); ta.select();
+    document.execCommand('copy'); ta.remove();
+  }
+  avisar('Prompt copiado! ✨');
+}
+
+function baixar(){
+  const blob = new Blob([$('saida').textContent], {type:'text/plain;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'prompt.txt'; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+}
+
+function limpar(){
+  for (const c of CAMPOS) if (c !== 'idioma') $(c).value = '';
+  $('idioma').selectedIndex = 0;
+  escolherTipo(tipo, true);
+  $('tarefa').focus();
+}
+
+function exemplo(){
+  if (TIPOS[tipo].imagem){
+    $('tarefa').value = 'uma menina de 11 anos vestida de astronauta flutuando entre planetas coloridos, sorrindo';
+    $('cenario').value = 'galáxia cheia de estrelas, um planeta com anéis ao fundo, pequenas auroras';
+    $('estilo').value = 'desenho animado 3D, tipo Pixar';
+    $('luz').value = 'brilho neon suave vindo dos planetas';
+    $('cores').value = 'roxo, rosa, azul-turquesa e dourado';
+    $('camera').value = 'corpo inteiro';
+    $('proporcao').value = '9:16';
+    $('evitar').value = 'texto na imagem, dedos deformados, rosto distorcido';
+  } else {
+    escolherTipo('estudo', true);
+    $('tarefa').value = 'Me ensine a somar frações com denominadores diferentes e depois me dê 5 exercícios para praticar, com as respostas separadas no final.';
+    $('contexto').value = 'Tenho 11 anos e vou ter prova na semana que vem. Já sei somar frações quando o número de baixo é igual, mas me confundo quando é diferente.';
+    $('publico').value = 'uma criança de 11 anos';
+    $('tom').value = 'didático, explicando cada passo';
+    $('tamanho').value = 'médio (3 a 5 parágrafos)';
+    $('regras').value = 'usar exemplos com pizza ou chocolate\nnão usar palavras difíceis\nexercícios do mais fácil para o mais difícil';
+  }
+  atualizar();
+  avisar('Exemplo carregado');
+}
+
+// Monta os botões de tipo e liga tudo.
+for (const [k,t] of Object.entries(TIPOS)){
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'tipo'; b.dataset.tipo = k; b.textContent = t.nome;
+  b.addEventListener('click', () => escolherTipo(k, true));
+  $('tipos').append(b);
+}
+$('form').addEventListener('input', atualizar);
+$('form').addEventListener('change', atualizar);
+$('copiar').addEventListener('click', copiar);
+$('baixar').addEventListener('click', baixar);
+$('limpar').addEventListener('click', limpar);
+$('exemploBtn').addEventListener('click', exemplo);
+if (!carregar()) escolherTipo('texto', true);
+</script>
+</body>
+</html>
