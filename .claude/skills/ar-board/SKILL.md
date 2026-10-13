@@ -29,7 +29,7 @@ Fale sempre no idioma do usuário (português, por padrão neste projeto).
 3. Escreva em 2 ou 3 frases o seu entendimento do sistema e do objetivo da rodada. Se faltar algo essencial, faça uma única pergunta antes de seguir.
 
 ### 2. Propor opções
-Apresente de 3 a 5 opções numeradas, realmente diferentes entre si (não variações da mesma ideia). Para cada uma:
+Apresente 3 opções numeradas (até 5 se o assunto pedir), realmente diferentes entre si (não variações da mesma ideia). Para cada uma:
 
 ```
 [N] Título curto
@@ -72,6 +72,7 @@ Cada regra cita os vereditos que a sustentam (datas). Mostre ao usuário, em pou
 - Ao final, pergunte se quer outra rodada (sobre o mesmo sistema, refinando as aprovadas, ou sobre outro).
 
 ## Princípios
+- É um treinamento simples de um agente simples, inteligente e eficiente: rodadas curtas, opções diretas, texto enxuto. Por padrão, 3 opções; use até 5 só quando o assunto pedir.
 - O registro é a fonte da verdade sobre o gosto do usuário; a sua opinião vem depois dele.
 - Prefira menos opções e melhores a muitas opções rasas.
 - Cada rodada deve mostrar que você aprendeu: cite as regras que moldaram as opções.
