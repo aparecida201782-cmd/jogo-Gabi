@@ -28,7 +28,8 @@
   .voltar{color:var(--suave);text-decoration:none;font-size:.9rem}
   .voltar:hover{color:var(--neon)}
   h1{margin:4px 0 0;font-family:var(--titulo);font-weight:900;font-size:clamp(1.6rem,5vw,2.6rem);letter-spacing:.03em;
-    background:linear-gradient(100deg,var(--sol),var(--rosa) 45%,var(--roxo) 70%,var(--neon));-webkit-background-clip:text;background-clip:text;color:transparent}
+    background:linear-gradient(100deg,#d4486e,#a3213f 50%,#7b1830);-webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 14px rgba(163,33,63,.45))}
   .sub{margin:4px 0 0;color:var(--suave);max-width:60ch;line-height:1.45}
 
   .grade{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:18px;align-items:start}
@@ -75,6 +76,22 @@
   .botao.forte{background:linear-gradient(100deg,var(--roxo),var(--neon));border:0;color:#04061a}
   .botao:disabled{opacity:.45;cursor:not-allowed}
   .contagem{margin-top:8px;color:var(--suave);font-size:.8rem}
+  .ia{margin-top:18px;padding-top:16px;border-top:1px solid var(--linha)}
+  .ia p{margin:0 0 10px;color:var(--suave);font-size:.85rem;line-height:1.45}
+  .interruptor{display:flex;align-items:center;gap:10px;font-weight:700;cursor:pointer;margin-bottom:4px}
+  .interruptor input{appearance:none;width:44px;height:24px;border-radius:99px;background:rgba(255,255,255,.15);position:relative;cursor:pointer;transition:.2s;flex:none;margin:0}
+  .interruptor input::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s}
+  .interruptor input:checked{background:var(--aurora)}
+  .interruptor input:checked::after{left:23px}
+  .interruptor input:focus-visible{outline:2px solid var(--neon);outline-offset:2px}
+  #blocoIA{margin-top:14px}
+  .ia .botao.chat{background:linear-gradient(100deg,var(--aurora),var(--neon));border:0;color:#03140c}
+  .ia details{margin-top:12px}
+  .ia .chave{display:grid;grid-template-columns:1fr auto;gap:8px}
+  .ia input[type=password]{width:100%;font:inherit;font-size:.95rem;color:var(--tinta);background:var(--campo);border:1px solid var(--linha);border-radius:10px;padding:10px 12px}
+  .ia a{color:var(--neon)}
+  #melhorado{margin-top:12px;border-color:rgba(61,255,180,.45)}
+  .erro{color:var(--erro)!important}
   .aviso{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 20px);transform:translate(-50%,40px);opacity:0;transition:.25s;
     background:var(--aurora);color:#03140c;font-weight:800;padding:10px 16px;border-radius:99px;pointer-events:none;z-index:9}
   .aviso.ver{transform:translate(-50%,0);opacity:1}
@@ -274,6 +291,56 @@
         <button type="button" class="botao forte" id="copiar">Copiar prompt</button>
         <button type="button" class="botao" id="baixar">Baixar .txt</button>
       </div>
+
+      <div class="ia">
+        <label class="interruptor"><input type="checkbox" id="usarIA"> <span>Criar com a ajuda da IA (Laya ou ChatGPT)</span></label>
+        <div id="blocoIA" hidden>
+        <h2>4 · Deixar perfeito com IA</h2>
+        <p><b>Melhorar no ChatGPT</b> abre o ChatGPT já com o pedido pronto: usa a sua assinatura, sem chave. <b>Melhorar aqui mesmo</b> usa a IA escolhida abaixo (a Laya no seu servidor ou o GPT pela API) e mostra o resultado nesta página.</p>
+        <div class="acoes">
+          <button type="button" class="botao chat" id="abrirChat">Melhorar no ChatGPT ↗</button>
+          <button type="button" class="botao" id="melhorarAqui">Melhorar aqui mesmo</button>
+        </div>
+        <p class="contagem" id="iaStatus" role="status"></p>
+        <pre id="melhorado" hidden></pre>
+        <div class="acoes" id="acoesMelhorado" hidden>
+          <button type="button" class="botao forte" id="copiarMelhorado">Copiar prompt melhorado</button>
+          <button type="button" class="botao" id="usarMelhorado">Usar no ChatGPT ↗</button>
+        </div>
+        <details id="configIA">
+          <summary>Melhorar aqui mesmo: escolher a IA</summary>
+          <div class="campo">
+            <label for="provedorIA">Qual IA?</label>
+            <select id="provedorIA">
+              <option value="laya">Laya (Hermes no meu servidor)</option>
+              <option value="openai">GPT (API da OpenAI)</option>
+            </select>
+          </div>
+          <p id="ajudaOpenai">A API é separada da assinatura do ChatGPT e cobra por uso (centavos por prompt).
+             Crie a chave em <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">platform.openai.com/api-keys</a>.</p>
+          <div id="campoLaya" hidden>
+            <p>Endereço da API da Laya, compatível com OpenAI (termina em <code>/v1</code>). Precisa ser <b>https</b> e liberar acesso (CORS) para este site.</p>
+            <div class="campo">
+              <label for="urlIA">Endereço da Laya</label>
+              <input type="text" id="urlIA" placeholder="https://laya.dynosai.cloud/v1" spellcheck="false" autocomplete="off">
+            </div>
+          </div>
+          <p>A chave e o endereço ficam guardados só neste navegador e vão direto para a IA escolhida.</p>
+          <div class="campo">
+            <label for="chaveIA" id="rotuloChave">Chave da API</label>
+            <div class="chave">
+              <input type="password" id="chaveIA" placeholder="sk-..." autocomplete="off" spellcheck="false">
+              <button type="button" class="botao" id="esquecerChave">Apagar</button>
+            </div>
+          </div>
+          <div class="campo">
+            <label for="modeloIA">Modelo</label>
+            <input type="text" id="modeloIA" spellcheck="false">
+            <span class="dica">Nome do modelo que a IA escolhida aceita.</span>
+          </div>
+        </details>
+        </div>
+      </div>
     </section>
   </div>
 </div>
@@ -381,7 +448,7 @@ function atualizar(){
   const texto = tarefa ? (TIPOS[tipo].imagem ? montarImagem() : montarTexto()) : '';
   if (texto){ saida.textContent = texto; saida.classList.remove('vazio'); }
   else { saida.textContent = 'O prompt aparece aqui assim que você escrever a tarefa.'; saida.classList.add('vazio'); }
-  $('copiar').disabled = $('baixar').disabled = !texto;
+  $('copiar').disabled = $('baixar').disabled = $('abrirChat').disabled = $('melhorarAqui').disabled = !texto;
   $('contagem').textContent = texto ? `${texto.split(/\s+/).length} palavras · ${texto.length} caracteres` : '';
 
   const {n, dicas} = avaliar();
@@ -435,8 +502,7 @@ function avisar(msg){
   clearTimeout(avisar.t); avisar.t = setTimeout(()=>a.classList.remove('ver'), 1800);
 }
 
-async function copiar(){
-  const txt = $('saida').textContent;
+async function copiar(txt = $('saida').textContent){
   try { await navigator.clipboard.writeText(txt); }
   catch(e){
     const ta = document.createElement('textarea'); ta.value = txt; document.body.append(ta); ta.select();
@@ -482,6 +548,131 @@ function exemplo(){
   avisar('Exemplo carregado');
 }
 
+// ---- Melhorar com IA ----
+const PROVEDORES = {
+  openai: {url:'https://api.openai.com/v1', modelo:'gpt-5-mini', chaveObrigatoria:true},
+  laya:   {url:'', modelo:'hermes-agent', chaveObrigatoria:false}
+};
+const provedor = () => PROVEDORES[$('provedorIA').value] ? $('provedorIA').value : 'laya';
+const MAX_URL = 7000; // acima disso o link do ChatGPT pode ser cortado; aí copiamos e a pessoa cola
+
+function instrucoesIA(){
+  const imagem = TIPOS[tipo].imagem;
+  return `Você é um engenheiro de prompts especialista. Reescreva o prompt abaixo para que fique perfeito ${imagem ? 'para uma IA geradora de imagens' : 'para um assistente de IA como o ChatGPT'}.
+
+Regras:
+- Mantenha exatamente a intenção e todas as informações do original. Não invente fatos sobre a pessoa ou a situação.
+- Deixe claro, específico e bem organizado${imagem ? ': sujeito, ação, cenário, estilo, luz, cores, enquadramento, proporção e o que evitar' : ', com papel, tarefa, contexto, requisitos e formato da resposta'}.
+- Acrescente o que um especialista acrescentaria para melhorar o resultado (critérios de qualidade, detalhes úteis, armadilhas a evitar).
+- Onde faltar uma informação essencial que só a pessoa sabe, deixe um espaço entre [colchetes] para ela preencher.
+- Escreva em ${imagem ? 'português, com uma versão em inglês logo abaixo' : 'português do Brasil'}.
+- Responda somente com o prompt final, sem comentários antes ou depois.`;
+}
+
+function pedidoChat(texto){
+  return `${instrucoesIA()}\n\nPrompt original:\n"""\n${texto}\n"""\n\nEntregue o prompt final dentro de um bloco de código para eu copiar.`;
+}
+
+async function abrirNoChatGPT(texto){
+  const url = 'https://chatgpt.com/?q=' + encodeURIComponent(texto);
+  if (url.length <= MAX_URL){ window.open(url, '_blank', 'noopener'); return; }
+  await copiar(texto);
+  window.open('https://chatgpt.com/', '_blank', 'noopener');
+  avisar('Texto longo: copiei. Cole no ChatGPT ✨');
+}
+
+function iaStatus(msg, erro){
+  $('iaStatus').textContent = msg;
+  $('iaStatus').classList.toggle('erro', !!erro);
+}
+
+async function melhorarAqui(){
+  const texto = $('saida').textContent;
+  const chave = $('chaveIA').value.trim();
+  const p = PROVEDORES[provedor()];
+  const base = (provedor() === 'laya' ? $('urlIA').value.trim() : p.url).replace(/\/+$/, '').replace(/\/chat\/completions$/, '');
+  if (provedor() === 'laya' && !/^https?:\/\//.test(base)){
+    $('configIA').open = true; $('urlIA').focus();
+    iaStatus('Coloque o endereço da API da Laya abaixo (ex.: https://laya.dynosai.cloud/v1).', true);
+    return;
+  }
+  if (p.chaveObrigatoria && !chave){
+    $('configIA').open = true; $('chaveIA').focus();
+    iaStatus('Cole sua chave da API OpenAI abaixo, ou use o botão "Melhorar no ChatGPT", que não precisa de chave.', true);
+    return;
+  }
+  const btn = $('melhorarAqui');
+  btn.disabled = true; iaStatus('A IA está melhorando o seu prompt…');
+  try {
+    const headers = {'Content-Type':'application/json'};
+    if (chave) headers.Authorization = 'Bearer ' + chave;
+    const r = await fetch(base + '/chat/completions', {
+      method:'POST', headers,
+      body: JSON.stringify({
+        model: $('modeloIA').value.trim() || p.modelo,
+        messages:[{role:'system', content:instrucoesIA()}, {role:'user', content:texto}]
+      })
+    });
+    const dados = await r.json().catch(() => ({}));
+    if (!r.ok){
+      const msg = dados.error?.message || '';
+      if (r.status === 401) throw new Error('Chave inválida. Confira se copiou a chave inteira.');
+      if (r.status === 429) throw new Error(provedor() === 'laya' ? 'A Laya está ocupada ou no limite. Tente de novo em instantes.' : 'Sem crédito ou limite atingido na conta da API. Veja platform.openai.com/settings/organization/billing.');
+      if (r.status === 404) throw new Error(provedor() === 'laya' ? 'Endereço não encontrado. Confira se termina em /v1 e se a API da Laya está ligada.' : 'Esse modelo não está disponível na sua conta. Troque o nome do modelo.');
+      if (/model/i.test(msg)) throw new Error('Esse modelo não está disponível. Troque o nome do modelo.');
+      throw new Error(msg || 'Erro ' + r.status);
+    }
+    const melhor = (dados.choices?.[0]?.message?.content || '').trim().replace(/^```[a-z]*\n?|\n?```$/g, '');
+    if (!melhor) throw new Error('A IA não devolveu texto. Tente de novo.');
+    $('melhorado').textContent = melhor;
+    $('melhorado').hidden = $('acoesMelhorado').hidden = false;
+    iaStatus('Pronto! Prompt melhorado pela IA:');
+  } catch(e){
+    const semConexao = e.message === 'Failed to fetch' || e.name === 'TypeError';
+    iaStatus(!semConexao ? e.message : provedor() === 'laya'
+      ? 'Não consegui falar com a Laya. Confira se o endereço está certo, se usa https e se o servidor libera acesso (CORS) para este site.'
+      : 'Não consegui falar com a OpenAI. Confira a internet e tente de novo.', true);
+  } finally { btn.disabled = false; }
+}
+
+// Cada IA guarda a própria chave, modelo e endereço, só neste navegador.
+const ler = k => { try { return localStorage.getItem(k) || ''; } catch(e){ return ''; } };
+const gravar = (k, v) => { try { localStorage.setItem(k, v); } catch(e){} };
+function salvarIA(){
+  const pv = provedor();
+  gravar('gerador-prompt-provedor', pv);
+  gravar('gerador-prompt-chave-' + pv, $('chaveIA').value.trim());
+  gravar('gerador-prompt-modelo-' + pv, $('modeloIA').value.trim());
+  if (pv === 'laya') gravar('gerador-prompt-url-laya', $('urlIA').value.trim());
+}
+function carregarIA(){
+  const pv = provedor();
+  $('chaveIA').value = ler('gerador-prompt-chave-' + pv);
+  $('modeloIA').value = ler('gerador-prompt-modelo-' + pv) || PROVEDORES[pv].modelo;
+  $('urlIA').value = ler('gerador-prompt-url-laya');
+  $('campoLaya').hidden = pv !== 'laya';
+  $('ajudaOpenai').hidden = pv !== 'openai';
+  $('rotuloChave').textContent = pv === 'laya' ? 'Chave da Laya (se o servidor pedir)' : 'Chave da API';
+  $('chaveIA').placeholder = pv === 'laya' ? 'opcional' : 'sk-...';
+}
+$('provedorIA').value = ler('gerador-prompt-provedor') || 'laya';
+carregarIA();
+$('provedorIA').addEventListener('change', () => { gravar('gerador-prompt-provedor', provedor()); carregarIA(); });
+for (const id of ['chaveIA','modeloIA','urlIA']) $(id).addEventListener('change', salvarIA);
+$('esquecerChave').addEventListener('click', () => { $('chaveIA').value = ''; salvarIA(); avisar('Chave apagada deste navegador'); });
+$('abrirChat').addEventListener('click', () => abrirNoChatGPT(pedidoChat($('saida').textContent)));
+$('melhorarAqui').addEventListener('click', melhorarAqui);
+$('copiarMelhorado').addEventListener('click', () => copiar($('melhorado').textContent));
+$('usarMelhorado').addEventListener('click', () => abrirNoChatGPT($('melhorado').textContent));
+
+function mostrarIA(){
+  $('blocoIA').hidden = !$('usarIA').checked;
+  try { localStorage.setItem('gerador-prompt-usar-ia', $('usarIA').checked ? '1' : '0'); } catch(e){}
+}
+try { $('usarIA').checked = localStorage.getItem('gerador-prompt-usar-ia') === '1'; } catch(e){}
+$('usarIA').addEventListener('change', mostrarIA);
+mostrarIA();
+
 // Monta os botões de tipo e liga tudo.
 for (const [k,t] of Object.entries(TIPOS)){
   const b = document.createElement('button');
@@ -491,7 +682,7 @@ for (const [k,t] of Object.entries(TIPOS)){
 }
 $('form').addEventListener('input', atualizar);
 $('form').addEventListener('change', atualizar);
-$('copiar').addEventListener('click', copiar);
+$('copiar').addEventListener('click', () => copiar());
 $('baixar').addEventListener('click', baixar);
 $('limpar').addEventListener('click', limpar);
 $('exemploBtn').addEventListener('click', exemplo);
