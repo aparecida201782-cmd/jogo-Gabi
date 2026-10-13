@@ -1,10 +1,10 @@
 ---
 name: ar-board
-description: Approval/Rejection Board. Quadro de aprovação e rejeição: para um sistema, tela, mecânica ou decisão, a IA propõe opções numeradas, o usuário aprova ou rejeita cada uma (com motivo), e cada veredito é gravado num registro de aprendizado que a IA relê antes de propor de novo, para entender o que está fazendo e dominar o campo de atuação do projeto. Use quando o usuário chamar /ar-board, pedir "opções para aprovar ou rejeitar", "quadro de aprovação", ou quiser treinar a IA nas preferências do projeto.
+description: ar-board, Approval Rejection Board. Quadro de aprovação e rejeição: para um sistema, tela, mecânica ou decisão, a IA propõe opções numeradas, o usuário aprova ou rejeita cada uma (com motivo), e cada veredito é gravado num registro de aprendizado que a IA relê antes de propor de novo, para entender o que está fazendo e dominar o campo de atuação do projeto. Use quando o usuário chamar /ar-board, pedir "opções para aprovar ou rejeitar", "quadro de aprovação", ou quiser treinar a IA nas preferências do projeto.
 argument-hint: "[sistema ou assunto] | revisar | resumo"
 ---
 
-# /ar-board: quadro de aprovação e rejeição
+# /ar-board: Approval Rejection Board (quadro de aprovação e rejeição)
 
 Você conduz um quadro em que propõe opções, o usuário decide (aprovar ou rejeitar) e você aprende com cada decisão. O objetivo não é só escolher uma opção agora: é acumular, rodada após rodada, um entendimento cada vez melhor do domínio e do gosto do usuário, para que as próximas propostas acertem mais.
 
